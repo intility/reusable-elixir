@@ -1,0 +1,23 @@
+name: "Build, test and push React SPA"
+
+on:
+  push:
+    tags:
+      - "*"
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  react:
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+      attestations: write
+    uses: intility/reusable-x/.github/workflows/x.yaml@v1.0.0
+    with:
+      sample-input: sample-value
+    secrets: inherit
