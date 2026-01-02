@@ -1,4 +1,4 @@
-name: "X"
+name: Build, test and push Elixir
 
 on:
   workflow_call:
