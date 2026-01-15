@@ -1,4 +1,4 @@
-name: "Build, test and push React SPA"
+name: "Build, test and push Elixir app"
 
 on:
   push:
@@ -11,13 +11,56 @@ on:
       - main
 
 jobs:
-  react:
+  elixir:
     permissions:
       contents: read
       packages: write
       id-token: write
       attestations: write
-    uses: intility/reusable-x/.github/workflows/x.yaml@v1.0.0
+    uses: intility/reusable-elixir/.github/workflows/elixir.yaml@v1.0.0
     with:
-      sample-input: sample-value
+      # Project directory (default: ".")
+      directory: .
+
+      # Elixir and OTP versions
+      elixir-version: "1.19"
+      otp-version: "28"
+
+      # Run tests (default: true)
+      test: true
+
+      # Build and push OCI image (default: true)
+      # Disable on PRs to avoid pushing unreviewed code
+      docker: ${{ github.event_name != 'pull_request' }}
+
+      # Optional: Override base image (defaults to project config)
+      # base-image: "elixir:1.18-slim"
+
+      # Optional: Multi-platform builds (requires include_erts: false)
+      # platforms: "linux/amd64,linux/arm64"
+
+      # Optional: Release name if multiple releases configured
+      # release: "my_app"
+
+      # Optional: Custom tags (defaults shown below)
+      # tags: |
+      #   type=schedule
+      #   type=ref,event=branch
+      #   type=ref,event=pr
+      #   type=semver,pattern={{version}}
+      #   type=semver,pattern={{major}}.{{minor}}
     secrets: inherit
+
+  # Example with private Hex organization
+  # elixir-private:
+  #   permissions:
+  #     contents: read
+  #     packages: write
+  #     id-token: write
+  #     attestations: write
+  #   uses: intility/reusable-elixir/.github/workflows/elixir.yaml@v1.0.0
+  #   with:
+  #     hex-organization: intility
+  #     docker: ${{ github.event_name != 'pull_request' }}
+  #   secrets:
+  #     hex-organization-key: ${{ secrets.HEX_ORGANIZATION_KEY }}

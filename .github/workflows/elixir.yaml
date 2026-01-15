@@ -3,14 +3,155 @@ name: Build, test and push Elixir
 on:
   workflow_call:
     inputs:
-      example-input:
-        description: "Descriptive description"
+      directory:
         type: string
-        default: "value"
+        default: "."
+        description: The directory where the Elixir project is located
+      elixir-version:
+        type: string
+        default: "1.19"
+        description: The Elixir version to use
+      otp-version:
+        type: string
+        default: "28"
+        description: The Erlang/OTP version to use
+      hex-organization:
+        type: string
+        required: false
+        description: Hex organization for private packages (e.g., intility)
+      test:
+        type: boolean
+        default: true
+        description: Whether to run mix test
+      docker:
+        type: boolean
+        default: true
+        description: Whether to build and push the OCI image to the container registry
+      base-image:
+        type: string
+        required: false
+        description: Override base image for ocibuild (e.g., elixir:1.19-slim)
+      platforms:
+        type: string
+        required: false
+        description: Target platforms for multi-arch builds (e.g., linux/amd64,linux/arm64)
+      release:
+        type: string
+        required: false
+        description: Release name if multiple releases are configured
+      tags:
+        type: string
+        required: false
+        description: "Tags for the docker image, see https://github.com/docker/metadata-action"
+        default: |
+          type=schedule
+          type=ref,event=branch
+          type=ref,event=pr
+          type=semver,pattern={{version}}
+          type=semver,pattern={{major}}.{{minor}}
+    secrets:
+      hex-organization-key:
+        required: false
+        description: Hex organization authentication key for private packages
 
 jobs:
-  build:
+  elixir:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ${{ inputs.directory }}
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          fetch-depth: 1
+
+      # Set SOURCE_DATE_EPOCH=0 for reproducible builds and layer caching
+      # Fixed timestamp ensures unchanged content produces identical layer digests
+      # Actual build time is recorded via org.opencontainers.image.created annotation
+      - name: Set SOURCE_DATE_EPOCH
+        id: source-date
+        run: echo "epoch=0" >> "$GITHUB_OUTPUT"
+
+      - name: Setup Elixir
+        uses: erlef/setup-beam@5304e04ea2b355f03681464e683d92e3b2f18451 # v1.18.2
+        with:
+          elixir-version: ${{ inputs.elixir-version }}
+          otp-version: ${{ inputs.otp-version }}
+
+      - name: Restore dependencies cache
+        uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684 # v4.2.3
+        with:
+          path: |
+            ${{ inputs.directory }}/deps
+            ${{ inputs.directory }}/_build
+          key: ${{ runner.os }}-mix-${{ inputs.elixir-version }}-${{ inputs.otp-version }}-${{ hashFiles('**/mix.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-mix-${{ inputs.elixir-version }}-${{ inputs.otp-version }}-
+
+      - name: Authorize Hex organization
+        if: ${{ inputs.hex-organization != '' }}
+        run: mix hex.organization auth ${{ inputs.hex-organization }} --key ${{ secrets.hex-organization-key }}
+
+      - name: Install dependencies
+        run: mix deps.get
+
+      - name: Compile
+        run: mix compile --warnings-as-errors
+
+      - name: Run tests
+        if: ${{ inputs.test }}
+        run: mix test
+
+      - name: Build release
+        if: ${{ inputs.docker }}
+        run: mix release --overwrite
+        env:
+          MIX_ENV: prod
+          SOURCE_DATE_EPOCH: ${{ steps.source-date.outputs.epoch }}
+
+      - name: Docker meta
+        if: ${{ inputs.docker }}
+        id: meta
+        uses: docker/metadata-action@902fa8ec7d6ecbf8d84d538b9b233a880e428804 # v5.7.0
+        with:
+          images: ghcr.io/${{ github.repository }}
+          sep-tags: ";"
+          tags: ${{ inputs.tags }}
+
+      # Set image outputs for reuse in subsequent steps
+      - name: Set image outputs
+        if: ${{ inputs.docker }}
+        id: image
+        run: |
+          echo "registry=ghcr.io/${{ github.repository_owner }}" >> "$GITHUB_OUTPUT"
+          echo "name=ghcr.io/${{ github.repository }}" >> "$GITHUB_OUTPUT"
+
+      - name: Login to GHCR
+        if: ${{ inputs.docker }}
+        uses: docker/login-action@74a5d142397b4f367a81961eba4e8cd7edddf772 # v3.4.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push OCI image
+        if: ${{ inputs.docker }}
+        id: ocibuild
+        uses: ./.github/actions/ocibuild
+        with:
+          tags: ${{ steps.meta.outputs.tags }}
+          registry: ${{ steps.image.outputs.registry }}
+          base-image: ${{ inputs.base-image }}
+          platforms: ${{ inputs.platforms }}
+          release: ${{ inputs.release }}
+          source-date-epoch: ${{ steps.source-date.outputs.epoch }}
+          push-username: ${{ github.actor }}
+          push-password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Generate artifact attestation
+        if: ${{ inputs.docker }}
+        uses: actions/attest-build-provenance@c074443f1aee8d4aeeae555aebba3282517141b2 # v2.2.3
+        with:
+          subject-digest: ${{ steps.ocibuild.outputs.digest }}
+          subject-name: ${{ steps.image.outputs.name }}
+          push-to-registry: true

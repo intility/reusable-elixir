@@ -1,65 +1,154 @@
 # Reusable Elixir Workflow
 
 > [!IMPORTANT]
-> This workflow expects the project you're building is using the [ocibuild](https://hex.pm/packages/ocibuild) library to build container images.
+> This workflow expects your project to use the [ocibuild](https://hex.pm/packages/ocibuild) library for building container images.
 
-This reusable workflow will fetch dependencies, run tests, build and publish your Elixir project.
-The workflow includes the following steps.
+This reusable workflow builds, tests, and publishes Elixir projects as OCI container images with full supply chain security.
 
-- `mix deps.get`: Fetches dependencies for your project.
-- `mix test`: Runs your test-suite.
-- `mix ocibuild`: Builds OCI container image using the `ocibuild` library.
-- `mix ocibuild --push`: Pushes the container image to the GitHub Container Registry (ghcr.io).
+## Features
 
-## Basic usage
+- **Reproducible builds** via `SOURCE_DATE_EPOCH=0` for consistent layer digests
+- **Layer caching** - unchanged layers (ERTS, deps) are skipped on upload
+- **SLSA provenance attestation** for supply chain security
+- **Automatic OCI annotations** (source URL, revision, version, created timestamp)
+- **SBOM generation** (Software Bill of Materials) included in images
+- **Private Hex packages** support via organization authentication
+- **Multi-platform builds** support (requires `include_erts: false`)
 
-The [example workflow](./example.yaml) is set up to run when a tag is pushed, when the `main` branch has been pushed to, or on pull requests to the `main` branch.
+## Workflow Steps
 
-### Permissions
+1. **Checkout** - Fetches repository code
+2. **Setup Elixir** - Installs Elixir and OTP using erlef/setup-beam
+3. **Cache** - Restores deps and _build from cache
+4. **Dependencies** - Runs `mix deps.get`
+5. **Compile** - Runs `mix compile --warnings-as-errors`
+6. **Test** - Runs `mix test` (optional)
+7. **Release** - Builds production release with `mix release`
+8. **OCI Build** - Builds and pushes image with `mix ocibuild --push`
+9. **Attestation** - Generates SLSA build provenance
 
-- `id-token`: write # Used for the attestation
-- `contents`: read # Used for the checkout
-- `packages`: write # Used for the publish
-- `attestations`: write # Used for the attestation
+## Basic Usage
 
-### Prerequisite
+```yaml
+name: "Build and publish"
 
-In order to produce standardized deterministic builds, this project requires that you have installed the [ocibuild](https://hex.pm/packages/ocibuild) library in your project.
-This library produces OCI compliant container images and automatically handles the following:
+on:
+  push:
+    tags: ["*"]
+    branches: [main]
+  pull_request:
+    branches: [main]
 
-- OCI annotations
-- Reproducible builds
-- Image layering of runtime, dependencies and application code
-- SBOM (Software Bill of Materials)
+jobs:
+  elixir:
+    permissions:
+      contents: read      # Checkout repository
+      packages: write     # Push to GHCR
+      id-token: write     # OIDC token for attestation
+      attestations: write # Create attestations
+    uses: intility/reusable-elixir/.github/workflows/elixir.yaml@v1
+    with:
+      docker: ${{ github.event_name != 'pull_request' }}
+    secrets: inherit
+```
 
-> [!IMPORTANT]
-> You need to set up the following things for your reusable workflow repository:
+See the full [example workflow](./example.yaml) for more options.
 
-- [x] Repository Settings -> Actions -> General -> Access needs to be set to at least `Accessible from repositories in the 'intility' organization`
-- [ ] An org admin needs to grant Dependabot access to the repository here: https://github.com/organizations/intility/settings/security_analysis
-- [x] Add the `reusable-workflows` topic to the repository
-- [x] Rename `x.yaml` workflow
-- [ ] Update `example.yaml` and `README.md`
-- [x] Add a branch ruleset to protect the main branch
-- [ ] If you need to push a docker image, try re-using [`reusable-docker`](https://github.com/intility/reusable-docker) ([example in `reusable-react`](https://github.com/intility/reusable-react/blob/55a30700735748f3562c0e59bb5f13e3a261f6a2/.github/workflows/react.yaml#L175))
-- [ ] Remove this checklist
+## Available Inputs
 
-# Reusable X workflow
+| Name | Type | Default | Description |
+| :--- | :--- | :------ | :---------- |
+| `directory` | string | `.` | Project directory |
+| `elixir-version` | string | `1.18` | Elixir version |
+| `otp-version` | string | `27` | Erlang/OTP version |
+| `hex-organization` | string | - | Hex organization for private packages |
+| `test` | boolean | `true` | Run `mix test` |
+| `docker` | boolean | `true` | Build and push OCI image |
+| `base-image` | string | - | Override base image (e.g., `elixir:1.18-slim`) |
+| `platforms` | string | - | Multi-arch platforms (e.g., `linux/amd64,linux/arm64`) |
+| `release` | string | - | Release name if multiple configured |
+| `tags` | string | semver + branch/pr | Docker metadata tags |
 
-<!-- Describe what the workflow is for  -->
+## Secrets
 
-Reusable workflow for X.
+| Name | Required | Description |
+| :--- | :------- | :---------- |
+| `hex-organization-key` | No | Hex organization auth key for private packages |
 
-## Basic usage
+## Required Permissions
 
-<!-- Describe basic usage and what it does -->
+```yaml
+permissions:
+  contents: read      # Checkout repository
+  packages: write     # Push to GitHub Container Registry
+  id-token: write     # OIDC token for attestation
+  attestations: write # Create build provenance attestation
+```
 
-See the [example workflow](./example.yaml).
+## Project Configuration
 
-## Available inputs
+Your Elixir project needs `ocibuild` configured. Add to `mix.exs`:
 
-<!-- Describe available inputs for the reusable workflow -->
+```elixir
+defp deps do
+  [
+    {:ocibuild, "~> 0.10", runtime: false}
+  ]
+end
 
-| Name            | Type   | Default value | Description             |
-| :-------------- | :----- | :------------ | :---------------------- |
-| `example-input` | string | `value`       | Descriptive description |
+def project do
+  [
+    # ... other config
+    releases: [
+      my_app: [
+        # Optional: exclude ERTS for multi-platform builds
+        # include_erts: false
+      ]
+    ],
+    # ocibuild configuration
+    ocibuild: [
+      base_image: "debian:stable-slim",
+      workdir: "/app",
+      env: %{"LANG" => "C.UTF-8"},
+      expose: [4000]
+    ]
+  ]
+end
+```
+
+## Reproducible Builds & Layer Caching
+
+The workflow sets `SOURCE_DATE_EPOCH=0` to ensure file timestamps are consistent across builds. This enables:
+
+- **Layer caching** - unchanged ERTS/deps layers keep the same digest and are skipped on upload
+- **Reproducible builds** - same source always produces the same image
+- **Registry deduplication** - identical content = identical digests
+
+The actual build timestamp is recorded in the `org.opencontainers.image.created` annotation, so you still know when the image was built.
+
+## Private Hex Packages
+
+For projects using private Hex organization packages:
+
+```yaml
+jobs:
+  elixir:
+    uses: intility/reusable-elixir/.github/workflows/elixir.yaml@v1
+    with:
+      hex-organization: intility
+    secrets:
+      hex-organization-key: ${{ secrets.HEX_ORGANIZATION_KEY }}
+```
+
+## Multi-Platform Builds
+
+For multi-architecture images (requires `include_erts: false` in your release config):
+
+```yaml
+jobs:
+  elixir:
+    uses: intility/reusable-elixir/.github/workflows/elixir.yaml@v1
+    with:
+      base-image: "elixir:1.18-slim"  # Must include ERTS
+      platforms: "linux/amd64,linux/arm64"
+```

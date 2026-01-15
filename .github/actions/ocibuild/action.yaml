@@ -1,0 +1,80 @@
+name: Build and Push OCI Image
+description: Build and push OCI images using ocibuild
+
+inputs:
+  tags:
+    description: Semicolon-separated full image refs (e.g., from docker/metadata-action)
+    required: true
+  registry:
+    description: Registry to push to (e.g., ghcr.io/intility)
+    required: true
+  base-image:
+    description: Override base image for ocibuild
+    required: false
+  platforms:
+    description: Target platforms for multi-arch builds (e.g., linux/amd64,linux/arm64)
+    required: false
+  release:
+    description: Release name if multiple releases are configured
+    required: false
+  source-date-epoch:
+    description: SOURCE_DATE_EPOCH for reproducible builds and layer caching (unset by default)
+    required: false
+  push-username:
+    description: Registry username
+    required: true
+  push-password:
+    description: Registry password/token
+    required: true
+
+outputs:
+  digest:
+    description: Image digest (sha256:...) for attestation
+    value: ${{ steps.ocibuild.outputs.digest }}
+
+runs:
+  using: composite
+  steps:
+    - name: Build and push OCI image
+      id: ocibuild
+      shell: bash
+      run: |
+        # Set SOURCE_DATE_EPOCH if provided (for reproducible builds and layer caching)
+        if [ -n "${{ inputs.source-date-epoch }}" ]; then
+          export SOURCE_DATE_EPOCH="${{ inputs.source-date-epoch }}"
+        fi
+
+        # Set created annotation to actual build time
+        OCIBUILD_ARGS="--tag '${{ inputs.tags }}' -a org.opencontainers.image.created=$(date +%s)"
+
+        # Add optional base image override
+        if [ -n "${{ inputs.base-image }}" ]; then
+          OCIBUILD_ARGS="$OCIBUILD_ARGS --base ${{ inputs.base-image }}"
+        fi
+
+        # Add optional platforms for multi-arch
+        if [ -n "${{ inputs.platforms }}" ]; then
+          OCIBUILD_ARGS="$OCIBUILD_ARGS --platform ${{ inputs.platforms }}"
+        fi
+
+        # Add optional release name
+        if [ -n "${{ inputs.release }}" ]; then
+          OCIBUILD_ARGS="$OCIBUILD_ARGS --release ${{ inputs.release }}"
+        fi
+
+        # Build and push in one step
+        OUTPUT=$(eval mix ocibuild $OCIBUILD_ARGS --push "${{ inputs.registry }}" 2>&1 | tee /dev/stderr)
+
+        # Extract digest from output (format: sha256:...)
+        DIGEST=$(echo "$OUTPUT" | grep -oE 'sha256:[a-f0-9]{64}' | tail -1)
+
+        if [ -z "$DIGEST" ]; then
+          echo "::error::Failed to extract digest from ocibuild output"
+          exit 1
+        fi
+
+        echo "digest=$DIGEST" >> "$GITHUB_OUTPUT"
+      env:
+        MIX_ENV: prod
+        OCIBUILD_PUSH_USERNAME: ${{ inputs.push-username }}
+        OCIBUILD_PUSH_PASSWORD: ${{ inputs.push-password }}
