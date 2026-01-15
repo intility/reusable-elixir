@@ -49,6 +49,10 @@ jobs:
       #   type=ref,event=pr
       #   type=semver,pattern={{version}}
       #   type=semver,pattern={{major}}.{{minor}}
+
+      # Optional: Enable reproducible builds and layer caching
+      # Use "0" for consistent file timestamps across builds
+      source-date-epoch: "0"
     secrets: inherit
 
   # Example with private Hex organization

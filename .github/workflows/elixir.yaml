@@ -49,6 +49,10 @@ on:
           type=ref,event=pr
           type=semver,pattern={{version}}
           type=semver,pattern={{major}}.{{minor}}
+      source-date-epoch:
+        type: string
+        required: false
+        description: "SOURCE_DATE_EPOCH for reproducible builds (use '0' for layer caching)"
     secrets:
       hex-organization-key:
         required: false
@@ -64,13 +68,6 @@ jobs:
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
           fetch-depth: 1
-
-      # Set SOURCE_DATE_EPOCH=0 for reproducible builds and layer caching
-      # Fixed timestamp ensures unchanged content produces identical layer digests
-      # Actual build time is recorded via org.opencontainers.image.created annotation
-      - name: Set SOURCE_DATE_EPOCH
-        id: source-date
-        run: echo "epoch=0" >> "$GITHUB_OUTPUT"
 
       - name: Setup Elixir
         uses: erlef/setup-beam@5304e04ea2b355f03681464e683d92e3b2f18451 # v1.18.2
@@ -107,7 +104,6 @@ jobs:
         run: mix release --overwrite
         env:
           MIX_ENV: prod
-          SOURCE_DATE_EPOCH: ${{ steps.source-date.outputs.epoch }}
 
       - name: Docker meta
         if: ${{ inputs.docker }}
@@ -144,7 +140,7 @@ jobs:
           base-image: ${{ inputs.base-image }}
           platforms: ${{ inputs.platforms }}
           release: ${{ inputs.release }}
-          source-date-epoch: ${{ steps.source-date.outputs.epoch }}
+          source-date-epoch: ${{ inputs.source-date-epoch }}
           push-username: ${{ github.actor }}
           push-password: ${{ secrets.GITHUB_TOKEN }}
 

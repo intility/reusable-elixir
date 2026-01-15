@@ -7,8 +7,8 @@ This reusable workflow builds, tests, and publishes Elixir projects as OCI conta
 
 ## Features
 
-- **Reproducible builds** via `SOURCE_DATE_EPOCH=0` for consistent layer digests
-- **Layer caching** - unchanged layers (ERTS, deps) are skipped on upload
+- **Reproducible builds** (opt-in) via `SOURCE_DATE_EPOCH` for consistent layer digests
+- **Layer caching** - unchanged layers (ERTS, deps) are skipped on upload when enabled
 - **SLSA provenance attestation** for supply chain security
 - **Automatic OCI annotations** (source URL, revision, version, created timestamp)
 - **SBOM generation** (Software Bill of Materials) included in images
@@ -59,15 +59,16 @@ See the full [example workflow](./example.yaml) for more options.
 | Name | Type | Default | Description |
 | :--- | :--- | :------ | :---------- |
 | `directory` | string | `.` | Project directory |
-| `elixir-version` | string | `1.18` | Elixir version |
-| `otp-version` | string | `27` | Erlang/OTP version |
+| `elixir-version` | string | `1.19` | Elixir version |
+| `otp-version` | string | `28` | Erlang/OTP version |
 | `hex-organization` | string | - | Hex organization for private packages |
 | `test` | boolean | `true` | Run `mix test` |
 | `docker` | boolean | `true` | Build and push OCI image |
-| `base-image` | string | - | Override base image (e.g., `elixir:1.18-slim`) |
+| `base-image` | string | - | Override base image (e.g., `elixir:1.19-slim`) |
 | `platforms` | string | - | Multi-arch platforms (e.g., `linux/amd64,linux/arm64`) |
 | `release` | string | - | Release name if multiple configured |
 | `tags` | string | semver + branch/pr | Docker metadata tags |
+| `source-date-epoch` | string | - | SOURCE_DATE_EPOCH for reproducible builds (use `0` for layer caching) |
 
 ## Secrets
 
@@ -118,13 +119,23 @@ end
 
 ## Reproducible Builds & Layer Caching
 
-The workflow sets `SOURCE_DATE_EPOCH=0` to ensure file timestamps are consistent across builds. This enables:
+To enable reproducible builds and layer caching, set `source-date-epoch: "0"`:
+
+```yaml
+jobs:
+  elixir:
+    uses: intility/reusable-elixir/.github/workflows/elixir.yaml@v1
+    with:
+      source-date-epoch: "0"
+```
+
+This ensures file timestamps are consistent across builds, enabling:
 
 - **Layer caching** - unchanged ERTS/deps layers keep the same digest and are skipped on upload
 - **Reproducible builds** - same source always produces the same image
 - **Registry deduplication** - identical content = identical digests
 
-The actual build timestamp is recorded in the `org.opencontainers.image.created` annotation, so you still know when the image was built.
+The actual build timestamp is recorded in the `org.opencontainers.image.created` annotation.
 
 ## Private Hex Packages
 
@@ -149,6 +160,6 @@ jobs:
   elixir:
     uses: intility/reusable-elixir/.github/workflows/elixir.yaml@v1
     with:
-      base-image: "elixir:1.18-slim"  # Must include ERTS
+      base-image: "elixir:1.19-slim"  # Must include ERTS
       platforms: "linux/amd64,linux/arm64"
 ```
