@@ -1,60 +1,114 @@
-# Reusable Elixir Workflow
+# Reusable Elixir Workflows
+
+Reusable GitHub Actions workflows for Elixir projects. Two workflows are available:
+
+- **elixir-test** - Testing, linting, and static analysis
+- **elixir-release** - Build and push OCI container images
+
+## elixir-test
+
+Runs tests and static analysis using [team-alembic/staple-actions](https://github.com/team-alembic/staple-actions).
+
+### Features
+
+- **Parallel jobs** for fast feedback (deps, audit, build, test, credo, dialyzer run concurrently)
+- **Credo** static code analysis
+- **Dialyzer** type checking with PLT caching
+- **Sobelow** security scanner (Phoenix)
+- **PostgreSQL** service container with Ash/Ecto support
+- **SQLite** support for Ash
+- **NPM** install for Phoenix assets
+- **Hex organization** support for private packages
+
+### Usage
+
+```yaml
+name: Test
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    uses: intility/reusable-elixir/.github/workflows/elixir-test.yaml@v1
+    with:
+      elixir-version: "1.18"
+      otp-version: "27"
+```
+
+### Inputs
+
+| Name | Type | Default | Description |
+| :--- | :--- | :------ | :---------- |
+| `elixir-version` | string | `1.18` | Elixir version |
+| `otp-version` | string | `27` | Erlang/OTP version |
+| `audit` | boolean | `true` | Run hex.audit and deps.audit |
+| `credo` | boolean | `true` | Run Credo static analysis |
+| `dialyzer` | boolean | `true` | Run Dialyzer type checking |
+| `sobelow` | boolean | `false` | Run Sobelow security scanner |
+| `postgres` | boolean | `false` | Start PostgreSQL service |
+| `postgres-version` | string | `17` | PostgreSQL version |
+| `ash-postgres` | boolean | `false` | Run Ash PostgreSQL migrations |
+| `ecto-postgres` | boolean | `false` | Run Ecto migrations |
+| `sqlite` | boolean | `false` | Run Ash SQLite migrations |
+| `npm-install` | boolean | `false` | Run npm install for assets |
+| `npm-working-directory` | string | `assets` | Directory for npm install |
+| `node-version` | string | `latest` | Node.js version |
+| `spark-formatter` | boolean | `false` | Check Spark DSL formatting |
+| `hex-organization` | string | - | Hex organization for private packages |
+
+### Secrets
+
+| Name | Required | Description |
+| :--- | :------- | :---------- |
+| `hex-organization-key` | No | Hex organization auth key |
+
+---
+
+## elixir-release
 
 > [!IMPORTANT]
 > This workflow expects your project to use the [ocibuild](https://hex.pm/packages/ocibuild) library for building container images.
 
-This reusable workflow builds, tests, and publishes Elixir projects as OCI container images with full supply chain security.
+Builds and publishes Elixir releases as OCI container images with supply chain security.
 
-## Features
+### Features
 
 - **Reproducible builds** (opt-in) via `SOURCE_DATE_EPOCH` for consistent layer digests
-- **Layer caching** - unchanged layers (ERTS, deps) are skipped on upload when enabled
+- **Layer caching** - unchanged layers (ERTS, deps) are skipped on upload
 - **SLSA provenance attestation** for supply chain security
 - **Automatic OCI annotations** (source URL, revision, version, created timestamp)
 - **SBOM generation** (Software Bill of Materials) included in images
 - **Private Hex packages** support via organization authentication
 - **Multi-platform builds** support (requires `include_erts: false`)
 
-## Workflow Steps
-
-1. **Checkout** - Fetches repository code
-2. **Setup Elixir** - Installs Elixir and OTP using erlef/setup-beam
-3. **Cache** - Restores deps and _build from cache
-4. **Dependencies** - Runs `mix deps.get`
-5. **Compile** - Runs `mix compile --warnings-as-errors`
-6. **Test** - Runs `mix test` (optional)
-7. **Release** - Builds production release with `mix release`
-8. **OCI Build** - Builds and pushes image with `mix ocibuild --push`
-9. **Attestation** - Generates SLSA build provenance
-
-## Basic Usage
+### Usage
 
 ```yaml
-name: "Build and publish"
+name: Release
 
 on:
   push:
     tags: ["*"]
     branches: [main]
-  pull_request:
-    branches: [main]
 
 jobs:
-  elixir:
+  release:
     permissions:
-      contents: read      # Checkout repository
-      packages: write     # Push to GHCR
-      id-token: write     # OIDC token for attestation
-      attestations: write # Create attestations
-    uses: intility/reusable-elixir/.github/workflows/elixir.yaml@v1
+      contents: read
+      packages: write
+      id-token: write
+      attestations: write
+    uses: intility/reusable-elixir/.github/workflows/elixir-release.yaml@v1
     with:
-      docker: ${{ github.event_name != 'pull_request' }}
+      source-date-epoch: "0"
     secrets: inherit
 ```
 
-See the full [example workflow](./example.yaml) for more options.
-
-## Available Inputs
+### Inputs
 
 | Name | Type | Default | Description |
 | :--- | :--- | :------ | :---------- |
@@ -62,7 +116,6 @@ See the full [example workflow](./example.yaml) for more options.
 | `elixir-version` | string | `1.19` | Elixir version |
 | `otp-version` | string | `28` | Erlang/OTP version |
 | `hex-organization` | string | - | Hex organization for private packages |
-| `test` | boolean | `true` | Run `mix test` |
 | `docker` | boolean | `true` | Build and push OCI image |
 | `base-image` | string | - | Override base image (e.g., `elixir:1.19-slim`) |
 | `platforms` | string | - | Multi-arch platforms (e.g., `linux/amd64,linux/arm64`) |
@@ -70,13 +123,13 @@ See the full [example workflow](./example.yaml) for more options.
 | `tags` | string | semver + branch/pr | Docker metadata tags |
 | `source-date-epoch` | string | - | SOURCE_DATE_EPOCH for reproducible builds (use `0` for layer caching) |
 
-## Secrets
+### Secrets
 
 | Name | Required | Description |
 | :--- | :------- | :---------- |
-| `hex-organization-key` | No | Hex organization auth key for private packages |
+| `hex-organization-key` | No | Hex organization auth key |
 
-## Required Permissions
+### Required Permissions
 
 ```yaml
 permissions:
@@ -86,7 +139,7 @@ permissions:
   attestations: write # Create build provenance attestation
 ```
 
-## Project Configuration
+### Project Configuration
 
 Your Elixir project needs `ocibuild` configured. Add to `mix.exs`:
 
@@ -117,14 +170,14 @@ def project do
 end
 ```
 
-## Reproducible Builds & Layer Caching
+### Reproducible Builds & Layer Caching
 
-To enable reproducible builds and layer caching, set `source-date-epoch: "0"`:
+Set `source-date-epoch: "0"` to enable reproducible builds and layer caching:
 
 ```yaml
 jobs:
-  elixir:
-    uses: intility/reusable-elixir/.github/workflows/elixir.yaml@v1
+  release:
+    uses: intility/reusable-elixir/.github/workflows/elixir-release.yaml@v1
     with:
       source-date-epoch: "0"
 ```
@@ -137,14 +190,59 @@ This ensures file timestamps are consistent across builds, enabling:
 
 The actual build timestamp is recorded in the `org.opencontainers.image.created` annotation.
 
+---
+
+## Complete Example
+
+See [example.yaml](./example.yaml) for a complete workflow using both test and release.
+
+```yaml
+name: CI
+
+on:
+  push:
+    tags: ["*"]
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    uses: intility/reusable-elixir/.github/workflows/elixir-test.yaml@v1
+    with:
+      postgres: true
+      ash-postgres: true
+
+  release:
+    needs: test
+    if: github.event_name != 'pull_request'
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+      attestations: write
+    uses: intility/reusable-elixir/.github/workflows/elixir-release.yaml@v1
+    with:
+      source-date-epoch: "0"
+    secrets: inherit
+```
+
 ## Private Hex Packages
 
 For projects using private Hex organization packages:
 
 ```yaml
 jobs:
-  elixir:
-    uses: intility/reusable-elixir/.github/workflows/elixir.yaml@v1
+  test:
+    uses: intility/reusable-elixir/.github/workflows/elixir-test.yaml@v1
+    with:
+      hex-organization: intility
+    secrets:
+      hex-organization-key: ${{ secrets.HEX_ORGANIZATION_KEY }}
+
+  release:
+    needs: test
+    uses: intility/reusable-elixir/.github/workflows/elixir-release.yaml@v1
     with:
       hex-organization: intility
     secrets:
@@ -157,9 +255,9 @@ For multi-architecture images (requires `include_erts: false` in your release co
 
 ```yaml
 jobs:
-  elixir:
-    uses: intility/reusable-elixir/.github/workflows/elixir.yaml@v1
+  release:
+    uses: intility/reusable-elixir/.github/workflows/elixir-release.yaml@v1
     with:
-      base-image: "elixir:1.19-slim"  # Must include ERTS
+      base-image: "elixir:1.19-slim"
       platforms: "linux/amd64,linux/arm64"
 ```

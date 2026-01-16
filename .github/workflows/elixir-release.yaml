@@ -1,4 +1,4 @@
-name: Build, test and push Elixir
+name: Build and push Elixir release
 
 on:
   workflow_call:
@@ -19,10 +19,6 @@ on:
         type: string
         required: false
         description: Hex organization for private packages (e.g., intility)
-      test:
-        type: boolean
-        default: true
-        description: Whether to run mix test
       docker:
         type: boolean
         default: true
@@ -59,7 +55,7 @@ on:
         description: Hex organization authentication key for private packages
 
 jobs:
-  elixir:
+  release:
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -94,10 +90,6 @@ jobs:
 
       - name: Compile
         run: mix compile --warnings-as-errors
-
-      - name: Run tests
-        if: ${{ inputs.test }}
-        run: mix test
 
       - name: Build release
         if: ${{ inputs.docker }}

@@ -1,4 +1,4 @@
-name: "Build, test and push Elixir app"
+name: CI
 
 on:
   push:
@@ -11,13 +11,52 @@ on:
       - main
 
 jobs:
-  elixir:
+  # Run tests, linting, and static analysis
+  test:
+    uses: intility/reusable-elixir/.github/workflows/elixir-test.yaml@v1
+    with:
+      # Elixir and OTP versions
+      elixir-version: "1.18"
+      otp-version: "27"
+
+      # Static analysis (all default to true except sobelow)
+      audit: true
+      credo: true
+      dialyzer: true
+      # sobelow: true  # Enable for Phoenix projects
+
+      # Database support
+      # postgres: true
+      # postgres-version: "17"
+      # ash-postgres: true   # For Ash Framework projects
+      # ecto-postgres: true  # For Ecto projects
+
+      # SQLite support (Ash)
+      # sqlite: true
+
+      # Phoenix assets
+      # npm-install: true
+      # npm-working-directory: assets
+      # node-version: "22"
+
+      # Spark DSL formatter
+      # spark-formatter: true
+
+      # Private Hex packages
+      # hex-organization: intility
+    # secrets:
+    #   hex-organization-key: ${{ secrets.HEX_ORGANIZATION_KEY }}
+
+  # Build and push OCI container image
+  release:
+    needs: test
+    if: github.event_name != 'pull_request'
     permissions:
       contents: read
       packages: write
       id-token: write
       attestations: write
-    uses: intility/reusable-elixir/.github/workflows/elixir.yaml@v1.0.0
+    uses: intility/reusable-elixir/.github/workflows/elixir-release.yaml@v1
     with:
       # Project directory (default: ".")
       directory: .
@@ -26,15 +65,14 @@ jobs:
       elixir-version: "1.19"
       otp-version: "28"
 
-      # Run tests (default: true)
-      test: true
-
       # Build and push OCI image (default: true)
-      # Disable on PRs to avoid pushing unreviewed code
-      docker: ${{ github.event_name != 'pull_request' }}
+      docker: true
+
+      # Enable reproducible builds and layer caching
+      source-date-epoch: "0"
 
       # Optional: Override base image (defaults to project config)
-      # base-image: "elixir:1.18-slim"
+      # base-image: "elixir:1.19-slim"
 
       # Optional: Multi-platform builds (requires include_erts: false)
       # platforms: "linux/amd64,linux/arm64"
@@ -50,21 +88,6 @@ jobs:
       #   type=semver,pattern={{version}}
       #   type=semver,pattern={{major}}.{{minor}}
 
-      # Optional: Enable reproducible builds and layer caching
-      # Use "0" for consistent file timestamps across builds
-      source-date-epoch: "0"
+      # Private Hex packages
+      # hex-organization: intility
     secrets: inherit
-
-  # Example with private Hex organization
-  # elixir-private:
-  #   permissions:
-  #     contents: read
-  #     packages: write
-  #     id-token: write
-  #     attestations: write
-  #   uses: intility/reusable-elixir/.github/workflows/elixir.yaml@v1.0.0
-  #   with:
-  #     hex-organization: intility
-  #     docker: ${{ github.event_name != 'pull_request' }}
-  #   secrets:
-  #     hex-organization-key: ${{ secrets.HEX_ORGANIZATION_KEY }}

@@ -1,0 +1,272 @@
+name: Test Elixir
+
+on:
+  workflow_call:
+    inputs:
+      elixir-version:
+        type: string
+        default: "1.19"
+        description: The Elixir version to use
+      otp-version:
+        type: string
+        default: "28"
+        description: The Erlang/OTP version to use
+      audit:
+        type: boolean
+        default: true
+        description: Run hex.audit and deps.audit
+      credo:
+        type: boolean
+        default: true
+        description: Run Credo static analysis
+      dialyzer:
+        type: boolean
+        default: true
+        description: Run Dialyzer type checking
+      sobelow:
+        type: boolean
+        default: false
+        description: Run Sobelow security scanner (Phoenix only)
+      postgres:
+        type: boolean
+        default: false
+        description: Start PostgreSQL service
+      postgres-version:
+        type: string
+        default: "17"
+        description: PostgreSQL version
+      ash-postgres:
+        type: boolean
+        default: false
+        description: Run Ash PostgreSQL migrations
+      ecto-postgres:
+        type: boolean
+        default: false
+        description: Run Ecto PostgreSQL migrations
+      sqlite:
+        type: boolean
+        default: false
+        description: Run Ash SQLite migrations
+      npm-install:
+        type: boolean
+        default: false
+        description: Run npm install for assets
+      npm-working-directory:
+        type: string
+        default: assets
+        description: Directory for npm install
+      node-version:
+        type: string
+        default: latest
+        description: Node.js version
+      spark-formatter:
+        type: boolean
+        default: false
+        description: Check Spark DSL formatting
+      hex-organization:
+        type: string
+        required: false
+        description: Hex organization for private packages
+    secrets:
+      hex-organization-key:
+        required: false
+        description: Hex organization authentication key
+
+env:
+  ELIXIR_VERSION: ${{ inputs.elixir-version }}
+  OTP_VERSION: ${{ inputs.otp-version }}
+
+jobs:
+  deps:
+    name: Get Dependencies
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Authorize Hex organization
+        if: ${{ inputs.hex-organization != '' }}
+        run: mix hex.organization auth ${{ inputs.hex-organization }} --key ${{ secrets.hex-organization-key }}
+      - uses: team-alembic/staple-actions/actions/mix-deps-get@main
+
+  audit:
+    name: Audit Dependencies
+    runs-on: ubuntu-latest
+    if: ${{ inputs.audit }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: team-alembic/staple-actions/actions/mix-hex-audit@main
+      - uses: team-alembic/staple-actions/actions/mix-task@main
+        with:
+          task: deps.audit
+
+  build-test:
+    name: Build Test
+    runs-on: ubuntu-latest
+    needs: deps
+    steps:
+      - uses: actions/checkout@v4
+      - name: Authorize Hex organization
+        if: ${{ inputs.hex-organization != '' }}
+        run: mix hex.organization auth ${{ inputs.hex-organization }} --key ${{ secrets.hex-organization-key }}
+      - uses: team-alembic/staple-actions/actions/install-elixir@main
+      - uses: team-alembic/staple-actions/actions/mix-compile@main
+        with:
+          mix-env: test
+
+  unused-deps:
+    name: Check Unused Dependencies
+    runs-on: ubuntu-latest
+    needs: build-test
+    steps:
+      - uses: actions/checkout@v4
+      - uses: team-alembic/staple-actions/actions/mix-task@main
+        with:
+          mix-env: test
+          task: deps.unlock --check-unused
+
+  formatter:
+    name: Check Formatting
+    runs-on: ubuntu-latest
+    needs: build-test
+    steps:
+      - uses: actions/checkout@v4
+      - uses: team-alembic/staple-actions/actions/mix-format@main
+        with:
+          mix-env: test
+      - name: Spark (DSL)
+        uses: team-alembic/staple-actions/actions/mix-task@main
+        if: ${{ inputs.spark-formatter }}
+        with:
+          mix-env: test
+          task: spark.formatter --check
+
+  credo:
+    name: Credo
+    runs-on: ubuntu-latest
+    needs: build-test
+    if: ${{ inputs.credo }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: team-alembic/staple-actions/actions/mix-credo@main
+        with:
+          mix-env: test
+
+  dialyzer:
+    name: Dialyzer
+    runs-on: ubuntu-latest
+    needs: build-test
+    if: ${{ inputs.dialyzer }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: team-alembic/staple-actions/actions/mix-dialyzer@main
+        with:
+          mix-env: dev
+
+  sobelow:
+    name: Sobelow
+    runs-on: ubuntu-latest
+    needs: build-test
+    if: ${{ inputs.sobelow }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: team-alembic/staple-actions/actions/mix-task@main
+        with:
+          mix-env: test
+          task: sobelow
+
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    needs: build-test
+    services:
+      postgres:
+        image: ${{ inputs.postgres && format('postgres:{0}', inputs.postgres-version) || '' }}
+        env:
+          POSTGRES_HOST_AUTH_METHOD: trust
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        if: ${{ inputs.npm-install }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ inputs.node-version }}
+          cache: npm
+          cache-dependency-path: "**/package-lock.json"
+
+      - name: Run npm install
+        if: ${{ inputs.npm-install }}
+        run: npm ci
+        working-directory: ${{ inputs.npm-working-directory }}
+
+      # Ash PostgreSQL
+      - uses: team-alembic/staple-actions/actions/mix-task@main
+        if: ${{ inputs.postgres && inputs.ash-postgres }}
+        with:
+          mix-env: test
+          task: ash_postgres.generate_migrations --check
+
+      - uses: team-alembic/staple-actions/actions/mix-task@main
+        if: ${{ inputs.postgres && inputs.ash-postgres }}
+        with:
+          mix-env: test
+          task: ash_postgres.create
+
+      - uses: team-alembic/staple-actions/actions/mix-task@main
+        if: ${{ inputs.postgres && inputs.ash-postgres }}
+        with:
+          mix-env: test
+          task: ash_postgres.migrate
+
+      - uses: team-alembic/staple-actions/actions/mix-task@main
+        if: ${{ inputs.postgres && inputs.ash-postgres }}
+        with:
+          mix-env: test
+          task: ash_postgres.migrate --tenants
+
+      # Ecto PostgreSQL
+      - uses: team-alembic/staple-actions/actions/mix-task@main
+        if: ${{ inputs.postgres && inputs.ecto-postgres }}
+        with:
+          mix-env: test
+          task: ecto.create
+
+      - uses: team-alembic/staple-actions/actions/mix-task@main
+        if: ${{ inputs.postgres && inputs.ecto-postgres }}
+        with:
+          mix-env: test
+          task: ecto.migrate
+
+      # Ash SQLite
+      - uses: team-alembic/staple-actions/actions/mix-task@main
+        if: ${{ inputs.sqlite }}
+        with:
+          mix-env: test
+          task: ash_sqlite.generate_migrations --check
+
+      - uses: team-alembic/staple-actions/actions/mix-task@main
+        if: ${{ inputs.sqlite }}
+        with:
+          mix-env: test
+          task: ash_sqlite.create
+
+      - uses: team-alembic/staple-actions/actions/mix-task@main
+        if: ${{ inputs.sqlite }}
+        with:
+          mix-env: test
+          task: ash_sqlite.migrate
+
+      # Run tests
+      - uses: team-alembic/staple-actions/actions/mix-test@main
+        with:
+          mix-env: test
+        env:
+          PGHOST: localhost
+          PGUSER: postgres
+          PGPASS: postgres
