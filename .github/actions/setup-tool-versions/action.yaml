@@ -1,0 +1,22 @@
+name: Setup .tool-versions
+description: Generate .tool-versions file from inputs, or use existing file
+
+inputs:
+  elixir-version:
+    description: Elixir version (uses existing .tool-versions if not specified)
+    required: false
+  otp-version:
+    description: Erlang/OTP version (uses existing .tool-versions if not specified)
+    required: false
+
+runs:
+  using: composite
+  steps:
+    - name: Generate .tool-versions
+      if: ${{ inputs.elixir-version != '' }}
+      shell: bash
+      run: |
+        echo "elixir ${{ inputs.elixir-version }}" > .tool-versions
+        echo "erlang ${{ inputs.otp-version }}" >> .tool-versions
+        echo "Generated .tool-versions:"
+        cat .tool-versions
