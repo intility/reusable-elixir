@@ -11,6 +11,7 @@ runs:
   using: composite
   steps:
     - name: Restore Mix cache
+      id: cache
       uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684 # v4.2.3
       with:
         path: |
@@ -20,3 +21,10 @@ runs:
         restore-keys: |
           ${{ runner.os }}-mix-${{ inputs.mix-env }}-${{ hashFiles('.tool-versions') }}-${{ hashFiles('**/mix.lock') }}-
           ${{ runner.os }}-mix-${{ inputs.mix-env }}-${{ hashFiles('.tool-versions') }}-
+
+    - name: Touch cached files
+      if: steps.cache.outputs.cache-hit == 'true'
+      shell: bash
+      run: |
+        find deps -type f -exec touch {} + 2>/dev/null || true
+        find _build/${{ inputs.mix-env }} -type f -exec touch {} + 2>/dev/null || true
