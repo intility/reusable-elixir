@@ -67,6 +67,7 @@ jobs:
 | `node-version`          | string  | `latest` | Node.js version                                                       |
 | `spark-formatter`       | boolean | `false`  | Check Spark DSL formatting                                            |
 | `hex-organization`      | string  | -        | Hex organization for private packages                                 |
+| `apt-packages`          | string  | -        | Space-separated APT packages to install (e.g., `libvips-dev`)         |
 
 ### Secrets
 
@@ -137,6 +138,7 @@ jobs:
 | `npm-working-directory` | string | `assets`        | Directory for npm install                                             |
 | `npm-registry`      | string  | -                  | Custom NPM registry URL (e.g., `https://npm.pkg.github.com`)          |
 | `node-version`      | string  | `latest`           | Node.js version                                                       |
+| `apt-packages`      | string  | -                  | Space-separated APT packages to install (e.g., `libvips-dev`)         |
 
 ### Secrets
 

@@ -63,6 +63,10 @@ on:
         type: string
         required: false
         description: Hex organization for private packages
+      apt-packages:
+        type: string
+        required: false
+        description: Space-separated list of APT packages to install (e.g., libvips-dev imagemagick)
     secrets:
       hex-organization-key:
         required: false
@@ -121,6 +125,10 @@ jobs:
     needs: deps
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - uses: ./.github/actions/apt-packages
+        if: ${{ inputs.apt-packages != '' }}
+        with:
+          packages: ${{ inputs.apt-packages }}
       - uses: ./.github/actions/setup-tool-versions
         with:
           elixir-version: ${{ inputs.elixir-version }}
@@ -237,6 +245,10 @@ jobs:
           - 5432:5432
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - uses: ./.github/actions/apt-packages
+        if: ${{ inputs.apt-packages != '' }}
+        with:
+          packages: ${{ inputs.apt-packages }}
       - uses: ./.github/actions/setup-tool-versions
         with:
           elixir-version: ${{ inputs.elixir-version }}
