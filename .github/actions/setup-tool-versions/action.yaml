@@ -8,15 +8,27 @@ inputs:
   otp-version:
     description: Erlang/OTP version (uses existing .tool-versions if not specified)
     required: false
+  working-directory:
+    description: Directory where .tool-versions should be written
+    required: false
+    default: "."
 
 runs:
   using: composite
   steps:
+    - name: Validate inputs
+      if: ${{ (inputs.elixir-version != '' && inputs.otp-version == '') || (inputs.elixir-version == '' && inputs.otp-version != '') }}
+      shell: bash
+      run: |
+        echo "::error::Both elixir-version and otp-version must be provided together, or neither"
+        exit 1
+
     - name: Generate .tool-versions
       if: ${{ inputs.elixir-version != '' }}
       shell: bash
+      working-directory: ${{ inputs.working-directory }}
       run: |
         echo "elixir ${{ inputs.elixir-version }}" > .tool-versions
         echo "erlang ${{ inputs.otp-version }}" >> .tool-versions
-        echo "Generated .tool-versions:"
+        echo "Generated .tool-versions in ${{ inputs.working-directory }}:"
         cat .tool-versions

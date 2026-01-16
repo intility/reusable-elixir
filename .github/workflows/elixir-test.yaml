@@ -5,12 +5,12 @@ on:
     inputs:
       elixir-version:
         type: string
-        default: "1.19"
-        description: The Elixir version to use
+        required: false
+        description: Elixir version (uses .tool-versions if not specified)
       otp-version:
         type: string
-        default: "28"
-        description: The Erlang/OTP version to use
+        required: false
+        description: Erlang/OTP version (uses .tool-versions if not specified)
       audit:
         type: boolean
         default: true
@@ -28,25 +28,17 @@ on:
         default: false
         description: Run Sobelow security scanner (Phoenix only)
       postgres:
-        type: boolean
-        default: false
-        description: Start PostgreSQL service
+        type: string
+        required: false
+        description: "PostgreSQL migrations: 'ash' or 'ecto' (starts service automatically)"
       postgres-version:
         type: string
-        default: "17"
+        default: "18"
         description: PostgreSQL version
-      ash-postgres:
-        type: boolean
-        default: false
-        description: Run Ash PostgreSQL migrations
-      ecto-postgres:
-        type: boolean
-        default: false
-        description: Run Ecto PostgreSQL migrations
       sqlite:
-        type: boolean
-        default: false
-        description: Run Ash SQLite migrations
+        type: string
+        required: false
+        description: "SQLite migrations: 'ash' or 'ecto'"
       npm-install:
         type: boolean
         default: false
@@ -72,29 +64,34 @@ on:
         required: false
         description: Hex organization authentication key
 
-env:
-  ELIXIR_VERSION: ${{ inputs.elixir-version }}
-  OTP_VERSION: ${{ inputs.otp-version }}
-
 jobs:
   deps:
     name: Get Dependencies
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - uses: ./.github/actions/setup-tool-versions
+        with:
+          elixir-version: ${{ inputs.elixir-version }}
+          otp-version: ${{ inputs.otp-version }}
+      - uses: team-alembic/staple-actions/actions/install-elixir@a74b3b61209d35d45526df174766632f8aee03ed # main
       - name: Authorize Hex organization
         if: ${{ inputs.hex-organization != '' }}
         run: mix hex.organization auth ${{ inputs.hex-organization }} --key ${{ secrets.hex-organization-key }}
-      - uses: team-alembic/staple-actions/actions/mix-deps-get@main
+      - uses: team-alembic/staple-actions/actions/mix-deps-get@a74b3b61209d35d45526df174766632f8aee03ed # main
 
   audit:
     name: Audit Dependencies
     runs-on: ubuntu-latest
     if: ${{ inputs.audit }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: team-alembic/staple-actions/actions/mix-hex-audit@main
-      - uses: team-alembic/staple-actions/actions/mix-task@main
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - uses: ./.github/actions/setup-tool-versions
+        with:
+          elixir-version: ${{ inputs.elixir-version }}
+          otp-version: ${{ inputs.otp-version }}
+      - uses: team-alembic/staple-actions/actions/mix-hex-audit@a74b3b61209d35d45526df174766632f8aee03ed # main
+      - uses: team-alembic/staple-actions/actions/mix-task@a74b3b61209d35d45526df174766632f8aee03ed # main
         with:
           task: deps.audit
 
@@ -103,12 +100,16 @@ jobs:
     runs-on: ubuntu-latest
     needs: deps
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - uses: ./.github/actions/setup-tool-versions
+        with:
+          elixir-version: ${{ inputs.elixir-version }}
+          otp-version: ${{ inputs.otp-version }}
+      - uses: team-alembic/staple-actions/actions/install-elixir@a74b3b61209d35d45526df174766632f8aee03ed # main
       - name: Authorize Hex organization
         if: ${{ inputs.hex-organization != '' }}
         run: mix hex.organization auth ${{ inputs.hex-organization }} --key ${{ secrets.hex-organization-key }}
-      - uses: team-alembic/staple-actions/actions/install-elixir@main
-      - uses: team-alembic/staple-actions/actions/mix-compile@main
+      - uses: team-alembic/staple-actions/actions/mix-compile@a74b3b61209d35d45526df174766632f8aee03ed # main
         with:
           mix-env: test
 
@@ -117,8 +118,12 @@ jobs:
     runs-on: ubuntu-latest
     needs: build-test
     steps:
-      - uses: actions/checkout@v4
-      - uses: team-alembic/staple-actions/actions/mix-task@main
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - uses: ./.github/actions/setup-tool-versions
+        with:
+          elixir-version: ${{ inputs.elixir-version }}
+          otp-version: ${{ inputs.otp-version }}
+      - uses: team-alembic/staple-actions/actions/mix-task@a74b3b61209d35d45526df174766632f8aee03ed # main
         with:
           mix-env: test
           task: deps.unlock --check-unused
@@ -128,12 +133,16 @@ jobs:
     runs-on: ubuntu-latest
     needs: build-test
     steps:
-      - uses: actions/checkout@v4
-      - uses: team-alembic/staple-actions/actions/mix-format@main
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - uses: ./.github/actions/setup-tool-versions
+        with:
+          elixir-version: ${{ inputs.elixir-version }}
+          otp-version: ${{ inputs.otp-version }}
+      - uses: team-alembic/staple-actions/actions/mix-format@a74b3b61209d35d45526df174766632f8aee03ed # main
         with:
           mix-env: test
       - name: Spark (DSL)
-        uses: team-alembic/staple-actions/actions/mix-task@main
+        uses: team-alembic/staple-actions/actions/mix-task@a74b3b61209d35d45526df174766632f8aee03ed # main
         if: ${{ inputs.spark-formatter }}
         with:
           mix-env: test
@@ -145,8 +154,12 @@ jobs:
     needs: build-test
     if: ${{ inputs.credo }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: team-alembic/staple-actions/actions/mix-credo@main
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - uses: ./.github/actions/setup-tool-versions
+        with:
+          elixir-version: ${{ inputs.elixir-version }}
+          otp-version: ${{ inputs.otp-version }}
+      - uses: team-alembic/staple-actions/actions/mix-credo@a74b3b61209d35d45526df174766632f8aee03ed # main
         with:
           mix-env: test
 
@@ -156,8 +169,12 @@ jobs:
     needs: build-test
     if: ${{ inputs.dialyzer }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: team-alembic/staple-actions/actions/mix-dialyzer@main
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - uses: ./.github/actions/setup-tool-versions
+        with:
+          elixir-version: ${{ inputs.elixir-version }}
+          otp-version: ${{ inputs.otp-version }}
+      - uses: team-alembic/staple-actions/actions/mix-dialyzer@a74b3b61209d35d45526df174766632f8aee03ed # main
         with:
           mix-env: dev
 
@@ -167,8 +184,12 @@ jobs:
     needs: build-test
     if: ${{ inputs.sobelow }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: team-alembic/staple-actions/actions/mix-task@main
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - uses: ./.github/actions/setup-tool-versions
+        with:
+          elixir-version: ${{ inputs.elixir-version }}
+          otp-version: ${{ inputs.otp-version }}
+      - uses: team-alembic/staple-actions/actions/mix-task@a74b3b61209d35d45526df174766632f8aee03ed # main
         with:
           mix-env: test
           task: sobelow
@@ -179,7 +200,7 @@ jobs:
     needs: build-test
     services:
       postgres:
-        image: ${{ inputs.postgres && format('postgres:{0}', inputs.postgres-version) || '' }}
+        image: ${{ inputs.postgres != '' && format('postgres:{0}', inputs.postgres-version) || '' }}
         env:
           POSTGRES_HOST_AUTH_METHOD: trust
         options: >-
@@ -190,11 +211,15 @@ jobs:
         ports:
           - 5432:5432
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - uses: ./.github/actions/setup-tool-versions
+        with:
+          elixir-version: ${{ inputs.elixir-version }}
+          otp-version: ${{ inputs.otp-version }}
 
       - name: Setup Node
         if: ${{ inputs.npm-install }}
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: ${{ inputs.node-version }}
           cache: npm
@@ -206,67 +231,80 @@ jobs:
         working-directory: ${{ inputs.npm-working-directory }}
 
       # Ash PostgreSQL
-      - uses: team-alembic/staple-actions/actions/mix-task@main
-        if: ${{ inputs.postgres && inputs.ash-postgres }}
+      - uses: team-alembic/staple-actions/actions/mix-task@a74b3b61209d35d45526df174766632f8aee03ed # main
+        if: ${{ inputs.postgres == 'ash' }}
         with:
           mix-env: test
           task: ash_postgres.generate_migrations --check
 
-      - uses: team-alembic/staple-actions/actions/mix-task@main
-        if: ${{ inputs.postgres && inputs.ash-postgres }}
+      - uses: team-alembic/staple-actions/actions/mix-task@a74b3b61209d35d45526df174766632f8aee03ed # main
+        if: ${{ inputs.postgres == 'ash' }}
         with:
           mix-env: test
           task: ash_postgres.create
 
-      - uses: team-alembic/staple-actions/actions/mix-task@main
-        if: ${{ inputs.postgres && inputs.ash-postgres }}
+      - uses: team-alembic/staple-actions/actions/mix-task@a74b3b61209d35d45526df174766632f8aee03ed # main
+        if: ${{ inputs.postgres == 'ash' }}
         with:
           mix-env: test
           task: ash_postgres.migrate
 
-      - uses: team-alembic/staple-actions/actions/mix-task@main
-        if: ${{ inputs.postgres && inputs.ash-postgres }}
+      - uses: team-alembic/staple-actions/actions/mix-task@a74b3b61209d35d45526df174766632f8aee03ed # main
+        if: ${{ inputs.postgres == 'ash' }}
         with:
           mix-env: test
           task: ash_postgres.migrate --tenants
 
       # Ecto PostgreSQL
-      - uses: team-alembic/staple-actions/actions/mix-task@main
-        if: ${{ inputs.postgres && inputs.ecto-postgres }}
+      - uses: team-alembic/staple-actions/actions/mix-task@a74b3b61209d35d45526df174766632f8aee03ed # main
+        if: ${{ inputs.postgres == 'ecto' }}
         with:
           mix-env: test
           task: ecto.create
 
-      - uses: team-alembic/staple-actions/actions/mix-task@main
-        if: ${{ inputs.postgres && inputs.ecto-postgres }}
+      - uses: team-alembic/staple-actions/actions/mix-task@a74b3b61209d35d45526df174766632f8aee03ed # main
+        if: ${{ inputs.postgres == 'ecto' }}
         with:
           mix-env: test
           task: ecto.migrate
 
       # Ash SQLite
-      - uses: team-alembic/staple-actions/actions/mix-task@main
-        if: ${{ inputs.sqlite }}
+      - uses: team-alembic/staple-actions/actions/mix-task@a74b3b61209d35d45526df174766632f8aee03ed # main
+        if: ${{ inputs.sqlite == 'ash' }}
         with:
           mix-env: test
           task: ash_sqlite.generate_migrations --check
 
-      - uses: team-alembic/staple-actions/actions/mix-task@main
-        if: ${{ inputs.sqlite }}
+      - uses: team-alembic/staple-actions/actions/mix-task@a74b3b61209d35d45526df174766632f8aee03ed # main
+        if: ${{ inputs.sqlite == 'ash' }}
         with:
           mix-env: test
           task: ash_sqlite.create
 
-      - uses: team-alembic/staple-actions/actions/mix-task@main
-        if: ${{ inputs.sqlite }}
+      - uses: team-alembic/staple-actions/actions/mix-task@a74b3b61209d35d45526df174766632f8aee03ed # main
+        if: ${{ inputs.sqlite == 'ash' }}
         with:
           mix-env: test
           task: ash_sqlite.migrate
 
+      # Ecto SQLite
+      - uses: team-alembic/staple-actions/actions/mix-task@a74b3b61209d35d45526df174766632f8aee03ed # main
+        if: ${{ inputs.sqlite == 'ecto' }}
+        with:
+          mix-env: test
+          task: ecto.create
+
+      - uses: team-alembic/staple-actions/actions/mix-task@a74b3b61209d35d45526df174766632f8aee03ed # main
+        if: ${{ inputs.sqlite == 'ecto' }}
+        with:
+          mix-env: test
+          task: ecto.migrate
+
       # Run tests
-      - uses: team-alembic/staple-actions/actions/mix-test@main
+      - uses: team-alembic/staple-actions/actions/mix-test@a74b3b61209d35d45526df174766632f8aee03ed # main
         with:
           mix-env: test
         env:
           PGHOST: localhost
           PGUSER: postgres
-          PGPASS: postgres
+          PGPASSWORD: postgres

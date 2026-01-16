@@ -12,12 +12,28 @@ on:
 
 jobs:
   # Run tests, linting, and static analysis
+  # Option 1: Use .tool-versions from your project (simplest)
+  # test:
+  #   uses: intility/reusable-elixir/.github/workflows/elixir-test.yaml@v1
+
+  # Option 2: Matrix strategy for testing multiple Elixir/OTP versions
   test:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # Elixir 1.18 supports OTP 25-27
+          - elixir: "1.18"
+            otp: "27"
+          # Elixir 1.19 supports OTP 27-28
+          - elixir: "1.19"
+            otp: "27"
+          - elixir: "1.19"
+            otp: "28"
     uses: intility/reusable-elixir/.github/workflows/elixir-test.yaml@v1
     with:
-      # Elixir and OTP versions
-      elixir-version: "1.18"
-      otp-version: "27"
+      elixir-version: ${{ matrix.elixir }}
+      otp-version: ${{ matrix.otp }}
 
       # Static analysis (all default to true except sobelow)
       audit: true
@@ -25,14 +41,14 @@ jobs:
       dialyzer: true
       # sobelow: true  # Enable for Phoenix projects
 
-      # Database support
-      # postgres: true
-      # postgres-version: "17"
-      # ash-postgres: true   # For Ash Framework projects
-      # ecto-postgres: true  # For Ecto projects
+      # Database support (starts PostgreSQL service automatically)
+      # postgres: ash   # For Ash Framework projects
+      # postgres: ecto  # For Ecto/Phoenix projects
+      # postgres-version: "18"
 
-      # SQLite support (Ash)
-      # sqlite: true
+      # SQLite support
+      # sqlite: ash   # For Ash Framework projects
+      # sqlite: ecto  # For Ecto projects
 
       # Phoenix assets
       # npm-install: true
@@ -58,15 +74,9 @@ jobs:
       attestations: write
     uses: intility/reusable-elixir/.github/workflows/elixir-release.yaml@v1
     with:
-      # Project directory (default: ".")
-      directory: .
-
-      # Elixir and OTP versions
-      elixir-version: "1.19"
-      otp-version: "28"
-
-      # Build and push OCI image (default: true)
-      docker: true
+      # Uses .tool-versions from your project (or specify explicitly)
+      # elixir-version: "1.19"
+      # otp-version: "28"
 
       # Enable reproducible builds and layer caching
       source-date-epoch: "0"
@@ -79,14 +89,6 @@ jobs:
 
       # Optional: Release name if multiple releases configured
       # release: "my_app"
-
-      # Optional: Custom tags (defaults shown below)
-      # tags: |
-      #   type=schedule
-      #   type=ref,event=branch
-      #   type=ref,event=pr
-      #   type=semver,pattern={{version}}
-      #   type=semver,pattern={{major}}.{{minor}}
 
       # Private Hex packages
       # hex-organization: intility

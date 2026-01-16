@@ -16,7 +16,7 @@ Runs tests and static analysis using [team-alembic/staple-actions](https://githu
 - **Dialyzer** type checking with PLT caching
 - **Sobelow** security scanner (Phoenix)
 - **PostgreSQL** service container with Ash/Ecto support
-- **SQLite** support for Ash
+- **SQLite** support for Ash/Ecto
 - **NPM** install for Phoenix assets
 - **Hex organization** support for private packages
 
@@ -33,38 +33,45 @@ on:
 
 jobs:
   test:
+    # Uses .tool-versions from your project
+    uses: intility/reusable-elixir/.github/workflows/elixir-test.yaml@v1
+```
+
+Or specify versions explicitly:
+
+```yaml
+jobs:
+  test:
     uses: intility/reusable-elixir/.github/workflows/elixir-test.yaml@v1
     with:
-      elixir-version: "1.18"
-      otp-version: "27"
+      elixir-version: "1.19"
+      otp-version: "28"
 ```
 
 ### Inputs
 
-| Name | Type | Default | Description |
-| :--- | :--- | :------ | :---------- |
-| `elixir-version` | string | `1.18` | Elixir version |
-| `otp-version` | string | `27` | Erlang/OTP version |
-| `audit` | boolean | `true` | Run hex.audit and deps.audit |
-| `credo` | boolean | `true` | Run Credo static analysis |
-| `dialyzer` | boolean | `true` | Run Dialyzer type checking |
-| `sobelow` | boolean | `false` | Run Sobelow security scanner |
-| `postgres` | boolean | `false` | Start PostgreSQL service |
-| `postgres-version` | string | `17` | PostgreSQL version |
-| `ash-postgres` | boolean | `false` | Run Ash PostgreSQL migrations |
-| `ecto-postgres` | boolean | `false` | Run Ecto migrations |
-| `sqlite` | boolean | `false` | Run Ash SQLite migrations |
-| `npm-install` | boolean | `false` | Run npm install for assets |
-| `npm-working-directory` | string | `assets` | Directory for npm install |
-| `node-version` | string | `latest` | Node.js version |
-| `spark-formatter` | boolean | `false` | Check Spark DSL formatting |
-| `hex-organization` | string | - | Hex organization for private packages |
+| Name                    | Type    | Default  | Description                                                           |
+|:------------------------|:--------|:---------|:----------------------------------------------------------------------|
+| `elixir-version`        | string  | -        | Elixir version (uses `.tool-versions` if not specified)               |
+| `otp-version`           | string  | -        | Erlang/OTP version (uses `.tool-versions` if not specified)           |
+| `audit`                 | boolean | `true`   | Run hex.audit and deps.audit                                          |
+| `credo`                 | boolean | `true`   | Run Credo static analysis                                             |
+| `dialyzer`              | boolean | `true`   | Run Dialyzer type checking                                            |
+| `sobelow`               | boolean | `false`  | Run Sobelow security scanner (Phoenix projects)                       |
+| `postgres`              | string  | -        | PostgreSQL migrations: `ash` or `ecto` (starts service automatically) |
+| `postgres-version`      | string  | `18`     | PostgreSQL version                                                    |
+| `sqlite`                | string  | -        | SQLite migrations: `ash` or `ecto`                                    |
+| `npm-install`           | boolean | `false`  | Run npm install for assets                                            |
+| `npm-working-directory` | string  | `assets` | Directory for npm install                                             |
+| `node-version`          | string  | `latest` | Node.js version                                                       |
+| `spark-formatter`       | boolean | `false`  | Check Spark DSL formatting                                            |
+| `hex-organization`      | string  | -        | Hex organization for private packages                                 |
 
 ### Secrets
 
-| Name | Required | Description |
-| :--- | :------- | :---------- |
-| `hex-organization-key` | No | Hex organization auth key |
+| Name                   | Required | Description               |
+|:-----------------------|:---------|:--------------------------|
+| `hex-organization-key` | No       | Hex organization auth key |
 
 ---
 
@@ -102,32 +109,33 @@ jobs:
       packages: write
       id-token: write
       attestations: write
+    # Uses .tool-versions from your project
     uses: intility/reusable-elixir/.github/workflows/elixir-release.yaml@v1
     with:
-      source-date-epoch: "0"
+      source-date-epoch: "0" # Set mtime on all files in the archive to January 1, 1970 00:00:00 UTC to allow reproducible builds
     secrets: inherit
 ```
 
 ### Inputs
 
-| Name | Type | Default | Description |
-| :--- | :--- | :------ | :---------- |
-| `directory` | string | `.` | Project directory |
-| `elixir-version` | string | `1.19` | Elixir version |
-| `otp-version` | string | `28` | Erlang/OTP version |
-| `hex-organization` | string | - | Hex organization for private packages |
-| `docker` | boolean | `true` | Build and push OCI image |
-| `base-image` | string | - | Override base image (e.g., `elixir:1.19-slim`) |
-| `platforms` | string | - | Multi-arch platforms (e.g., `linux/amd64,linux/arm64`) |
-| `release` | string | - | Release name if multiple configured |
-| `tags` | string | semver + branch/pr | Docker metadata tags |
-| `source-date-epoch` | string | - | SOURCE_DATE_EPOCH for reproducible builds (use `0` for layer caching) |
+| Name                | Type    | Default            | Description                                                           |
+|:--------------------|:--------|:-------------------|:----------------------------------------------------------------------|
+| `directory`         | string  | `.`                | Project directory                                                     |
+| `elixir-version`    | string  | -                  | Elixir version (uses `.tool-versions` if not specified)               |
+| `otp-version`       | string  | -                  | Erlang/OTP version (uses `.tool-versions` if not specified)           |
+| `hex-organization`  | string  | -                  | Hex organization for private packages                                 |
+| `docker`            | boolean | `true`             | Build and push OCI image                                              |
+| `base-image`        | string  | -                  | Override base image (e.g., `elixir:1.19-slim`)                        |
+| `platforms`         | string  | -                  | Multi-arch platforms (e.g., `linux/amd64,linux/arm64`)                |
+| `release`           | string  | -                  | Release name if multiple configured                                   |
+| `tags`              | string  | semver + branch/pr | Docker metadata tags                                                  |
+| `source-date-epoch` | string  | -                  | SOURCE_DATE_EPOCH for reproducible builds (use `0` for layer caching) |
 
 ### Secrets
 
-| Name | Required | Description |
-| :--- | :------- | :---------- |
-| `hex-organization-key` | No | Hex organization auth key |
+| Name                   | Required | Description               |
+|:-----------------------|:---------|:--------------------------|
+| `hex-organization-key` | No       | Hex organization auth key |
 
 ### Required Permissions
 
@@ -137,37 +145,6 @@ permissions:
   packages: write     # Push to GitHub Container Registry
   id-token: write     # OIDC token for attestation
   attestations: write # Create build provenance attestation
-```
-
-### Project Configuration
-
-Your Elixir project needs `ocibuild` configured. Add to `mix.exs`:
-
-```elixir
-defp deps do
-  [
-    {:ocibuild, "~> 0.10", runtime: false}
-  ]
-end
-
-def project do
-  [
-    # ... other config
-    releases: [
-      my_app: [
-        # Optional: exclude ERTS for multi-platform builds
-        # include_erts: false
-      ]
-    ],
-    # ocibuild configuration
-    ocibuild: [
-      base_image: "debian:stable-slim",
-      workdir: "/app",
-      env: %{"LANG" => "C.UTF-8"},
-      expose: [4000]
-    ]
-  ]
-end
 ```
 
 ### Reproducible Builds & Layer Caching
@@ -210,8 +187,7 @@ jobs:
   test:
     uses: intility/reusable-elixir/.github/workflows/elixir-test.yaml@v1
     with:
-      postgres: true
-      ash-postgres: true
+      postgres: ash
 
   release:
     needs: test
@@ -226,6 +202,70 @@ jobs:
       source-date-epoch: "0"
     secrets: inherit
 ```
+
+## Version Management
+
+Both workflows support two ways to specify Elixir/OTP versions:
+
+### Using `.tool-versions` (recommended)
+
+If your project has a `.tool-versions` file, simply omit the version inputs:
+
+```yaml
+jobs:
+  test:
+    uses: intility/reusable-elixir/.github/workflows/elixir-test.yaml@v1
+    # Uses versions from .tool-versions automatically
+```
+
+Example `.tool-versions`:
+```
+elixir 1.19.0
+erlang 28.0
+```
+
+### Using explicit versions
+
+Override `.tool-versions` by specifying versions explicitly:
+
+```yaml
+jobs:
+  test:
+    uses: intility/reusable-elixir/.github/workflows/elixir-test.yaml@v1
+    with:
+      elixir-version: "1.19"
+      otp-version: "28"
+```
+
+### Matrix strategy for multiple versions
+
+Test against multiple Elixir/OTP combinations:
+
+```yaml
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # Elixir 1.18 supports OTP 25-27
+          - elixir: "1.18"
+            otp: "27"
+          # Elixir 1.19 supports OTP 27-28
+          - elixir: "1.19"
+            otp: "27"
+          - elixir: "1.19"
+            otp: "28"
+    uses: intility/reusable-elixir/.github/workflows/elixir-test.yaml@v1
+    with:
+      elixir-version: ${{ matrix.elixir }}
+      otp-version: ${{ matrix.otp }}
+```
+
+> [!NOTE]
+> When using a matrix, each combination spawns a separate workflow run with independent caching.
+
+---
 
 ## Private Hex Packages
 
@@ -248,6 +288,39 @@ jobs:
     secrets:
       hex-organization-key: ${{ secrets.HEX_ORGANIZATION_KEY }}
 ```
+
+## Database Support
+
+### PostgreSQL
+
+Set `postgres` to start a PostgreSQL service and run migrations:
+
+```yaml
+jobs:
+  test:
+    uses: intility/reusable-elixir/.github/workflows/elixir-test.yaml@v1
+    with:
+      postgres: ash    # Ash Framework: ash_postgres.create + migrate
+      # or
+      postgres: ecto   # Ecto/Phoenix: ecto.create + migrate
+      postgres-version: "18"  # Optional, defaults to 18
+```
+
+### SQLite
+
+Set `sqlite` to run SQLite migrations (no service needed):
+
+```yaml
+jobs:
+  test:
+    uses: intility/reusable-elixir/.github/workflows/elixir-test.yaml@v1
+    with:
+      sqlite: ash    # Ash Framework: ash_sqlite.create + migrate
+      # or
+      sqlite: ecto   # Ecto: ecto.create + migrate
+```
+
+---
 
 ## Multi-Platform Builds
 
