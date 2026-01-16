@@ -142,11 +142,13 @@ jobs:
 
 ### Secrets
 
-| Name                   | Required | Description                                          |
-|:-----------------------|:---------|:-----------------------------------------------------|
-| `hex-organization-key` | No       | Hex organization auth key                            |
-| `ssh-private-key`      | No       | SSH private key(s) for private Git repository access |
-| `npm-token`            | No       | NPM authentication token for private registries      |
+| Name                   | Required | Description                                                    |
+|:-----------------------|:---------|:---------------------------------------------------------------|
+| `hex-organization-key` | No       | Hex organization auth key                                      |
+| `ssh-private-key`      | No       | SSH private key(s) for private Git repository access           |
+| `npm-token`            | No       | NPM authentication token for private registries                |
+| `pull-username`        | No       | Username for pulling base image (defaults to `github.actor`)   |
+| `pull-password`        | No       | Password for pulling base image (defaults to `GITHUB_TOKEN`)   |
 
 ### Required Permissions
 

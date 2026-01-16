@@ -20,11 +20,17 @@ inputs:
   source-date-epoch:
     description: SOURCE_DATE_EPOCH for reproducible builds and layer caching (unset by default)
     required: false
+  pull-username:
+    description: Username for pulling base image (defaults to push-username)
+    required: false
+  pull-password:
+    description: Password/token for pulling base image (defaults to push-password)
+    required: false
   push-username:
-    description: Registry username
+    description: Registry username for pushing
     required: true
   push-password:
-    description: Registry password/token
+    description: Registry password/token for pushing
     required: true
 
 outputs:
@@ -37,6 +43,12 @@ runs:
   steps:
     - name: Build and push OCI image
       id: ocibuild
+      env:
+        MIX_ENV: prod
+        OCIBUILD_PULL_USERNAME: ${{ inputs.pull-username || inputs.push-username }}
+        OCIBUILD_PULL_PASSWORD: ${{ inputs.pull-password || inputs.push-password }}
+        OCIBUILD_PUSH_USERNAME: ${{ inputs.push-username }}
+        OCIBUILD_PUSH_PASSWORD: ${{ inputs.push-password }}
       shell: bash
       run: |
         # Set SOURCE_DATE_EPOCH if provided (for reproducible builds and layer caching)
@@ -74,7 +86,3 @@ runs:
         fi
 
         echo "digest=$DIGEST" >> "$GITHUB_OUTPUT"
-      env:
-        MIX_ENV: prod
-        OCIBUILD_PUSH_USERNAME: ${{ inputs.push-username }}
-        OCIBUILD_PUSH_PASSWORD: ${{ inputs.push-password }}

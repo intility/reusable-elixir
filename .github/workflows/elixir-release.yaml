@@ -79,6 +79,12 @@ on:
       npm-token:
         required: false
         description: NPM authentication token for private registries
+      pull-username:
+        required: false
+        description: Username for pulling base image (defaults to github.actor)
+      pull-password:
+        required: false
+        description: Password/token for pulling base image (defaults to GITHUB_TOKEN)
 
 jobs:
   release:
@@ -196,6 +202,8 @@ jobs:
           platforms: ${{ inputs.platforms }}
           release: ${{ inputs.release }}
           source-date-epoch: ${{ inputs.source-date-epoch }}
+          pull-username: ${{ secrets.pull-username }}
+          pull-password: ${{ secrets.pull-password }}
           push-username: ${{ github.actor }}
           push-password: ${{ secrets.GITHUB_TOKEN }}
 
