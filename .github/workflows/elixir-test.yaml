@@ -131,6 +131,9 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.ssh-private-key }}
       - uses: team-alembic/staple-actions/actions/install-elixir@a74b3b61209d35d45526df174766632f8aee03ed # main
+      - uses: intility/reusable-elixir/.github/actions/mix-cache@main
+        with:
+          mix-env: test
       - name: Authorize Hex organization
         if: ${{ inputs.hex-organization != '' }}
         run: mix hex.organization auth ${{ inputs.hex-organization }} --key ${{ secrets.hex-organization-key }}
@@ -205,6 +208,10 @@ jobs:
         with:
           elixir-version: ${{ inputs.elixir-version }}
           otp-version: ${{ inputs.otp-version }}
+      - uses: team-alembic/staple-actions/actions/install-elixir@a74b3b61209d35d45526df174766632f8aee03ed # main
+      - uses: intility/reusable-elixir/.github/actions/mix-cache@main
+        with:
+          mix-env: dev
       - uses: team-alembic/staple-actions/actions/mix-dialyzer@a74b3b61209d35d45526df174766632f8aee03ed # main
         with:
           mix-env: dev
@@ -252,6 +259,10 @@ jobs:
         with:
           elixir-version: ${{ inputs.elixir-version }}
           otp-version: ${{ inputs.otp-version }}
+      - uses: team-alembic/staple-actions/actions/install-elixir@a74b3b61209d35d45526df174766632f8aee03ed # main
+      - uses: intility/reusable-elixir/.github/actions/mix-cache@main
+        with:
+          mix-env: test
 
       - name: Setup Node
         if: ${{ inputs.npm-install }}

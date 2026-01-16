@@ -1,0 +1,22 @@
+name: Mix Cache
+description: Cache Mix dependencies and build artifacts
+
+inputs:
+  mix-env:
+    description: MIX_ENV to cache for
+    required: false
+    default: test
+
+runs:
+  using: composite
+  steps:
+    - name: Restore Mix cache
+      uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684 # v4.2.3
+      with:
+        path: |
+          deps
+          _build/${{ inputs.mix-env }}
+        key: ${{ runner.os }}-mix-${{ inputs.mix-env }}-${{ hashFiles('.tool-versions') }}-${{ hashFiles('**/mix.lock') }}-${{ hashFiles('**/*.ex', '**/*.exs') }}
+        restore-keys: |
+          ${{ runner.os }}-mix-${{ inputs.mix-env }}-${{ hashFiles('.tool-versions') }}-${{ hashFiles('**/mix.lock') }}-
+          ${{ runner.os }}-mix-${{ inputs.mix-env }}-${{ hashFiles('.tool-versions') }}-
