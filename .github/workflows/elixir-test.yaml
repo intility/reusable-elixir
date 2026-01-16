@@ -157,27 +157,30 @@ jobs:
   formatter:
     name: Check Formatting
     runs-on: ubuntu-latest
-    needs: build-test
+    needs: deps
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
       - uses: intility/reusable-elixir/.github/actions/setup-tool-versions@main
         with:
           elixir-version: ${{ inputs.elixir-version }}
           otp-version: ${{ inputs.otp-version }}
-      - uses: team-alembic/staple-actions/actions/mix-format@a74b3b61209d35d45526df174766632f8aee03ed # main
+      - uses: team-alembic/staple-actions/actions/mix-task@a74b3b61209d35d45526df174766632f8aee03ed # main
         with:
           mix-env: test
+          task: format --check-formatted
+          compile: "false"
       - name: Spark (DSL)
         uses: team-alembic/staple-actions/actions/mix-task@a74b3b61209d35d45526df174766632f8aee03ed # main
         if: ${{ inputs.spark-formatter }}
         with:
           mix-env: test
           task: spark.formatter --check
+          compile: "false"
 
   credo:
     name: Credo
     runs-on: ubuntu-latest
-    needs: build-test
+    needs: deps
     if: ${{ inputs.credo }}
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
@@ -185,9 +188,11 @@ jobs:
         with:
           elixir-version: ${{ inputs.elixir-version }}
           otp-version: ${{ inputs.otp-version }}
-      - uses: team-alembic/staple-actions/actions/mix-credo@a74b3b61209d35d45526df174766632f8aee03ed # main
+      - uses: team-alembic/staple-actions/actions/mix-task@a74b3b61209d35d45526df174766632f8aee03ed # main
         with:
           mix-env: test
+          task: credo --strict
+          compile: "false"
 
   dialyzer:
     name: Dialyzer
@@ -207,7 +212,7 @@ jobs:
   sobelow:
     name: Sobelow
     runs-on: ubuntu-latest
-    needs: build-test
+    needs: deps
     if: ${{ inputs.sobelow }}
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
@@ -219,6 +224,7 @@ jobs:
         with:
           mix-env: test
           task: sobelow
+          compile: "false"
 
   test:
     name: Test
