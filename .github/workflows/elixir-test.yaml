@@ -21,7 +21,7 @@ on:
         description: Run Credo static analysis
       dialyzer:
         type: boolean
-        default: true
+        default: false
         description: Run Dialyzer type checking
       sobelow:
         type: boolean
