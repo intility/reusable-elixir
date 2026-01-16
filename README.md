@@ -69,9 +69,10 @@ jobs:
 
 ### Secrets
 
-| Name                   | Required | Description               |
-|:-----------------------|:---------|:--------------------------|
-| `hex-organization-key` | No       | Hex organization auth key |
+| Name                   | Required | Description                                       |
+|:-----------------------|:---------|:--------------------------------------------------|
+| `hex-organization-key` | No       | Hex organization auth key                         |
+| `ssh-private-key`      | No       | SSH private key(s) for private Git repository access |
 
 ---
 
@@ -133,9 +134,10 @@ jobs:
 
 ### Secrets
 
-| Name                   | Required | Description               |
-|:-----------------------|:---------|:--------------------------|
-| `hex-organization-key` | No       | Hex organization auth key |
+| Name                   | Required | Description                                       |
+|:-----------------------|:---------|:--------------------------------------------------|
+| `hex-organization-key` | No       | Hex organization auth key                         |
+| `ssh-private-key`      | No       | SSH private key(s) for private Git repository access |
 
 ### Required Permissions
 
@@ -288,6 +290,40 @@ jobs:
     secrets:
       hex-organization-key: ${{ secrets.HEX_ORGANIZATION_KEY }}
 ```
+
+## Private Git Dependencies
+
+For projects with dependencies hosted in private Git repositories:
+
+```yaml
+jobs:
+  test:
+    uses: intility/reusable-elixir/.github/workflows/elixir-test.yaml@v1
+    secrets:
+      ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+  release:
+    needs: test
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+      attestations: write
+    uses: intility/reusable-elixir/.github/workflows/elixir-release.yaml@v1
+    secrets:
+      ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+```
+
+Multiple keys are supported for accessing different repositories:
+
+```yaml
+secrets:
+  ssh-private-key: |
+    ${{ secrets.REPO_A_DEPLOY_KEY }}
+    ${{ secrets.REPO_B_DEPLOY_KEY }}
+```
+
+The SSH key(s) should have read access to your private repositories. You can combine this with Hex organization authentication if needed.
 
 ## Database Support
 
