@@ -88,9 +88,7 @@ jobs:
         with:
           elixir-version: ${{ inputs.elixir-version }}
           otp-version: ${{ inputs.otp-version }}
-      - name: Setup SSH agent
-        if: ${{ secrets.ssh-private-key != '' }}
-        uses: webfactory/ssh-agent@a6f90b1f127823b31d4d4a8d96047790581349bd # v0.9.1
+      - uses: ./.github/actions/ssh-agent
         with:
           ssh-private-key: ${{ secrets.ssh-private-key }}
       - uses: team-alembic/staple-actions/actions/install-elixir@a74b3b61209d35d45526df174766632f8aee03ed # main
@@ -109,9 +107,7 @@ jobs:
         with:
           elixir-version: ${{ inputs.elixir-version }}
           otp-version: ${{ inputs.otp-version }}
-      - name: Setup SSH agent
-        if: ${{ secrets.ssh-private-key != '' }}
-        uses: webfactory/ssh-agent@a6f90b1f127823b31d4d4a8d96047790581349bd # v0.9.1
+      - uses: ./.github/actions/ssh-agent
         with:
           ssh-private-key: ${{ secrets.ssh-private-key }}
       - uses: team-alembic/staple-actions/actions/mix-hex-audit@a74b3b61209d35d45526df174766632f8aee03ed # main
@@ -133,9 +129,7 @@ jobs:
         with:
           elixir-version: ${{ inputs.elixir-version }}
           otp-version: ${{ inputs.otp-version }}
-      - name: Setup SSH agent
-        if: ${{ secrets.ssh-private-key != '' }}
-        uses: webfactory/ssh-agent@a6f90b1f127823b31d4d4a8d96047790581349bd # v0.9.1
+      - uses: ./.github/actions/ssh-agent
         with:
           ssh-private-key: ${{ secrets.ssh-private-key }}
       - uses: team-alembic/staple-actions/actions/install-elixir@a74b3b61209d35d45526df174766632f8aee03ed # main

@@ -102,9 +102,7 @@ jobs:
           otp-version: ${{ inputs.otp-version }}
           working-directory: ${{ inputs.directory }}
 
-      - name: Setup SSH agent
-        if: ${{ secrets.ssh-private-key != '' }}
-        uses: webfactory/ssh-agent@a6f90b1f127823b31d4d4a8d96047790581349bd # v0.9.1
+      - uses: ./.github/actions/ssh-agent
         with:
           ssh-private-key: ${{ secrets.ssh-private-key }}
 
