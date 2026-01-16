@@ -131,9 +131,13 @@ jobs:
       - name: Authorize Hex organization
         if: ${{ inputs.hex-organization != '' }}
         run: mix hex.organization auth ${{ inputs.hex-organization }} --key ${{ secrets.hex-organization-key }}
+        env:
+          MIX_ENV: prod
 
       - name: Install dependencies
         run: mix deps.get
+        env:
+          MIX_ENV: prod
 
       - name: Setup Node
         if: ${{ inputs.npm-install }}
@@ -159,6 +163,8 @@ jobs:
 
       - name: Compile
         run: mix compile --warnings-as-errors
+        env:
+          MIX_ENV: prod
 
       - name: Build release
         if: ${{ inputs.docker }}
