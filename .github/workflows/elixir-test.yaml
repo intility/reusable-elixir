@@ -100,6 +100,7 @@ jobs:
   audit:
     name: Audit Dependencies
     runs-on: ubuntu-latest
+    needs: deps
     if: ${{ inputs.audit }}
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
@@ -111,9 +112,6 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.ssh-private-key }}
       - uses: team-alembic/staple-actions/actions/mix-hex-audit@a74b3b61209d35d45526df174766632f8aee03ed # main
-      - uses: team-alembic/staple-actions/actions/mix-task@a74b3b61209d35d45526df174766632f8aee03ed # main
-        with:
-          task: deps.audit
 
   build-test:
     name: Build Test
@@ -143,7 +141,7 @@ jobs:
   unused-deps:
     name: Check Unused Dependencies
     runs-on: ubuntu-latest
-    needs: build-test
+    needs: deps
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
       - uses: intility/reusable-elixir/.github/actions/setup-tool-versions@main
@@ -154,6 +152,7 @@ jobs:
         with:
           mix-env: test
           task: deps.unlock --check-unused
+          compile: "false"
 
   formatter:
     name: Check Formatting
