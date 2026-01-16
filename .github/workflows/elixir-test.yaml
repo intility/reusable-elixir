@@ -47,6 +47,10 @@ on:
         type: string
         default: assets
         description: Directory for npm install
+      npm-registry:
+        type: string
+        required: false
+        description: Custom NPM registry URL (e.g., https://npm.pkg.github.com)
       node-version:
         type: string
         default: latest
@@ -66,6 +70,9 @@ on:
       ssh-private-key:
         required: false
         description: SSH private key(s) for accessing private Git repositories (supports multiple keys)
+      npm-token:
+        required: false
+        description: NPM authentication token for private registries
 
 jobs:
   deps:
@@ -240,6 +247,7 @@ jobs:
         uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: ${{ inputs.node-version }}
+          registry-url: ${{ inputs.npm-registry }}
           cache: npm
           cache-dependency-path: "**/package-lock.json"
 
@@ -247,6 +255,8 @@ jobs:
         if: ${{ inputs.npm-install }}
         run: npm ci
         working-directory: ${{ inputs.npm-working-directory }}
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.npm-token }}
 
       # Ash PostgreSQL
       - uses: team-alembic/staple-actions/actions/mix-task@a74b3b61209d35d45526df174766632f8aee03ed # main

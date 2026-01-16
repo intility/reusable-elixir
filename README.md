@@ -63,16 +63,18 @@ jobs:
 | `sqlite`                | string  | -        | SQLite migrations: `ash` or `ecto`                                    |
 | `npm-install`           | boolean | `false`  | Run npm install for assets                                            |
 | `npm-working-directory` | string  | `assets` | Directory for npm install                                             |
+| `npm-registry`          | string  | -        | Custom NPM registry URL (e.g., `https://npm.pkg.github.com`)          |
 | `node-version`          | string  | `latest` | Node.js version                                                       |
 | `spark-formatter`       | boolean | `false`  | Check Spark DSL formatting                                            |
 | `hex-organization`      | string  | -        | Hex organization for private packages                                 |
 
 ### Secrets
 
-| Name                   | Required | Description                                       |
-|:-----------------------|:---------|:--------------------------------------------------|
-| `hex-organization-key` | No       | Hex organization auth key                         |
+| Name                   | Required | Description                                          |
+|:-----------------------|:---------|:-----------------------------------------------------|
+| `hex-organization-key` | No       | Hex organization auth key                            |
 | `ssh-private-key`      | No       | SSH private key(s) for private Git repository access |
+| `npm-token`            | No       | NPM authentication token for private registries      |
 
 ---
 
@@ -131,13 +133,18 @@ jobs:
 | `release`           | string  | -                  | Release name if multiple configured                                   |
 | `tags`              | string  | semver + branch/pr | Docker metadata tags                                                  |
 | `source-date-epoch` | string  | -                  | SOURCE_DATE_EPOCH for reproducible builds (use `0` for layer caching) |
+| `npm-install`       | boolean | `false`            | Run npm install and `mix assets.deploy`                               |
+| `npm-working-directory` | string | `assets`        | Directory for npm install                                             |
+| `npm-registry`      | string  | -                  | Custom NPM registry URL (e.g., `https://npm.pkg.github.com`)          |
+| `node-version`      | string  | `latest`           | Node.js version                                                       |
 
 ### Secrets
 
-| Name                   | Required | Description                                       |
-|:-----------------------|:---------|:--------------------------------------------------|
-| `hex-organization-key` | No       | Hex organization auth key                         |
+| Name                   | Required | Description                                          |
+|:-----------------------|:---------|:-----------------------------------------------------|
+| `hex-organization-key` | No       | Hex organization auth key                            |
 | `ssh-private-key`      | No       | SSH private key(s) for private Git repository access |
+| `npm-token`            | No       | NPM authentication token for private registries      |
 
 ### Required Permissions
 
@@ -325,6 +332,28 @@ secrets:
 
 The SSH key(s) should have read access to your private repositories. You can combine this with Hex organization authentication if needed.
 
+## Private NPM Packages
+
+For Phoenix projects with assets from private NPM registries:
+
+```yaml
+jobs:
+  test:
+    uses: intility/reusable-elixir/.github/workflows/elixir-test.yaml@v1
+    with:
+      npm-install: true
+      npm-registry: https://npm.pkg.github.com
+    secrets:
+      npm-token: ${{ secrets.NPM_TOKEN }}
+```
+
+For GitHub Packages, you can use `GITHUB_TOKEN`:
+
+```yaml
+secrets:
+  npm-token: ${{ secrets.GITHUB_TOKEN }}
+```
+
 ## Database Support
 
 ### PostgreSQL
@@ -357,6 +386,26 @@ jobs:
 ```
 
 ---
+
+## Phoenix Assets
+
+For Phoenix projects with JavaScript assets:
+
+```yaml
+jobs:
+  release:
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+      attestations: write
+    uses: intility/reusable-elixir/.github/workflows/elixir-release.yaml@v1
+    with:
+      npm-install: true
+    secrets: inherit
+```
+
+This runs `npm ci` in the `assets` directory followed by `mix assets.deploy` before building the release.
 
 ## Multi-Platform Builds
 

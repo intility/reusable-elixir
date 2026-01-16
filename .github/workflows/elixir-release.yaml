@@ -49,6 +49,22 @@ on:
         type: string
         required: false
         description: "SOURCE_DATE_EPOCH for reproducible builds (use '0' for layer caching)"
+      npm-install:
+        type: boolean
+        default: false
+        description: Run npm install for assets
+      npm-working-directory:
+        type: string
+        default: assets
+        description: Directory for npm install
+      npm-registry:
+        type: string
+        required: false
+        description: Custom NPM registry URL (e.g., https://npm.pkg.github.com)
+      node-version:
+        type: string
+        default: latest
+        description: Node.js version
     secrets:
       hex-organization-key:
         required: false
@@ -56,6 +72,9 @@ on:
       ssh-private-key:
         required: false
         description: SSH private key(s) for accessing private Git repositories (supports multiple keys)
+      npm-token:
+        required: false
+        description: NPM authentication token for private registries
 
 jobs:
   release:
@@ -102,6 +121,28 @@ jobs:
 
       - name: Install dependencies
         run: mix deps.get
+
+      - name: Setup Node
+        if: ${{ inputs.npm-install }}
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: ${{ inputs.node-version }}
+          registry-url: ${{ inputs.npm-registry }}
+          cache: npm
+          cache-dependency-path: ${{ inputs.directory }}/${{ inputs.npm-working-directory }}/package-lock.json
+
+      - name: Run npm install
+        if: ${{ inputs.npm-install }}
+        run: npm ci
+        working-directory: ${{ inputs.directory }}/${{ inputs.npm-working-directory }}
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.npm-token }}
+
+      - name: Deploy assets
+        if: ${{ inputs.npm-install }}
+        run: mix assets.deploy
+        env:
+          MIX_ENV: prod
 
       - name: Compile
         run: mix compile --warnings-as-errors
