@@ -84,11 +84,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
-      - uses: ./.github/actions/setup-tool-versions
+      - uses: intility/reusable-elixir/.github/actions/setup-tool-versions@main
         with:
           elixir-version: ${{ inputs.elixir-version }}
           otp-version: ${{ inputs.otp-version }}
-      - uses: ./.github/actions/ssh-agent
+      - uses: intility/reusable-elixir/.github/actions/ssh-agent@main
         with:
           ssh-private-key: ${{ secrets.ssh-private-key }}
       - uses: team-alembic/staple-actions/actions/install-elixir@a74b3b61209d35d45526df174766632f8aee03ed # main
@@ -103,11 +103,11 @@ jobs:
     if: ${{ inputs.audit }}
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
-      - uses: ./.github/actions/setup-tool-versions
+      - uses: intility/reusable-elixir/.github/actions/setup-tool-versions@main
         with:
           elixir-version: ${{ inputs.elixir-version }}
           otp-version: ${{ inputs.otp-version }}
-      - uses: ./.github/actions/ssh-agent
+      - uses: intility/reusable-elixir/.github/actions/ssh-agent@main
         with:
           ssh-private-key: ${{ secrets.ssh-private-key }}
       - uses: team-alembic/staple-actions/actions/mix-hex-audit@a74b3b61209d35d45526df174766632f8aee03ed # main
@@ -121,15 +121,15 @@ jobs:
     needs: deps
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
-      - uses: ./.github/actions/apt-packages
+      - uses: intility/reusable-elixir/.github/actions/apt-packages@main
         if: ${{ inputs.apt-packages != '' }}
         with:
           packages: ${{ inputs.apt-packages }}
-      - uses: ./.github/actions/setup-tool-versions
+      - uses: intility/reusable-elixir/.github/actions/setup-tool-versions@main
         with:
           elixir-version: ${{ inputs.elixir-version }}
           otp-version: ${{ inputs.otp-version }}
-      - uses: ./.github/actions/ssh-agent
+      - uses: intility/reusable-elixir/.github/actions/ssh-agent@main
         with:
           ssh-private-key: ${{ secrets.ssh-private-key }}
       - uses: team-alembic/staple-actions/actions/install-elixir@a74b3b61209d35d45526df174766632f8aee03ed # main
@@ -146,7 +146,7 @@ jobs:
     needs: build-test
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
-      - uses: ./.github/actions/setup-tool-versions
+      - uses: intility/reusable-elixir/.github/actions/setup-tool-versions@main
         with:
           elixir-version: ${{ inputs.elixir-version }}
           otp-version: ${{ inputs.otp-version }}
@@ -161,7 +161,7 @@ jobs:
     needs: build-test
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
-      - uses: ./.github/actions/setup-tool-versions
+      - uses: intility/reusable-elixir/.github/actions/setup-tool-versions@main
         with:
           elixir-version: ${{ inputs.elixir-version }}
           otp-version: ${{ inputs.otp-version }}
@@ -182,7 +182,7 @@ jobs:
     if: ${{ inputs.credo }}
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
-      - uses: ./.github/actions/setup-tool-versions
+      - uses: intility/reusable-elixir/.github/actions/setup-tool-versions@main
         with:
           elixir-version: ${{ inputs.elixir-version }}
           otp-version: ${{ inputs.otp-version }}
@@ -197,7 +197,7 @@ jobs:
     if: ${{ inputs.dialyzer }}
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
-      - uses: ./.github/actions/setup-tool-versions
+      - uses: intility/reusable-elixir/.github/actions/setup-tool-versions@main
         with:
           elixir-version: ${{ inputs.elixir-version }}
           otp-version: ${{ inputs.otp-version }}
@@ -212,7 +212,7 @@ jobs:
     if: ${{ inputs.sobelow }}
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
-      - uses: ./.github/actions/setup-tool-versions
+      - uses: intility/reusable-elixir/.github/actions/setup-tool-versions@main
         with:
           elixir-version: ${{ inputs.elixir-version }}
           otp-version: ${{ inputs.otp-version }}
@@ -239,11 +239,11 @@ jobs:
           - 5432:5432
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
-      - uses: ./.github/actions/apt-packages
+      - uses: intility/reusable-elixir/.github/actions/apt-packages@main
         if: ${{ inputs.apt-packages != '' }}
         with:
           packages: ${{ inputs.apt-packages }}
-      - uses: ./.github/actions/setup-tool-versions
+      - uses: intility/reusable-elixir/.github/actions/setup-tool-versions@main
         with:
           elixir-version: ${{ inputs.elixir-version }}
           otp-version: ${{ inputs.otp-version }}
