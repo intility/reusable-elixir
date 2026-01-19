@@ -49,6 +49,10 @@ on:
         type: string
         required: false
         description: "SOURCE_DATE_EPOCH for reproducible builds (use '0' for layer caching)"
+      tailwind-install:
+        type: boolean
+        default: false
+        description: Run mix tailwind.install to download the Tailwind binary
       npm-install:
         type: boolean
         default: false
@@ -154,6 +158,12 @@ jobs:
         working-directory: ${{ inputs.directory }}/${{ inputs.npm-working-directory }}
         env:
           NODE_AUTH_TOKEN: ${{ secrets.npm-token }}
+
+      - name: Install Tailwind
+        if: ${{ inputs.tailwind-install }}
+        run: mix tailwind.install
+        env:
+          MIX_ENV: prod
 
       - name: Compile
         run: mix compile --warnings-as-errors
