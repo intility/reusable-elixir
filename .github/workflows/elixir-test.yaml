@@ -92,10 +92,17 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.ssh-private-key }}
       - uses: team-alembic/staple-actions/actions/install-elixir@a74b3b61209d35d45526df174766632f8aee03ed # main
+      - uses: intility/reusable-elixir/.github/actions/mix-cache@main
+        with:
+          mix-env: test
       - name: Authorize Hex organization
         if: ${{ inputs.hex-organization != '' }}
         run: mix hex.organization auth ${{ inputs.hex-organization }} --key ${{ secrets.hex-organization-key }}
       - uses: team-alembic/staple-actions/actions/mix-deps-get@a74b3b61209d35d45526df174766632f8aee03ed # main
+      - name: Compile dependencies
+        run: mix deps.compile
+        env:
+          MIX_ENV: test
 
   audit:
     name: Audit Dependencies
@@ -111,6 +118,10 @@ jobs:
       - uses: intility/reusable-elixir/.github/actions/ssh-agent@main
         with:
           ssh-private-key: ${{ secrets.ssh-private-key }}
+      - uses: team-alembic/staple-actions/actions/install-elixir@a74b3b61209d35d45526df174766632f8aee03ed # main
+      - uses: intility/reusable-elixir/.github/actions/mix-cache@main
+        with:
+          mix-env: test
       - uses: team-alembic/staple-actions/actions/mix-hex-audit@a74b3b61209d35d45526df174766632f8aee03ed # main
 
   build-test:
@@ -151,6 +162,10 @@ jobs:
         with:
           elixir-version: ${{ inputs.elixir-version }}
           otp-version: ${{ inputs.otp-version }}
+      - uses: team-alembic/staple-actions/actions/install-elixir@a74b3b61209d35d45526df174766632f8aee03ed # main
+      - uses: intility/reusable-elixir/.github/actions/mix-cache@main
+        with:
+          mix-env: test
       - uses: team-alembic/staple-actions/actions/mix-task@a74b3b61209d35d45526df174766632f8aee03ed # main
         with:
           mix-env: test
@@ -167,6 +182,10 @@ jobs:
         with:
           elixir-version: ${{ inputs.elixir-version }}
           otp-version: ${{ inputs.otp-version }}
+      - uses: team-alembic/staple-actions/actions/install-elixir@a74b3b61209d35d45526df174766632f8aee03ed # main
+      - uses: intility/reusable-elixir/.github/actions/mix-cache@main
+        with:
+          mix-env: test
       - uses: team-alembic/staple-actions/actions/mix-task@a74b3b61209d35d45526df174766632f8aee03ed # main
         with:
           mix-env: test
@@ -191,6 +210,10 @@ jobs:
         with:
           elixir-version: ${{ inputs.elixir-version }}
           otp-version: ${{ inputs.otp-version }}
+      - uses: team-alembic/staple-actions/actions/install-elixir@a74b3b61209d35d45526df174766632f8aee03ed # main
+      - uses: intility/reusable-elixir/.github/actions/mix-cache@main
+        with:
+          mix-env: test
       - uses: team-alembic/staple-actions/actions/mix-task@a74b3b61209d35d45526df174766632f8aee03ed # main
         with:
           mix-env: test
@@ -227,6 +250,10 @@ jobs:
         with:
           elixir-version: ${{ inputs.elixir-version }}
           otp-version: ${{ inputs.otp-version }}
+      - uses: team-alembic/staple-actions/actions/install-elixir@a74b3b61209d35d45526df174766632f8aee03ed # main
+      - uses: intility/reusable-elixir/.github/actions/mix-cache@main
+        with:
+          mix-env: test
       - uses: team-alembic/staple-actions/actions/mix-task@a74b3b61209d35d45526df174766632f8aee03ed # main
         with:
           mix-env: test
