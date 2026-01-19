@@ -103,6 +103,8 @@ jobs:
         run: mix deps.compile
         env:
           MIX_ENV: test
+          HEX_HOME: ${{ runner.temp }}/.hex
+          MIX_HOME: ${{ runner.temp }}/.mix
 
   audit:
     name: Audit Dependencies
