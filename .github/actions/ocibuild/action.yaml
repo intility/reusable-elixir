@@ -6,7 +6,7 @@ inputs:
     description: Semicolon-separated full image refs (e.g., from docker/metadata-action)
     required: true
   registry:
-    description: Registry to push to (e.g., ghcr.io/intility)
+    description: Registry host to push to (e.g., ghcr.io). Do not include org/repo path - tags already contain full image refs.
     required: true
   base-image:
     description: Override base image for ocibuild

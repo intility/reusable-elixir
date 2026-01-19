@@ -35,11 +35,13 @@ jobs:
       elixir-version: ${{ matrix.elixir }}
       otp-version: ${{ matrix.otp }}
 
-      # Static analysis (all default to true except sobelow)
-      audit: true
-      credo: true
+      # Static analysis defaults:
+      # - audit: true (hex.audit and deps.audit)
+      # - credo: true
+      # - dialyzer: false (enable if needed, slow)
+      # - sobelow: false (enable for Phoenix projects)
       dialyzer: true
-      # sobelow: true  # Enable for Phoenix projects
+      # sobelow: true
 
       # Database support (starts PostgreSQL service automatically)
       # postgres: ash   # For Ash Framework projects
