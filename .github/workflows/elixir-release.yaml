@@ -181,14 +181,6 @@ jobs:
           sep-tags: ";"
           tags: ${{ inputs.tags }}
 
-      # Set image outputs for reuse in subsequent steps
-      - name: Set image outputs
-        if: ${{ inputs.docker }}
-        id: image
-        run: |
-          echo "registry=ghcr.io/${{ github.repository_owner }}" >> "$GITHUB_OUTPUT"
-          echo "name=ghcr.io/${{ github.repository }}" >> "$GITHUB_OUTPUT"
-
       - name: Login to GHCR
         if: ${{ inputs.docker }}
         uses: docker/login-action@74a5d142397b4f367a81961eba4e8cd7edddf772 # v3.4.0
@@ -203,7 +195,7 @@ jobs:
         uses: intility/reusable-elixir/.github/actions/ocibuild@main
         with:
           tags: ${{ steps.meta.outputs.tags }}
-          registry: ${{ steps.image.outputs.registry }}
+          registry: ghcr.io
           base-image: ${{ inputs.base-image }}
           platforms: ${{ inputs.platforms }}
           release: ${{ inputs.release }}
@@ -218,5 +210,5 @@ jobs:
         uses: actions/attest-build-provenance@c074443f1aee8d4aeeae555aebba3282517141b2 # v2.2.3
         with:
           subject-digest: ${{ steps.ocibuild.outputs.digest }}
-          subject-name: ${{ steps.image.outputs.name }}
+          subject-name: ghcr.io/${{ github.repository }}
           push-to-registry: true
