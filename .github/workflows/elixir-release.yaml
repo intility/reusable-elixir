@@ -155,14 +155,14 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.npm-token }}
 
-      - name: Deploy assets
-        if: ${{ inputs.npm-install }}
-        run: mix assets.deploy
+      - name: Compile
+        run: mix compile --warnings-as-errors
         env:
           MIX_ENV: prod
 
-      - name: Compile
-        run: mix compile --warnings-as-errors
+      - name: Deploy assets
+        if: ${{ inputs.npm-install }}
+        run: mix assets.deploy
         env:
           MIX_ENV: prod
 
