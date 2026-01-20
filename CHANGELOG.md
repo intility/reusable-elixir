@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.2.1](https://github.com/intility/reusable-elixir/compare/v1.2.0...v1.2.1) (2026-01-20)
+
+
+### Bug Fixes
+
+* **ocibuild:** Make pull credentials optional for anonymous registry access ([08b92fc](https://github.com/intility/reusable-elixir/commit/08b92fc236efc6f1306549ee005c266d39ae317e))
+* **ocibuild:** Remove fallback to push credentials for pull operations ([d12256a](https://github.com/intility/reusable-elixir/commit/d12256a58a985b403151299179565ad16af4d770))
+
 ## [1.2.0](https://github.com/intility/reusable-elixir/compare/v1.1.0...v1.2.0) (2026-01-19)
 
 
