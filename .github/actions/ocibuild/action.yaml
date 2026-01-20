@@ -45,12 +45,18 @@ runs:
       id: ocibuild
       env:
         MIX_ENV: prod
-        OCIBUILD_PULL_USERNAME: ${{ inputs.pull-username }}
-        OCIBUILD_PULL_PASSWORD: ${{ inputs.pull-password }}
         OCIBUILD_PUSH_USERNAME: ${{ inputs.push-username }}
         OCIBUILD_PUSH_PASSWORD: ${{ inputs.push-password }}
       shell: bash
       run: |
+        # Set pull credentials only if provided (to allow anonymous pulls from Docker Hub)
+        if [ -n "${{ inputs.pull-username }}" ]; then
+          export OCIBUILD_PULL_USERNAME="${{ inputs.pull-username }}"
+        fi
+        if [ -n "${{ inputs.pull-password }}" ]; then
+          export OCIBUILD_PULL_PASSWORD="${{ inputs.pull-password }}"
+        fi
+
         # Set SOURCE_DATE_EPOCH if provided (for reproducible builds and layer caching)
         if [ -n "${{ inputs.source-date-epoch }}" ]; then
           export SOURCE_DATE_EPOCH="${{ inputs.source-date-epoch }}"
