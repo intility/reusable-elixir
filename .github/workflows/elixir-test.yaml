@@ -59,6 +59,15 @@ on:
         type: boolean
         default: false
         description: Check Spark DSL formatting
+      spark-extensions:
+        type: string
+        required: false
+        description: |
+          Spark DSL extensions for formatter (multiline, one per line).
+          Example:
+            spark-extensions: |
+              MyApp.Resource.Extension
+              MyApp.Another.DSL
       hex-organization:
         type: string
         required: false
@@ -193,12 +202,19 @@ jobs:
           mix-env: test
           task: format --check-formatted
           compile: "false"
+      - name: Prepare Spark extensions
+        if: ${{ inputs.spark-formatter && inputs.spark-extensions != '' }}
+        id: spark-extensions
+        run: |
+          # Convert multiline input to comma-separated string
+          extensions=$(echo "${{ inputs.spark-extensions }}" | tr '\n' ',' | sed 's/,$//' | sed 's/,,*/,/g')
+          echo "args=--extensions ${extensions}" >> $GITHUB_OUTPUT
       - name: Spark (DSL)
         uses: team-alembic/staple-actions/actions/mix-task@a74b3b61209d35d45526df174766632f8aee03ed # main
         if: ${{ inputs.spark-formatter }}
         with:
           mix-env: test
-          task: spark.formatter --check
+          task: spark.formatter --check ${{ steps.spark-extensions.outputs.args }}
           compile: "false"
 
   credo:
