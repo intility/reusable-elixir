@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.2](https://github.com/intility/reusable-elixir/compare/v1.2.1...v1.2.2) (2026-02-02)
+
+
+### Bug Fixes
+
+* **ci:** improve spark-extensions parsing in workflow ([452f661](https://github.com/intility/reusable-elixir/commit/452f661c8e36dfcbaf93902b67d38612fc7ff551))
+
 ## [1.2.1](https://github.com/intility/reusable-elixir/compare/v1.2.0...v1.2.1) (2026-01-20)
 
 
