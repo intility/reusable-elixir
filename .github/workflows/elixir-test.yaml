@@ -92,7 +92,7 @@ jobs:
     name: Get Dependencies
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v4
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v4
       - uses: intility/reusable-elixir/.github/actions/setup-tool-versions@main
         with:
           elixir-version: ${{ inputs.elixir-version }}
@@ -121,7 +121,7 @@ jobs:
     needs: deps
     if: ${{ inputs.audit }}
     steps:
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v4
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v4
       - uses: intility/reusable-elixir/.github/actions/setup-tool-versions@main
         with:
           elixir-version: ${{ inputs.elixir-version }}
@@ -140,7 +140,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: deps
     steps:
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v4
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v4
       - uses: intility/reusable-elixir/.github/actions/apt-packages@main
         if: ${{ inputs.apt-packages != '' }}
         with:
@@ -168,7 +168,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: deps
     steps:
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v4
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v4
       - uses: intility/reusable-elixir/.github/actions/setup-tool-versions@main
         with:
           elixir-version: ${{ inputs.elixir-version }}
@@ -188,7 +188,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: deps
     steps:
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v4
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v4
       - uses: intility/reusable-elixir/.github/actions/setup-tool-versions@main
         with:
           elixir-version: ${{ inputs.elixir-version }}
@@ -223,7 +223,7 @@ jobs:
     needs: deps
     if: ${{ inputs.credo }}
     steps:
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v4
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v4
       - uses: intility/reusable-elixir/.github/actions/setup-tool-versions@main
         with:
           elixir-version: ${{ inputs.elixir-version }}
@@ -244,7 +244,7 @@ jobs:
     needs: build-test
     if: ${{ inputs.dialyzer }}
     steps:
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v4
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v4
       - uses: intility/reusable-elixir/.github/actions/setup-tool-versions@main
         with:
           elixir-version: ${{ inputs.elixir-version }}
@@ -263,7 +263,7 @@ jobs:
     needs: deps
     if: ${{ inputs.sobelow }}
     steps:
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v4
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v4
       - uses: intility/reusable-elixir/.github/actions/setup-tool-versions@main
         with:
           elixir-version: ${{ inputs.elixir-version }}
@@ -295,7 +295,7 @@ jobs:
         ports:
           - 5432:5432
     steps:
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v4
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v4
       - uses: intility/reusable-elixir/.github/actions/apt-packages@main
         if: ${{ inputs.apt-packages != '' }}
         with:
@@ -311,7 +311,7 @@ jobs:
 
       - name: Setup Node
         if: ${{ inputs.npm-install }}
-        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v4
         with:
           node-version: ${{ inputs.node-version }}
           registry-url: ${{ inputs.npm-registry }}
