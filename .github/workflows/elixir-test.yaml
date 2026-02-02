@@ -206,8 +206,8 @@ jobs:
         if: ${{ inputs.spark-formatter && inputs.spark-extensions != '' }}
         id: spark-extensions
         run: |
-          # Convert multiline input to comma-separated string
-          extensions=$(echo "${{ inputs.spark-extensions }}" | tr '\n' ',' | sed 's/,$//' | sed 's/,,*/,/g')
+          # Convert multiline input to comma-separated string, removing empty lines and trailing commas
+          extensions=$(echo "${{ inputs.spark-extensions }}" | grep -v '^$' | tr '\n' ',' | sed 's/,*$//')
           echo "args=--extensions ${extensions}" >> $GITHUB_OUTPUT
       - name: Spark (DSL)
         uses: team-alembic/staple-actions/actions/mix-task@a74b3b61209d35d45526df174766632f8aee03ed # main
