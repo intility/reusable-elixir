@@ -1,0 +1,20 @@
+name: Set Environment Variables
+description: Export environment variables from a multiline KEY=VALUE string
+
+inputs:
+  env:
+    description: Environment variables (one KEY=VALUE per line)
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Set environment variables
+      shell: bash
+      env:
+        ENV_VARS: ${{ inputs.env }}
+      run: |
+        while IFS= read -r line; do
+          [[ -z "$line" || "$line" =~ ^[[:space:]]*# ]] && continue
+          printf '%s\n' "$line" >> "$GITHUB_ENV"
+        done <<< "$ENV_VARS"
