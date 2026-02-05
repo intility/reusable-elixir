@@ -68,6 +68,7 @@ jobs:
 | `spark-formatter`       | boolean | `false`  | Check Spark DSL formatting                                            |
 | `hex-organization`      | string  | -        | Hex organization for private packages                                 |
 | `apt-packages`          | string  | -        | Space-separated APT packages to install (e.g., `libvips-dev`)         |
+| `env`                   | string  | -        | Environment variables for all jobs (one `KEY=VALUE` per line)          |
 
 ### Secrets
 
@@ -410,6 +411,22 @@ jobs:
 ```
 
 This runs `npm ci` in the `assets` directory followed by `mix assets.deploy` before building the release.
+
+## Environment Variables
+
+For projects that need custom environment variables at compile time or test time (e.g., [Cloak](https://hexdocs.pm/cloak) encryption keys):
+
+```yaml
+jobs:
+  test:
+    uses: intility/reusable-elixir/.github/workflows/elixir-test.yaml@v1
+    with:
+      env: |
+        CLOAK_KEY=b23S/6av/mvyVEh27ksmXb+784i50afsp1FD0DUf87E=
+        MY_OTHER_VAR=value
+```
+
+Environment variables are available in all jobs and all steps within the workflow.
 
 ## Multi-Platform Builds
 
