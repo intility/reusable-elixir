@@ -488,6 +488,29 @@ jobs:
 
 Environment variables are available in all jobs and all steps within the workflow.
 
+## Caching
+
+The `mix-cache` composite action manages two independent caches:
+
+- **Deps cache** — the `deps/` directory, keyed by `.tool-versions` and `mix.lock`
+- **Build cache** — the `_build/<env>` directory, keyed by `.tool-versions`, `mix.lock`, and source files
+
+By default both caches are active. Jobs that only need dependencies (formatting, linting, auditing) can skip the build cache:
+
+```yaml
+- uses: intility/reusable-elixir/.github/actions/mix-cache@main
+  with:
+    mix-env: test
+    cache-build: "false"   # Only cache deps/
+```
+
+| Input         | Type   | Default  | Description                                        |
+|:--------------|:-------|:---------|:---------------------------------------------------|
+| `mix-env`     | string | `test`   | MIX_ENV to cache for                               |
+| `cache-build` | string | `"true"` | Whether to cache `_build/` (set `"false"` to skip) |
+
+The `elixir-test` workflow uses this internally — deps-only jobs skip the build cache so that `build-test` is the first to save it, and downstream jobs (`test`, `dialyzer`) restore the full build without recompiling.
+
 ## Multi-Platform Builds
 
 For multi-architecture images (requires `include_erts: false` in your release config):
