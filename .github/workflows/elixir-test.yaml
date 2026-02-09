@@ -85,6 +85,16 @@ on:
             env: |
               CLOAK_KEY=base64encodedkey
               MY_OTHER_VAR=value
+      artifacts:
+        type: string
+        required: false
+        description: |
+          Multiline artifact definitions to download before compilation (one per line, format: name:path).
+          Use with actions/upload-artifact in a prior job to inject pre-built binaries.
+          Example:
+            artifacts: |
+              my-binary:apps/my_app/priv/bin
+              my-assets:apps/my_app/priv/static
     secrets:
       hex-organization-key:
         required: false
@@ -177,6 +187,10 @@ jobs:
       - uses: intility/reusable-elixir/.github/actions/mix-cache@main
         with:
           mix-env: test
+      - uses: intility/reusable-elixir/.github/actions/download-artifacts@main
+        if: ${{ inputs.artifacts != '' }}
+        with:
+          artifacts: ${{ inputs.artifacts }}
       - name: Authorize Hex organization
         if: ${{ inputs.hex-organization != '' }}
         run: mix hex.organization auth ${{ inputs.hex-organization }} --key ${{ secrets.hex-organization-key }}
@@ -353,6 +367,10 @@ jobs:
       - uses: intility/reusable-elixir/.github/actions/mix-cache@main
         with:
           mix-env: test
+      - uses: intility/reusable-elixir/.github/actions/download-artifacts@main
+        if: ${{ inputs.artifacts != '' }}
+        with:
+          artifacts: ${{ inputs.artifacts }}
 
       - name: Setup Node
         if: ${{ inputs.npm-install }}

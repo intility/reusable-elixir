@@ -69,6 +69,7 @@ jobs:
 | `hex-organization`      | string  | -        | Hex organization for private packages                                 |
 | `apt-packages`          | string  | -        | Space-separated APT packages to install (e.g., `libvips-dev`)         |
 | `env`                   | string  | -        | Environment variables for all jobs (one `KEY=VALUE` per line)          |
+| `artifacts`             | string  | -        | Multiline artifact definitions to download (`name:path` per line)     |
 
 ### Secrets
 
@@ -140,6 +141,7 @@ jobs:
 | `npm-registry`      | string  | -                  | Custom NPM registry URL (e.g., `https://npm.pkg.github.com`)          |
 | `node-version`      | string  | `latest`           | Node.js version                                                       |
 | `apt-packages`      | string  | -                  | Space-separated APT packages to install (e.g., `libvips-dev`)         |
+| `artifacts`         | string  | -                  | Multiline artifact definitions to download (`name:path` per line)     |
 
 ### Secrets
 
@@ -180,6 +182,64 @@ This ensures file timestamps are consistent across builds, enabling:
 - **Registry deduplication** - identical content = identical digests
 
 The actual build timestamp is recorded in the `org.opencontainers.image.created` annotation.
+
+---
+
+## Pre-built Artifacts
+
+For projects that depend on native binaries (Rust, Go, C) or other pre-compiled assets, you can inject artifacts from upstream jobs:
+
+```yaml
+name: CI
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build-native:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: cargo build --release
+        working-directory: native/cel_evaluator
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cel-evaluator
+          path: native/cel_evaluator/target/release/cel_evaluator
+
+  test:
+    needs: [build-native]
+    uses: intility/reusable-elixir/.github/workflows/elixir-test.yaml@v1
+    with:
+      artifacts: |
+        cel-evaluator:apps/my_app/priv/bin
+
+  release:
+    needs: [build-native, test]
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+      attestations: write
+    uses: intility/reusable-elixir/.github/workflows/elixir-release.yaml@v1
+    with:
+      artifacts: |
+        cel-evaluator:apps/my_app/priv/bin
+    secrets: inherit
+```
+
+Multiple artifacts can be specified, one per line:
+
+```yaml
+with:
+  artifacts: |
+    cel-evaluator:apps/my_app/priv/bin
+    wasm-module:apps/my_app/priv/wasm
+```
+
+> [!NOTE]
+> GitHub artifact uploads strip POSIX file permissions. Handle this on your end (e.g., `File.chmod/2` at runtime) rather than expecting executable bits to be preserved.
 
 ---
 
