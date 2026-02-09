@@ -199,6 +199,7 @@ jobs:
       - uses: team-alembic/staple-actions/actions/mix-compile@a74b3b61209d35d45526df174766632f8aee03ed # main
         with:
           mix-env: test
+          use-cache: "false"
 
   unused-deps:
     name: Check Unused Dependencies
@@ -395,29 +396,36 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.npm-token }}
 
       # Ash PostgreSQL
+      # use-cache: "false" — mix-cache already restored _build from build-test.
+      # Disabling staple-actions' internal cache prevents it from overwriting
+      # mix-cache's touched _build files, which would trigger full recompilation.
       - uses: team-alembic/staple-actions/actions/mix-task@a74b3b61209d35d45526df174766632f8aee03ed # main
         if: ${{ inputs.postgres == 'ash' }}
         with:
           mix-env: test
           task: ash_postgres.generate_migrations --check
+          use-cache: "false"
 
       - uses: team-alembic/staple-actions/actions/mix-task@a74b3b61209d35d45526df174766632f8aee03ed # main
         if: ${{ inputs.postgres == 'ash' }}
         with:
           mix-env: test
           task: ash_postgres.create
+          use-cache: "false"
 
       - uses: team-alembic/staple-actions/actions/mix-task@a74b3b61209d35d45526df174766632f8aee03ed # main
         if: ${{ inputs.postgres == 'ash' }}
         with:
           mix-env: test
           task: ash_postgres.migrate
+          use-cache: "false"
 
       - uses: team-alembic/staple-actions/actions/mix-task@a74b3b61209d35d45526df174766632f8aee03ed # main
         if: ${{ inputs.postgres == 'ash' }}
         with:
           mix-env: test
           task: ash_postgres.migrate --tenants
+          use-cache: "false"
 
       # Ecto PostgreSQL
       - uses: team-alembic/staple-actions/actions/mix-task@a74b3b61209d35d45526df174766632f8aee03ed # main
@@ -425,12 +433,14 @@ jobs:
         with:
           mix-env: test
           task: ecto.create
+          use-cache: "false"
 
       - uses: team-alembic/staple-actions/actions/mix-task@a74b3b61209d35d45526df174766632f8aee03ed # main
         if: ${{ inputs.postgres == 'ecto' }}
         with:
           mix-env: test
           task: ecto.migrate
+          use-cache: "false"
 
       # Ash SQLite
       - uses: team-alembic/staple-actions/actions/mix-task@a74b3b61209d35d45526df174766632f8aee03ed # main
@@ -438,18 +448,21 @@ jobs:
         with:
           mix-env: test
           task: ash_sqlite.generate_migrations --check
+          use-cache: "false"
 
       - uses: team-alembic/staple-actions/actions/mix-task@a74b3b61209d35d45526df174766632f8aee03ed # main
         if: ${{ inputs.sqlite == 'ash' }}
         with:
           mix-env: test
           task: ash_sqlite.create
+          use-cache: "false"
 
       - uses: team-alembic/staple-actions/actions/mix-task@a74b3b61209d35d45526df174766632f8aee03ed # main
         if: ${{ inputs.sqlite == 'ash' }}
         with:
           mix-env: test
           task: ash_sqlite.migrate
+          use-cache: "false"
 
       # Ecto SQLite
       - uses: team-alembic/staple-actions/actions/mix-task@a74b3b61209d35d45526df174766632f8aee03ed # main
@@ -457,17 +470,20 @@ jobs:
         with:
           mix-env: test
           task: ecto.create
+          use-cache: "false"
 
       - uses: team-alembic/staple-actions/actions/mix-task@a74b3b61209d35d45526df174766632f8aee03ed # main
         if: ${{ inputs.sqlite == 'ecto' }}
         with:
           mix-env: test
           task: ecto.migrate
+          use-cache: "false"
 
       # Run tests
       - uses: team-alembic/staple-actions/actions/mix-test@a74b3b61209d35d45526df174766632f8aee03ed # main
         with:
           mix-env: test
+          use-cache: "false"
         env:
           PGHOST: localhost
           PGUSER: postgres
