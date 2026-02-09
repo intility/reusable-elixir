@@ -73,6 +73,16 @@ on:
         type: string
         required: false
         description: Space-separated list of APT packages to install (e.g., libvips-dev imagemagick)
+      artifacts:
+        type: string
+        required: false
+        description: |
+          Multiline artifact definitions to download before compilation (one per line, format: name:path).
+          Use with actions/upload-artifact in a prior job to inject pre-built binaries.
+          Example:
+            artifacts: |
+              my-binary:apps/my_app/priv/bin
+              my-assets:apps/my_app/priv/static
     secrets:
       hex-organization-key:
         required: false
@@ -142,6 +152,12 @@ jobs:
         run: mix deps.get
         env:
           MIX_ENV: prod
+
+      - uses: intility/reusable-elixir/.github/actions/download-artifacts@main
+        if: ${{ inputs.artifacts != '' }}
+        with:
+          artifacts: ${{ inputs.artifacts }}
+          directory: ${{ inputs.directory }}
 
       - name: Setup Node
         if: ${{ inputs.npm-install }}
