@@ -1,0 +1,46 @@
+name: Download Artifacts
+description: Download workflow artifacts from multiline name:path definitions
+
+inputs:
+  artifacts:
+    description: |
+      Multiline artifact definitions (one per line, format: name:path).
+      The name refers to an artifact uploaded by a previous job in the same workflow run.
+      The path is where to download the artifact, relative to the directory input.
+    required: true
+  directory:
+    description: Base directory for resolving relative artifact paths
+    required: false
+    default: "."
+
+runs:
+  using: composite
+  steps:
+    - name: Download artifacts
+      shell: bash
+      env:
+        GH_TOKEN: ${{ github.token }}
+        ARTIFACTS: ${{ inputs.artifacts }}
+        DIRECTORY: ${{ inputs.directory }}
+      run: |
+        while IFS= read -r line; do
+          [[ -z "$line" || "$line" =~ ^[[:space:]]*# ]] && continue
+
+          name="${line%%:*}"
+          path="${line#*:}"
+
+          name="$(echo "$name" | xargs)"
+          path="$(echo "$path" | xargs)"
+
+          if [[ -z "$name" || -z "$path" ]]; then
+            echo "::error::Invalid artifact definition: '$line' (expected format: name:path)"
+            exit 1
+          fi
+
+          target="${DIRECTORY}/${path}"
+          mkdir -p "$target"
+
+          echo "::group::Downloading artifact '${name}' to '${target}'"
+          gh run download "$GITHUB_RUN_ID" --name "$name" --dir "$target"
+          echo "::endgroup::"
+        done <<< "$ARTIFACTS"
