@@ -127,6 +127,7 @@ jobs:
       - uses: intility/reusable-elixir/.github/actions/mix-cache@main
         with:
           mix-env: test
+          cache-build: "false"
       - name: Authorize Hex organization
         if: ${{ inputs.hex-organization != '' }}
         run: mix hex.organization auth ${{ inputs.hex-organization }} --key ${{ secrets.hex-organization-key }}
@@ -160,6 +161,7 @@ jobs:
       - uses: intility/reusable-elixir/.github/actions/mix-cache@main
         with:
           mix-env: test
+          cache-build: "false"
       - uses: team-alembic/staple-actions/actions/mix-hex-audit@a74b3b61209d35d45526df174766632f8aee03ed # main
 
   build-test:
@@ -216,6 +218,7 @@ jobs:
       - uses: intility/reusable-elixir/.github/actions/mix-cache@main
         with:
           mix-env: test
+          cache-build: "false"
       - uses: team-alembic/staple-actions/actions/mix-task@a74b3b61209d35d45526df174766632f8aee03ed # main
         with:
           mix-env: test
@@ -240,6 +243,7 @@ jobs:
       - uses: intility/reusable-elixir/.github/actions/mix-cache@main
         with:
           mix-env: test
+          cache-build: "false"
       - uses: team-alembic/staple-actions/actions/mix-task@a74b3b61209d35d45526df174766632f8aee03ed # main
         with:
           mix-env: test
@@ -279,6 +283,7 @@ jobs:
       - uses: intility/reusable-elixir/.github/actions/mix-cache@main
         with:
           mix-env: test
+          cache-build: "false"
       - uses: team-alembic/staple-actions/actions/mix-task@a74b3b61209d35d45526df174766632f8aee03ed # main
         with:
           mix-env: test
@@ -303,10 +308,10 @@ jobs:
       - uses: team-alembic/staple-actions/actions/install-elixir@a74b3b61209d35d45526df174766632f8aee03ed # main
       - uses: intility/reusable-elixir/.github/actions/mix-cache@main
         with:
-          mix-env: dev
+          mix-env: test
       - uses: team-alembic/staple-actions/actions/mix-dialyzer@a74b3b61209d35d45526df174766632f8aee03ed # main
         with:
-          mix-env: dev
+          mix-env: test
 
   sobelow:
     name: Sobelow
@@ -327,6 +332,7 @@ jobs:
       - uses: intility/reusable-elixir/.github/actions/mix-cache@main
         with:
           mix-env: test
+          cache-build: "false"
       - uses: team-alembic/staple-actions/actions/mix-task@a74b3b61209d35d45526df174766632f8aee03ed # main
         with:
           mix-env: test

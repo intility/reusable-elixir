@@ -6,25 +6,40 @@ inputs:
     description: MIX_ENV to cache for
     required: false
     default: test
+  cache-build:
+    description: Whether to cache _build/ directory (set to false for deps-only caching)
+    required: false
+    default: "true"
 
 runs:
   using: composite
   steps:
-    - name: Restore Mix cache
-      id: cache
+    - name: Restore deps cache
+      id: deps-cache
       uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684 # v4.2.3
       with:
-        path: |
-          deps
-          _build/${{ inputs.mix-env }}
-        key: ${{ runner.os }}-mix-${{ inputs.mix-env }}-${{ hashFiles('.tool-versions') }}-${{ hashFiles('**/mix.lock') }}-${{ hashFiles('**/*.ex', '**/*.exs') }}
+        path: deps
+        key: ${{ runner.os }}-deps-${{ hashFiles('.tool-versions') }}-${{ hashFiles('**/mix.lock') }}
         restore-keys: |
-          ${{ runner.os }}-mix-${{ inputs.mix-env }}-${{ hashFiles('.tool-versions') }}-${{ hashFiles('**/mix.lock') }}-
-          ${{ runner.os }}-mix-${{ inputs.mix-env }}-${{ hashFiles('.tool-versions') }}-
+          ${{ runner.os }}-deps-${{ hashFiles('.tool-versions') }}-
 
-    - name: Touch cached files
-      if: steps.cache.outputs.cache-hit == 'true'
+    - name: Restore build cache
+      if: inputs.cache-build == 'true'
+      id: build-cache
+      uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684 # v4.2.3
+      with:
+        path: _build/${{ inputs.mix-env }}
+        key: ${{ runner.os }}-build-${{ inputs.mix-env }}-${{ hashFiles('.tool-versions') }}-${{ hashFiles('**/mix.lock') }}-${{ hashFiles('**/*.ex', '**/*.exs') }}
+        restore-keys: |
+          ${{ runner.os }}-build-${{ inputs.mix-env }}-${{ hashFiles('.tool-versions') }}-${{ hashFiles('**/mix.lock') }}-
+          ${{ runner.os }}-build-${{ inputs.mix-env }}-${{ hashFiles('.tool-versions') }}-
+
+    - name: Touch cached deps files
+      if: steps.deps-cache.outputs.cache-hit == 'true'
       shell: bash
-      run: |
-        find deps -type f -exec touch {} + 2>/dev/null || true
-        find _build/${{ inputs.mix-env }} -type f -exec touch {} + 2>/dev/null || true
+      run: find deps -type f -exec touch {} + 2>/dev/null || true
+
+    - name: Touch cached build files
+      if: steps.build-cache.outputs.cache-hit == 'true'
+      shell: bash
+      run: find _build/${{ inputs.mix-env }} -type f -exec touch {} + 2>/dev/null || true
