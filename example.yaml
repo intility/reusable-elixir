@@ -40,6 +40,9 @@ jobs:
       # - credo: true
       # - dialyzer: false (enable if needed, slow)
       # - sobelow: false (enable for Phoenix projects)
+      # Pre-built artifacts from upstream jobs
+      # artifacts: |
+      #   my-binary:apps/my_app/priv/bin
       dialyzer: true
       # sobelow: true
 
@@ -81,6 +84,9 @@ jobs:
       # otp-version: "28"
 
       # Enable reproducible builds and layer caching
+      # Pre-built artifacts from upstream jobs
+      # artifacts: |
+      #   my-binary:apps/my_app/priv/bin
       source-date-epoch: "0"
 
       # Optional: Override base image (defaults to project config)
