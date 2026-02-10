@@ -1,5 +1,23 @@
 # Changelog
 
+## [1.3.0](https://github.com/intility/reusable-elixir/compare/v1.2.2...v1.3.0) (2026-02-10)
+
+
+### Features
+
+* add artifact injection support to workflows ([a30666d](https://github.com/intility/reusable-elixir/commit/a30666d5d488f756ac8644c7a79f7bb07dacdb69))
+* add artifacts input to elixir-release workflow ([b616ba8](https://github.com/intility/reusable-elixir/commit/b616ba8cefb919e991326b76f5c3065ca8aa9a88))
+* add artifacts input to elixir-test workflow ([173b3a8](https://github.com/intility/reusable-elixir/commit/173b3a8f73f05686e517ff3829134a78540602c5))
+* add download-artifacts composite action ([25255fa](https://github.com/intility/reusable-elixir/commit/25255fab6aae18d63f26d9ee636b705a1e01a229))
+* support passing environment variables to reusable workflow ([652dee3](https://github.com/intility/reusable-elixir/commit/652dee3f02636caba3d43ebb3f395fe5fc04479d))
+* support passing environment variables to reusable workflow ([e4d5381](https://github.com/intility/reusable-elixir/commit/e4d5381cc1958cf23ef96732e4a4c011299e1e63)), closes [#22](https://github.com/intility/reusable-elixir/issues/22)
+
+
+### Bug Fixes
+
+* prevent conflicting build caches in test job ([561d159](https://github.com/intility/reusable-elixir/commit/561d159858fbd5d47663d42b0405a01858a7e92d))
+* split mix-cache into separate deps and build caches ([20d3aa5](https://github.com/intility/reusable-elixir/commit/20d3aa5b78ea35e16fc6e103c6174029eb55eac8)), closes [#27](https://github.com/intility/reusable-elixir/issues/27)
+
 ## [1.2.2](https://github.com/intility/reusable-elixir/compare/v1.2.1...v1.2.2) (2026-02-02)
 
 
