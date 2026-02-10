@@ -1,0 +1,98 @@
+name: Build and deploy Elixir docs
+
+on:
+  workflow_call:
+    inputs:
+      elixir-version:
+        type: string
+        required: false
+        description: Elixir version (uses .tool-versions if not specified)
+      otp-version:
+        type: string
+        required: false
+        description: Erlang/OTP version (uses .tool-versions if not specified)
+      hex-organization:
+        type: string
+        required: false
+        description: Hex organization for private packages
+      apt-packages:
+        type: string
+        required: false
+        description: Space-separated list of APT packages to install (e.g., libvips-dev imagemagick)
+      env:
+        type: string
+        required: false
+        description: |
+          Environment variables to set (one KEY=VALUE per line).
+          Example:
+            env: |
+              CLOAK_KEY=base64encodedkey
+      artifacts:
+        type: string
+        required: false
+        description: |
+          Multiline artifact definitions to download before compilation (one per line, format: name:path).
+          Example:
+            artifacts: |
+              my-binary:apps/my_app/priv/bin
+    secrets:
+      hex-organization-key:
+        required: false
+        description: Hex organization authentication key
+      ssh-private-key:
+        required: false
+        description: SSH private key(s) for accessing private Git repositories
+
+jobs:
+  build:
+    name: Build Docs
+    runs-on: ubuntu-latest
+    steps:
+      - uses: intility/reusable-elixir/.github/actions/set-env@main
+        if: ${{ inputs.env != '' }}
+        with:
+          env: ${{ inputs.env }}
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v4
+      - uses: intility/reusable-elixir/.github/actions/apt-packages@main
+        if: ${{ inputs.apt-packages != '' }}
+        with:
+          packages: ${{ inputs.apt-packages }}
+      - uses: intility/reusable-elixir/.github/actions/setup-tool-versions@main
+        with:
+          elixir-version: ${{ inputs.elixir-version }}
+          otp-version: ${{ inputs.otp-version }}
+      - uses: intility/reusable-elixir/.github/actions/ssh-agent@main
+        with:
+          ssh-private-key: ${{ secrets.ssh-private-key }}
+      - uses: team-alembic/staple-actions/actions/install-elixir@a74b3b61209d35d45526df174766632f8aee03ed # main
+      - uses: intility/reusable-elixir/.github/actions/mix-cache@main
+        with:
+          mix-env: dev
+      - uses: intility/reusable-elixir/.github/actions/download-artifacts@main
+        if: ${{ inputs.artifacts != '' }}
+        with:
+          artifacts: ${{ inputs.artifacts }}
+      - name: Authorize Hex organization
+        if: ${{ inputs.hex-organization != '' }}
+        run: mix hex.organization auth ${{ inputs.hex-organization }} --key ${{ secrets.hex-organization-key }}
+      - uses: team-alembic/staple-actions/actions/mix-docs@a74b3b61209d35d45526df174766632f8aee03ed # main
+        with:
+          mix-env: dev
+      - uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa # v3.0.1
+        with:
+          path: doc/
+
+  deploy:
+    name: Deploy to GitHub Pages
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac553fd0d31 # v4.0.5
