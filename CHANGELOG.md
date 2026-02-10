@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.4.0](https://github.com/intility/reusable-elixir/compare/v1.3.0...v1.4.0) (2026-02-10)
+
+
+### Features
+
+* **ci:** replace staple-actions with lightweight composite actions ([d2307f7](https://github.com/intility/reusable-elixir/commit/d2307f76f0e3fa29f30924ff4e94e1b71ec2bca4))
+
+
+### Performance Improvements
+
+* **ci:** Remove wasteful deps compilation from deps job ([6bd0d1e](https://github.com/intility/reusable-elixir/commit/6bd0d1ed6080066e379683d50eb8b6aec6850ba5))
+
 ## [1.3.0](https://github.com/intility/reusable-elixir/compare/v1.2.2...v1.3.0) (2026-02-10)
 
 
