@@ -1,0 +1,17 @@
+name: Mix Deps Get
+description: Install Hex, Rebar, and fetch Mix dependencies
+
+runs:
+  using: composite
+  steps:
+    - name: Install Hex
+      shell: bash
+      run: mix local.hex --if-missing --force
+
+    - name: Install Rebar
+      shell: bash
+      run: mix local.rebar --if-missing --force
+
+    - name: Fetch dependencies
+      shell: bash
+      run: mix deps.get

@@ -64,7 +64,7 @@ jobs:
       - uses: intility/reusable-elixir/.github/actions/ssh-agent@main
         with:
           ssh-private-key: ${{ secrets.ssh-private-key }}
-      - uses: team-alembic/staple-actions/actions/install-elixir@a74b3b61209d35d45526df174766632f8aee03ed # main
+      - uses: intility/reusable-elixir/.github/actions/install-elixir@main
       - uses: intility/reusable-elixir/.github/actions/mix-cache@main
         with:
           mix-env: dev
@@ -75,7 +75,7 @@ jobs:
       - name: Authorize Hex organization
         if: ${{ inputs.hex-organization != '' }}
         run: mix hex.organization auth ${{ inputs.hex-organization }} --key ${{ secrets.hex-organization-key }}
-      - uses: team-alembic/staple-actions/actions/mix-docs@a74b3b61209d35d45526df174766632f8aee03ed # main
+      - uses: intility/reusable-elixir/.github/actions/mix-docs@main
         with:
           mix-env: dev
       - uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa # v3.0.1

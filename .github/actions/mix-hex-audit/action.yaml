@@ -1,0 +1,9 @@
+name: Mix Hex Audit
+description: Run mix hex.audit to check for retired packages
+
+runs:
+  using: composite
+  steps:
+    - name: Audit Hex packages
+      shell: bash
+      run: mix hex.audit

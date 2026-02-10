@@ -1,0 +1,19 @@
+name: Mix Task
+description: Run any mix task
+
+inputs:
+  task:
+    description: The mix task to run (e.g., "credo --strict")
+    required: true
+  mix-env:
+    description: MIX_ENV to run the task with
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Run mix ${{ inputs.task }}
+      shell: bash
+      run: mix ${{ inputs.task }}
+      env:
+        MIX_ENV: ${{ inputs.mix-env }}

@@ -1,13 +1,14 @@
 # Reusable Elixir Workflows
 
-Reusable GitHub Actions workflows for Elixir projects. Two workflows are available:
+Reusable GitHub Actions workflows for Elixir projects. Three workflows are available:
 
 - **elixir-test** - Testing, linting, and static analysis
+- **elixir-docs** - Build and deploy documentation to GitHub Pages
 - **elixir-release** - Build and push OCI container images
 
 ## elixir-test
 
-Runs tests and static analysis using [team-alembic/staple-actions](https://github.com/team-alembic/staple-actions).
+Runs tests and static analysis for Elixir projects.
 
 ### Features
 
@@ -66,6 +67,7 @@ jobs:
 | `npm-registry`          | string  | -        | Custom NPM registry URL (e.g., `https://npm.pkg.github.com`)          |
 | `node-version`          | string  | `latest` | Node.js version                                                       |
 | `spark-formatter`       | boolean | `false`  | Check Spark DSL formatting                                            |
+| `spark-extensions`      | string  | -        | Spark DSL extensions for formatter (multiline, one per line)          |
 | `hex-organization`      | string  | -        | Hex organization for private packages                                 |
 | `apt-packages`          | string  | -        | Space-separated APT packages to install (e.g., `libvips-dev`)         |
 | `env`                   | string  | -        | Environment variables for all jobs (one `KEY=VALUE` per line)          |
@@ -78,6 +80,47 @@ jobs:
 | `hex-organization-key` | No       | Hex organization auth key                            |
 | `ssh-private-key`      | No       | SSH private key(s) for private Git repository access |
 | `npm-token`            | No       | NPM authentication token for private registries      |
+
+---
+
+## elixir-docs
+
+Builds and deploys Elixir documentation to GitHub Pages.
+
+### Usage
+
+```yaml
+name: Docs
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  docs:
+    permissions:
+      pages: write
+      id-token: write
+    uses: intility/reusable-elixir/.github/workflows/elixir-docs.yaml@v1
+```
+
+### Inputs
+
+| Name               | Type   | Default | Description                                                       |
+|:-------------------|:-------|:--------|:------------------------------------------------------------------|
+| `elixir-version`   | string | -       | Elixir version (uses `.tool-versions` if not specified)           |
+| `otp-version`      | string | -       | Erlang/OTP version (uses `.tool-versions` if not specified)       |
+| `hex-organization` | string | -       | Hex organization for private packages                             |
+| `apt-packages`     | string | -       | Space-separated APT packages to install (e.g., `libvips-dev`)    |
+| `env`              | string | -       | Environment variables (one `KEY=VALUE` per line)                  |
+| `artifacts`        | string | -       | Multiline artifact definitions to download (`name:path` per line) |
+
+### Secrets
+
+| Name                   | Required | Description                                          |
+|:-----------------------|:---------|:-----------------------------------------------------|
+| `hex-organization-key` | No       | Hex organization auth key                            |
+| `ssh-private-key`      | No       | SSH private key(s) for private Git repository access |
 
 ---
 
@@ -510,6 +553,47 @@ By default both caches are active. Jobs that only need dependencies (formatting,
 | `cache-build` | string | `"true"` | Whether to cache `_build/` (set `"false"` to skip) |
 
 The `elixir-test` workflow uses this internally — deps-only jobs skip the build cache so that `build-test` is the first to save it, and downstream jobs (`test`, `dialyzer`) restore the full build without recompiling.
+
+## Composite Actions
+
+The workflows are built from lightweight composite actions in `.github/actions/`. These assume the environment is already set up (Elixir installed, deps cached) and can also be used independently in your own workflows.
+
+| Action | Description |
+|:-------|:------------|
+| `install-elixir` | Install Elixir and OTP via `erlef/setup-beam` using `.tool-versions` |
+| `mix-deps-get` | Install Hex, Rebar, and fetch dependencies |
+| `mix-compile` | Compile project (`mix-env` required, optional `args`) |
+| `mix-task` | Run any mix task (`task` and `mix-env` required) |
+| `mix-test` | Run `mix test` (`mix-env` required) |
+| `mix-hex-audit` | Run `mix hex.audit` |
+| `mix-dialyzer` | Run Dialyzer with automatic PLT caching (`mix-env` required, optional `plt-path`) |
+| `mix-docs` | Compile and generate documentation (`mix-env` required) |
+| `mix-cache` | Cache `deps/` and `_build/` directories |
+| `setup-tool-versions` | Generate or use `.tool-versions` file |
+| `ssh-agent` | Set up SSH agent for private Git repositories |
+| `set-env` | Export environment variables from multiline input |
+| `apt-packages` | Install system packages via apt-get |
+| `download-artifacts` | Download workflow artifacts from multiline definitions |
+| `ocibuild` | Build and push OCI images |
+
+### Using actions directly
+
+```yaml
+steps:
+  - uses: actions/checkout@v4
+  - uses: intility/reusable-elixir/.github/actions/install-elixir@main
+  - uses: intility/reusable-elixir/.github/actions/mix-cache@main
+    with:
+      mix-env: test
+  - uses: intility/reusable-elixir/.github/actions/mix-deps-get@main
+  - uses: intility/reusable-elixir/.github/actions/mix-compile@main
+    with:
+      mix-env: test
+  - uses: intility/reusable-elixir/.github/actions/mix-task@main
+    with:
+      mix-env: test
+      task: credo --strict
+```
 
 ## Multi-Platform Builds
 

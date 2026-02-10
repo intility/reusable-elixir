@@ -1,0 +1,16 @@
+name: Mix Test
+description: Run mix test
+
+inputs:
+  mix-env:
+    description: MIX_ENV to run tests with
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Run tests
+      shell: bash
+      run: mix test
+      env:
+        MIX_ENV: ${{ inputs.mix-env }}

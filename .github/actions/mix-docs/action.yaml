@@ -1,0 +1,22 @@
+name: Mix Docs
+description: Compile project and generate documentation
+
+inputs:
+  mix-env:
+    description: MIX_ENV to use
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Compile
+      shell: bash
+      run: mix compile
+      env:
+        MIX_ENV: ${{ inputs.mix-env }}
+
+    - name: Generate docs
+      shell: bash
+      run: mix docs
+      env:
+        MIX_ENV: ${{ inputs.mix-env }}

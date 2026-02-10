@@ -123,7 +123,7 @@ jobs:
       - uses: intility/reusable-elixir/.github/actions/ssh-agent@main
         with:
           ssh-private-key: ${{ secrets.ssh-private-key }}
-      - uses: team-alembic/staple-actions/actions/install-elixir@a74b3b61209d35d45526df174766632f8aee03ed # main
+      - uses: intility/reusable-elixir/.github/actions/install-elixir@main
       - uses: intility/reusable-elixir/.github/actions/mix-cache@main
         with:
           mix-env: test
@@ -131,7 +131,7 @@ jobs:
       - name: Authorize Hex organization
         if: ${{ inputs.hex-organization != '' }}
         run: mix hex.organization auth ${{ inputs.hex-organization }} --key ${{ secrets.hex-organization-key }}
-      - uses: team-alembic/staple-actions/actions/mix-deps-get@a74b3b61209d35d45526df174766632f8aee03ed # main
+      - uses: intility/reusable-elixir/.github/actions/mix-deps-get@main
 
   audit:
     name: Audit Dependencies
@@ -151,12 +151,12 @@ jobs:
       - uses: intility/reusable-elixir/.github/actions/ssh-agent@main
         with:
           ssh-private-key: ${{ secrets.ssh-private-key }}
-      - uses: team-alembic/staple-actions/actions/install-elixir@a74b3b61209d35d45526df174766632f8aee03ed # main
+      - uses: intility/reusable-elixir/.github/actions/install-elixir@main
       - uses: intility/reusable-elixir/.github/actions/mix-cache@main
         with:
           mix-env: test
           cache-build: "false"
-      - uses: team-alembic/staple-actions/actions/mix-hex-audit@a74b3b61209d35d45526df174766632f8aee03ed # main
+      - uses: intility/reusable-elixir/.github/actions/mix-hex-audit@main
 
   build-test:
     name: Build Test
@@ -179,7 +179,7 @@ jobs:
       - uses: intility/reusable-elixir/.github/actions/ssh-agent@main
         with:
           ssh-private-key: ${{ secrets.ssh-private-key }}
-      - uses: team-alembic/staple-actions/actions/install-elixir@a74b3b61209d35d45526df174766632f8aee03ed # main
+      - uses: intility/reusable-elixir/.github/actions/install-elixir@main
       - uses: intility/reusable-elixir/.github/actions/mix-cache@main
         with:
           mix-env: test
@@ -190,10 +190,9 @@ jobs:
       - name: Authorize Hex organization
         if: ${{ inputs.hex-organization != '' }}
         run: mix hex.organization auth ${{ inputs.hex-organization }} --key ${{ secrets.hex-organization-key }}
-      - uses: team-alembic/staple-actions/actions/mix-compile@a74b3b61209d35d45526df174766632f8aee03ed # main
+      - uses: intility/reusable-elixir/.github/actions/mix-compile@main
         with:
           mix-env: test
-          use-cache: "false"
 
   unused-deps:
     name: Check Unused Dependencies
@@ -209,16 +208,15 @@ jobs:
         with:
           elixir-version: ${{ inputs.elixir-version }}
           otp-version: ${{ inputs.otp-version }}
-      - uses: team-alembic/staple-actions/actions/install-elixir@a74b3b61209d35d45526df174766632f8aee03ed # main
+      - uses: intility/reusable-elixir/.github/actions/install-elixir@main
       - uses: intility/reusable-elixir/.github/actions/mix-cache@main
         with:
           mix-env: test
           cache-build: "false"
-      - uses: team-alembic/staple-actions/actions/mix-task@a74b3b61209d35d45526df174766632f8aee03ed # main
+      - uses: intility/reusable-elixir/.github/actions/mix-task@main
         with:
           mix-env: test
           task: deps.unlock --check-unused
-          compile: "false"
 
   formatter:
     name: Check Formatting
@@ -234,30 +232,28 @@ jobs:
         with:
           elixir-version: ${{ inputs.elixir-version }}
           otp-version: ${{ inputs.otp-version }}
-      - uses: team-alembic/staple-actions/actions/install-elixir@a74b3b61209d35d45526df174766632f8aee03ed # main
+      - uses: intility/reusable-elixir/.github/actions/install-elixir@main
       - uses: intility/reusable-elixir/.github/actions/mix-cache@main
         with:
           mix-env: test
           cache-build: "false"
-      - uses: team-alembic/staple-actions/actions/mix-task@a74b3b61209d35d45526df174766632f8aee03ed # main
+      - uses: intility/reusable-elixir/.github/actions/mix-task@main
         with:
           mix-env: test
           task: format --check-formatted
-          compile: "false"
       - name: Prepare Spark extensions
         if: ${{ inputs.spark-formatter && inputs.spark-extensions != '' }}
         id: spark-extensions
         run: |
           # Convert multiline input to comma-separated string, removing empty lines and trailing commas
           extensions=$(echo "${{ inputs.spark-extensions }}" | grep -v '^$' | tr '\n' ',' | sed 's/,*$//')
-          echo "args=--extensions ${extensions}" >> $GITHUB_OUTPUT
+          echo "args=--extensions ${extensions}" >> "$GITHUB_OUTPUT"
       - name: Spark (DSL)
-        uses: team-alembic/staple-actions/actions/mix-task@a74b3b61209d35d45526df174766632f8aee03ed # main
+        uses: intility/reusable-elixir/.github/actions/mix-task@main
         if: ${{ inputs.spark-formatter }}
         with:
           mix-env: test
           task: spark.formatter --check ${{ steps.spark-extensions.outputs.args }}
-          compile: "false"
 
   credo:
     name: Credo
@@ -274,16 +270,14 @@ jobs:
         with:
           elixir-version: ${{ inputs.elixir-version }}
           otp-version: ${{ inputs.otp-version }}
-      - uses: team-alembic/staple-actions/actions/install-elixir@a74b3b61209d35d45526df174766632f8aee03ed # main
+      - uses: intility/reusable-elixir/.github/actions/install-elixir@main
       - uses: intility/reusable-elixir/.github/actions/mix-cache@main
         with:
           mix-env: test
-          cache-build: "false"
-      - uses: team-alembic/staple-actions/actions/mix-task@a74b3b61209d35d45526df174766632f8aee03ed # main
+      - uses: intility/reusable-elixir/.github/actions/mix-task@main
         with:
           mix-env: test
           task: credo --strict
-          compile: "false"
 
   dialyzer:
     name: Dialyzer
@@ -303,11 +297,11 @@ jobs:
       - uses: intility/reusable-elixir/.github/actions/ssh-agent@main
         with:
           ssh-private-key: ${{ secrets.ssh-private-key }}
-      - uses: team-alembic/staple-actions/actions/install-elixir@a74b3b61209d35d45526df174766632f8aee03ed # main
+      - uses: intility/reusable-elixir/.github/actions/install-elixir@main
       - uses: intility/reusable-elixir/.github/actions/mix-cache@main
         with:
           mix-env: dev
-      - uses: team-alembic/staple-actions/actions/mix-dialyzer@a74b3b61209d35d45526df174766632f8aee03ed # main
+      - uses: intility/reusable-elixir/.github/actions/mix-dialyzer@main
         with:
           mix-env: dev
 
@@ -326,16 +320,14 @@ jobs:
         with:
           elixir-version: ${{ inputs.elixir-version }}
           otp-version: ${{ inputs.otp-version }}
-      - uses: team-alembic/staple-actions/actions/install-elixir@a74b3b61209d35d45526df174766632f8aee03ed # main
+      - uses: intility/reusable-elixir/.github/actions/install-elixir@main
       - uses: intility/reusable-elixir/.github/actions/mix-cache@main
         with:
           mix-env: test
-          cache-build: "false"
-      - uses: team-alembic/staple-actions/actions/mix-task@a74b3b61209d35d45526df174766632f8aee03ed # main
+      - uses: intility/reusable-elixir/.github/actions/mix-task@main
         with:
           mix-env: test
           task: sobelow
-          compile: "false"
 
   test:
     name: Test
@@ -367,7 +359,7 @@ jobs:
         with:
           elixir-version: ${{ inputs.elixir-version }}
           otp-version: ${{ inputs.otp-version }}
-      - uses: team-alembic/staple-actions/actions/install-elixir@a74b3b61209d35d45526df174766632f8aee03ed # main
+      - uses: intility/reusable-elixir/.github/actions/install-elixir@main
       - uses: intility/reusable-elixir/.github/actions/mix-cache@main
         with:
           mix-env: test
@@ -393,94 +385,79 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.npm-token }}
 
       # Ash PostgreSQL
-      # use-cache: "false" — mix-cache already restored _build from build-test.
-      # Disabling staple-actions' internal cache prevents it from overwriting
-      # mix-cache's touched _build files, which would trigger full recompilation.
-      - uses: team-alembic/staple-actions/actions/mix-task@a74b3b61209d35d45526df174766632f8aee03ed # main
+      - uses: intility/reusable-elixir/.github/actions/mix-task@main
         if: ${{ inputs.postgres == 'ash' }}
         with:
           mix-env: test
           task: ash_postgres.generate_migrations --check
-          use-cache: "false"
 
-      - uses: team-alembic/staple-actions/actions/mix-task@a74b3b61209d35d45526df174766632f8aee03ed # main
+      - uses: intility/reusable-elixir/.github/actions/mix-task@main
         if: ${{ inputs.postgres == 'ash' }}
         with:
           mix-env: test
           task: ash_postgres.create
-          use-cache: "false"
 
-      - uses: team-alembic/staple-actions/actions/mix-task@a74b3b61209d35d45526df174766632f8aee03ed # main
+      - uses: intility/reusable-elixir/.github/actions/mix-task@main
         if: ${{ inputs.postgres == 'ash' }}
         with:
           mix-env: test
           task: ash_postgres.migrate
-          use-cache: "false"
 
-      - uses: team-alembic/staple-actions/actions/mix-task@a74b3b61209d35d45526df174766632f8aee03ed # main
+      - uses: intility/reusable-elixir/.github/actions/mix-task@main
         if: ${{ inputs.postgres == 'ash' }}
         with:
           mix-env: test
           task: ash_postgres.migrate --tenants
-          use-cache: "false"
 
       # Ecto PostgreSQL
-      - uses: team-alembic/staple-actions/actions/mix-task@a74b3b61209d35d45526df174766632f8aee03ed # main
+      - uses: intility/reusable-elixir/.github/actions/mix-task@main
         if: ${{ inputs.postgres == 'ecto' }}
         with:
           mix-env: test
           task: ecto.create
-          use-cache: "false"
 
-      - uses: team-alembic/staple-actions/actions/mix-task@a74b3b61209d35d45526df174766632f8aee03ed # main
+      - uses: intility/reusable-elixir/.github/actions/mix-task@main
         if: ${{ inputs.postgres == 'ecto' }}
         with:
           mix-env: test
           task: ecto.migrate
-          use-cache: "false"
 
       # Ash SQLite
-      - uses: team-alembic/staple-actions/actions/mix-task@a74b3b61209d35d45526df174766632f8aee03ed # main
+      - uses: intility/reusable-elixir/.github/actions/mix-task@main
         if: ${{ inputs.sqlite == 'ash' }}
         with:
           mix-env: test
           task: ash_sqlite.generate_migrations --check
-          use-cache: "false"
 
-      - uses: team-alembic/staple-actions/actions/mix-task@a74b3b61209d35d45526df174766632f8aee03ed # main
+      - uses: intility/reusable-elixir/.github/actions/mix-task@main
         if: ${{ inputs.sqlite == 'ash' }}
         with:
           mix-env: test
           task: ash_sqlite.create
-          use-cache: "false"
 
-      - uses: team-alembic/staple-actions/actions/mix-task@a74b3b61209d35d45526df174766632f8aee03ed # main
+      - uses: intility/reusable-elixir/.github/actions/mix-task@main
         if: ${{ inputs.sqlite == 'ash' }}
         with:
           mix-env: test
           task: ash_sqlite.migrate
-          use-cache: "false"
 
       # Ecto SQLite
-      - uses: team-alembic/staple-actions/actions/mix-task@a74b3b61209d35d45526df174766632f8aee03ed # main
+      - uses: intility/reusable-elixir/.github/actions/mix-task@main
         if: ${{ inputs.sqlite == 'ecto' }}
         with:
           mix-env: test
           task: ecto.create
-          use-cache: "false"
 
-      - uses: team-alembic/staple-actions/actions/mix-task@a74b3b61209d35d45526df174766632f8aee03ed # main
+      - uses: intility/reusable-elixir/.github/actions/mix-task@main
         if: ${{ inputs.sqlite == 'ecto' }}
         with:
           mix-env: test
           task: ecto.migrate
-          use-cache: "false"
 
       # Run tests
-      - uses: team-alembic/staple-actions/actions/mix-test@a74b3b61209d35d45526df174766632f8aee03ed # main
+      - uses: intility/reusable-elixir/.github/actions/mix-test@main
         with:
           mix-env: test
-          use-cache: "false"
         env:
           PGHOST: localhost
           PGUSER: postgres
