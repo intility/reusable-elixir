@@ -89,6 +89,9 @@ jobs:
       #   my-binary:apps/my_app/priv/bin
       source-date-epoch: "0"
 
+      # Optional: Custom GHCR image name (defaults to ghcr.io/${{ github.repository }})
+      # image-name: "ghcr.io/intility/my-elixir-app"
+
       # Optional: Override base image (defaults to project config)
       # base-image: "elixir:1.19-slim"
 

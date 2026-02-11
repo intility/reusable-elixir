@@ -83,6 +83,10 @@ on:
             artifacts: |
               my-binary:apps/my_app/priv/bin
               my-assets:apps/my_app/priv/static
+      image-name:
+        type: string
+        required: false
+        description: "GHCR image name (e.g., ghcr.io/intility/my-elixir-app). Defaults to ghcr.io/${{ github.repository }}"
     secrets:
       hex-organization-key:
         required: false
@@ -203,7 +207,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@c299e40c65443455700f0fdfc63efafe5b349051 # v5.10.0
         with:
-          images: ghcr.io/${{ github.repository }}
+          images: ${{ inputs.image-name || format('ghcr.io/{0}', github.repository) }}
           sep-tags: ";"
           tags: ${{ inputs.tags }}
 
@@ -236,5 +240,5 @@ jobs:
         uses: actions/attest-build-provenance@96278af6caaf10aea03fd8d33a09a777ca52d62f # v3.2.0
         with:
           subject-digest: ${{ steps.ocibuild.outputs.digest }}
-          subject-name: ghcr.io/${{ github.repository }}
+          subject-name: ${{ inputs.image-name || format('ghcr.io/{0}', github.repository) }}
           push-to-registry: true
