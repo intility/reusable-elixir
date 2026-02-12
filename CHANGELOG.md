@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.5.0](https://github.com/intility/reusable-elixir/compare/v1.4.0...v1.5.0) (2026-02-12)
+
+
+### Features
+
+* **release:** add optional image-name input ([86d8d36](https://github.com/intility/reusable-elixir/commit/86d8d360be2ccabcc1a01ed5888f3367c6f841a5))
+* **release:** add optional image-name input ([73bcd0a](https://github.com/intility/reusable-elixir/commit/73bcd0a9ed711f5313691fa370237ae9a5e85a4a))
+
+
+### Bug Fixes
+
+* **ci:** correct pinned SHA for actions/deploy-pages v4.0.5 ([d95aefc](https://github.com/intility/reusable-elixir/commit/d95aefc356af74c7f563cca427ea71d4c2047369))
+
 ## [1.4.0](https://github.com/intility/reusable-elixir/compare/v1.3.0...v1.4.0) (2026-02-10)
 
 
