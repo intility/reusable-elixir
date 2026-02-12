@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.6.0](https://github.com/intility/reusable-elixir/compare/v1.5.1...v1.6.0) (2026-02-12)
+
+
+### Features
+
+* **test:** add directory support for mix tasks ([db9686e](https://github.com/intility/reusable-elixir/commit/db9686edfb7d7231e252e270c75ecc244e350790))
+* **test:** add directory support for mix tasks ([80cc79e](https://github.com/intility/reusable-elixir/commit/80cc79e15e6e69efc9e8676fc382cd4fa07f0173))
+
 ## [1.5.1](https://github.com/intility/reusable-elixir/compare/v1.5.0...v1.5.1) (2026-02-12)
 
 
