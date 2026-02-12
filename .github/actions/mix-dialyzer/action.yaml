@@ -6,9 +6,13 @@ inputs:
     description: MIX_ENV to use
     required: true
   plt-path:
-    description: Path to store PLT files
+    description: Path to store PLT files (relative to directory)
     required: false
     default: priv/plts
+  directory:
+    description: Directory containing the Elixir project
+    required: false
+    default: "."
 
 runs:
   using: composite
@@ -17,20 +21,22 @@ runs:
       id: plt-cache
       uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684 # v4.2.3
       with:
-        path: ${{ inputs.plt-path }}
-        key: plt-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('.tool-versions') }}-${{ hashFiles('**/mix.lock') }}
+        path: ${{ inputs.directory }}/${{ inputs.plt-path }}
+        key: plt-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles(format('{0}/.tool-versions', inputs.directory)) }}-${{ hashFiles(format('{0}/mix.lock', inputs.directory)) }}
         restore-keys: |
-          plt-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('.tool-versions') }}-
+          plt-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles(format('{0}/.tool-versions', inputs.directory)) }}-
 
     - name: Build PLT
       if: steps.plt-cache.outputs.cache-hit != 'true'
       shell: bash
+      working-directory: ${{ inputs.directory }}
       run: mix dialyzer --plt
       env:
         MIX_ENV: ${{ inputs.mix-env }}
 
     - name: Run Dialyzer
       shell: bash
+      working-directory: ${{ inputs.directory }}
       run: mix dialyzer --format github
       env:
         MIX_ENV: ${{ inputs.mix-env }}

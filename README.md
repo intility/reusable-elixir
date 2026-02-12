@@ -49,10 +49,22 @@ jobs:
       otp-version: "28"
 ```
 
+For projects where the Elixir app lives in a subdirectory:
+
+```yaml
+jobs:
+  test:
+    uses: intility/reusable-elixir/.github/workflows/elixir-test.yaml@v1
+    with:
+      directory: apps/my-elixir-app
+      postgres: ecto
+```
+
 ### Inputs
 
 | Name                    | Type    | Default  | Description                                                           |
 |:------------------------|:--------|:---------|:----------------------------------------------------------------------|
+| `directory`             | string  | `.`      | Project directory (for subdirectory support)                          |
 | `elixir-version`        | string  | -        | Elixir version (uses `.tool-versions` if not specified)               |
 | `otp-version`           | string  | -        | Erlang/OTP version (uses `.tool-versions` if not specified)           |
 | `audit`                 | boolean | `true`   | Run hex.audit and deps.audit                                          |
@@ -552,6 +564,7 @@ By default both caches are active. Jobs that only need dependencies (formatting,
 |:--------------|:-------|:---------|:---------------------------------------------------|
 | `mix-env`     | string | `test`   | MIX_ENV to cache for                               |
 | `cache-build` | string | `"true"` | Whether to cache `_build/` (set `"false"` to skip) |
+| `directory`   | string | `.`      | Directory containing the Elixir project             |
 
 The `elixir-test` workflow uses this internally — deps-only jobs skip the build cache so that `build-test` is the first to save it, and downstream jobs (`test`, `dialyzer`) restore the full build without recompiling.
 
@@ -561,20 +574,20 @@ The workflows are built from lightweight composite actions in `.github/actions/`
 
 | Action | Description |
 |:-------|:------------|
-| `install-elixir` | Install Elixir and OTP via `erlef/setup-beam` using `.tool-versions` |
-| `mix-deps-get` | Install Hex, Rebar, and fetch dependencies |
-| `mix-compile` | Compile project (`mix-env` required, optional `args`) |
-| `mix-task` | Run any mix task (`task` and `mix-env` required) |
-| `mix-test` | Run `mix test` (`mix-env` required) |
-| `mix-hex-audit` | Run `mix hex.audit` |
-| `mix-dialyzer` | Run Dialyzer with automatic PLT caching (`mix-env` required, optional `plt-path`) |
+| `install-elixir` | Install Elixir and OTP via `erlef/setup-beam` using `.tool-versions` (supports `directory`) |
+| `mix-deps-get` | Install Hex, Rebar, and fetch dependencies (supports `directory`) |
+| `mix-compile` | Compile project (`mix-env` required, optional `args`, supports `directory`) |
+| `mix-task` | Run any mix task (`task` and `mix-env` required, supports `directory`) |
+| `mix-test` | Run `mix test` (`mix-env` required, supports `directory`) |
+| `mix-hex-audit` | Run `mix hex.audit` (supports `directory`) |
+| `mix-dialyzer` | Run Dialyzer with automatic PLT caching (`mix-env` required, supports `directory`) |
 | `mix-docs` | Compile and generate documentation (`mix-env` required) |
-| `mix-cache` | Cache `deps/` and `_build/` directories |
-| `setup-tool-versions` | Generate or use `.tool-versions` file |
+| `mix-cache` | Cache `deps/` and `_build/` directories (supports `directory`) |
+| `setup-tool-versions` | Generate or use `.tool-versions` file (supports `working-directory`) |
 | `ssh-agent` | Set up SSH agent for private Git repositories |
 | `set-env` | Export environment variables from multiline input |
 | `apt-packages` | Install system packages via apt-get |
-| `download-artifacts` | Download workflow artifacts from multiline definitions |
+| `download-artifacts` | Download workflow artifacts from multiline definitions (supports `directory`) |
 | `ocibuild` | Build and push OCI images |
 
 ### Using actions directly
@@ -594,6 +607,27 @@ steps:
     with:
       mix-env: test
       task: credo --strict
+```
+
+All actions support a `directory` input (default `.`) for monorepo projects:
+
+```yaml
+steps:
+  - uses: actions/checkout@v4
+  - uses: intility/reusable-elixir/.github/actions/install-elixir@main
+    with:
+      directory: apps/my-app
+  - uses: intility/reusable-elixir/.github/actions/mix-cache@main
+    with:
+      mix-env: test
+      directory: apps/my-app
+  - uses: intility/reusable-elixir/.github/actions/mix-deps-get@main
+    with:
+      directory: apps/my-app
+  - uses: intility/reusable-elixir/.github/actions/mix-test@main
+    with:
+      mix-env: test
+      directory: apps/my-app
 ```
 
 ## Multi-Platform Builds

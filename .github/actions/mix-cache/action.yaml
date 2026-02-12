@@ -10,6 +10,10 @@ inputs:
     description: Whether to cache _build/ directory (set to false for deps-only caching)
     required: false
     default: "true"
+  directory:
+    description: Directory containing the Elixir project
+    required: false
+    default: "."
 
 runs:
   using: composite
@@ -18,28 +22,28 @@ runs:
       id: deps-cache
       uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684 # v4.2.3
       with:
-        path: deps
-        key: ${{ runner.os }}-deps-${{ hashFiles('.tool-versions') }}-${{ hashFiles('**/mix.lock') }}
+        path: ${{ inputs.directory }}/deps
+        key: ${{ runner.os }}-deps-${{ hashFiles(format('{0}/.tool-versions', inputs.directory)) }}-${{ hashFiles(format('{0}/mix.lock', inputs.directory)) }}
         restore-keys: |
-          ${{ runner.os }}-deps-${{ hashFiles('.tool-versions') }}-
+          ${{ runner.os }}-deps-${{ hashFiles(format('{0}/.tool-versions', inputs.directory)) }}-
 
     - name: Restore build cache
       if: inputs.cache-build == 'true'
       id: build-cache
       uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684 # v4.2.3
       with:
-        path: _build/${{ inputs.mix-env }}
-        key: ${{ runner.os }}-build-${{ inputs.mix-env }}-${{ hashFiles('.tool-versions') }}-${{ hashFiles('**/mix.lock') }}-${{ hashFiles('**/*.ex', '**/*.exs') }}
+        path: ${{ inputs.directory }}/_build/${{ inputs.mix-env }}
+        key: ${{ runner.os }}-build-${{ inputs.mix-env }}-${{ hashFiles(format('{0}/.tool-versions', inputs.directory)) }}-${{ hashFiles(format('{0}/mix.lock', inputs.directory)) }}-${{ hashFiles(format('{0}/**/*.ex', inputs.directory), format('{0}/**/*.exs', inputs.directory)) }}
         restore-keys: |
-          ${{ runner.os }}-build-${{ inputs.mix-env }}-${{ hashFiles('.tool-versions') }}-${{ hashFiles('**/mix.lock') }}-
-          ${{ runner.os }}-build-${{ inputs.mix-env }}-${{ hashFiles('.tool-versions') }}-
+          ${{ runner.os }}-build-${{ inputs.mix-env }}-${{ hashFiles(format('{0}/.tool-versions', inputs.directory)) }}-${{ hashFiles(format('{0}/mix.lock', inputs.directory)) }}-
+          ${{ runner.os }}-build-${{ inputs.mix-env }}-${{ hashFiles(format('{0}/.tool-versions', inputs.directory)) }}-
 
     - name: Touch cached deps files
       if: steps.deps-cache.outputs.cache-hit == 'true'
       shell: bash
-      run: find deps -type f -exec touch {} + 2>/dev/null || true
+      run: find ${{ inputs.directory }}/deps -type f -exec touch {} + 2>/dev/null || true
 
     - name: Touch cached build files
       if: steps.build-cache.outputs.cache-hit == 'true'
       shell: bash
-      run: find _build/${{ inputs.mix-env }} -type f -exec touch {} + 2>/dev/null || true
+      run: find ${{ inputs.directory }}/_build/${{ inputs.mix-env }} -type f -exec touch {} + 2>/dev/null || true

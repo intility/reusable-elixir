@@ -8,12 +8,17 @@ inputs:
   mix-env:
     description: MIX_ENV to run the task with
     required: true
+  directory:
+    description: Directory containing the Elixir project
+    required: false
+    default: "."
 
 runs:
   using: composite
   steps:
     - name: Run mix ${{ inputs.task }}
       shell: bash
+      working-directory: ${{ inputs.directory }}
       run: mix ${{ inputs.task }}
       env:
         MIX_ENV: ${{ inputs.mix-env }}

@@ -1,9 +1,16 @@
 name: Mix Hex Audit
 description: Run mix hex.audit to check for retired packages
 
+inputs:
+  directory:
+    description: Directory containing the Elixir project
+    required: false
+    default: "."
+
 runs:
   using: composite
   steps:
     - name: Audit Hex packages
       shell: bash
+      working-directory: ${{ inputs.directory }}
       run: mix hex.audit
