@@ -1,11 +1,17 @@
 name: Install Elixir
 description: Install Elixir and Erlang/OTP using .tool-versions
 
+inputs:
+  directory:
+    description: Directory containing .tool-versions file
+    required: false
+    default: "."
+
 runs:
   using: composite
   steps:
     - name: Install Elixir and OTP
       uses: erlef/setup-beam@5304e04ea2b355f03681464e683d92e3b2f18451 # v1.19.0
       with:
-        version-file: .tool-versions
+        version-file: ${{ inputs.directory }}/.tool-versions
         version-type: strict

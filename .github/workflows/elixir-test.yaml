@@ -3,6 +3,10 @@ name: Test Elixir
 on:
   workflow_call:
     inputs:
+      directory:
+        type: string
+        default: "."
+        description: The directory where the Elixir project is located
       elixir-version:
         type: string
         required: false
@@ -110,6 +114,9 @@ jobs:
   deps:
     name: Get Dependencies
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ${{ inputs.directory }}
     steps:
       - uses: intility/reusable-elixir/.github/actions/set-env@main
         if: ${{ inputs.env != '' }}
@@ -120,24 +127,33 @@ jobs:
         with:
           elixir-version: ${{ inputs.elixir-version }}
           otp-version: ${{ inputs.otp-version }}
+          working-directory: ${{ inputs.directory }}
       - uses: intility/reusable-elixir/.github/actions/ssh-agent@main
         with:
           ssh-private-key: ${{ secrets.ssh-private-key }}
       - uses: intility/reusable-elixir/.github/actions/install-elixir@main
+        with:
+          directory: ${{ inputs.directory }}
       - uses: intility/reusable-elixir/.github/actions/mix-cache@main
         with:
           mix-env: test
           cache-build: "false"
+          directory: ${{ inputs.directory }}
       - name: Authorize Hex organization
         if: ${{ inputs.hex-organization != '' }}
         run: mix hex.organization auth ${{ inputs.hex-organization }} --key ${{ secrets.hex-organization-key }}
       - uses: intility/reusable-elixir/.github/actions/mix-deps-get@main
+        with:
+          directory: ${{ inputs.directory }}
 
   audit:
     name: Audit Dependencies
     runs-on: ubuntu-latest
     needs: deps
     if: ${{ inputs.audit }}
+    defaults:
+      run:
+        working-directory: ${{ inputs.directory }}
     steps:
       - uses: intility/reusable-elixir/.github/actions/set-env@main
         if: ${{ inputs.env != '' }}
@@ -148,20 +164,29 @@ jobs:
         with:
           elixir-version: ${{ inputs.elixir-version }}
           otp-version: ${{ inputs.otp-version }}
+          working-directory: ${{ inputs.directory }}
       - uses: intility/reusable-elixir/.github/actions/ssh-agent@main
         with:
           ssh-private-key: ${{ secrets.ssh-private-key }}
       - uses: intility/reusable-elixir/.github/actions/install-elixir@main
+        with:
+          directory: ${{ inputs.directory }}
       - uses: intility/reusable-elixir/.github/actions/mix-cache@main
         with:
           mix-env: test
           cache-build: "false"
+          directory: ${{ inputs.directory }}
       - uses: intility/reusable-elixir/.github/actions/mix-hex-audit@main
+        with:
+          directory: ${{ inputs.directory }}
 
   build-test:
     name: Build Test
     runs-on: ubuntu-latest
     needs: deps
+    defaults:
+      run:
+        working-directory: ${{ inputs.directory }}
     steps:
       - uses: intility/reusable-elixir/.github/actions/set-env@main
         if: ${{ inputs.env != '' }}
@@ -176,28 +201,37 @@ jobs:
         with:
           elixir-version: ${{ inputs.elixir-version }}
           otp-version: ${{ inputs.otp-version }}
+          working-directory: ${{ inputs.directory }}
       - uses: intility/reusable-elixir/.github/actions/ssh-agent@main
         with:
           ssh-private-key: ${{ secrets.ssh-private-key }}
       - uses: intility/reusable-elixir/.github/actions/install-elixir@main
+        with:
+          directory: ${{ inputs.directory }}
       - uses: intility/reusable-elixir/.github/actions/mix-cache@main
         with:
           mix-env: test
+          directory: ${{ inputs.directory }}
       - uses: intility/reusable-elixir/.github/actions/download-artifacts@main
         if: ${{ inputs.artifacts != '' }}
         with:
           artifacts: ${{ inputs.artifacts }}
+          directory: ${{ inputs.directory }}
       - name: Authorize Hex organization
         if: ${{ inputs.hex-organization != '' }}
         run: mix hex.organization auth ${{ inputs.hex-organization }} --key ${{ secrets.hex-organization-key }}
       - uses: intility/reusable-elixir/.github/actions/mix-compile@main
         with:
           mix-env: test
+          directory: ${{ inputs.directory }}
 
   unused-deps:
     name: Check Unused Dependencies
     runs-on: ubuntu-latest
     needs: deps
+    defaults:
+      run:
+        working-directory: ${{ inputs.directory }}
     steps:
       - uses: intility/reusable-elixir/.github/actions/set-env@main
         if: ${{ inputs.env != '' }}
@@ -208,20 +242,28 @@ jobs:
         with:
           elixir-version: ${{ inputs.elixir-version }}
           otp-version: ${{ inputs.otp-version }}
+          working-directory: ${{ inputs.directory }}
       - uses: intility/reusable-elixir/.github/actions/install-elixir@main
+        with:
+          directory: ${{ inputs.directory }}
       - uses: intility/reusable-elixir/.github/actions/mix-cache@main
         with:
           mix-env: test
           cache-build: "false"
+          directory: ${{ inputs.directory }}
       - uses: intility/reusable-elixir/.github/actions/mix-task@main
         with:
           mix-env: test
           task: deps.unlock --check-unused
+          directory: ${{ inputs.directory }}
 
   formatter:
     name: Check Formatting
     runs-on: ubuntu-latest
     needs: deps
+    defaults:
+      run:
+        working-directory: ${{ inputs.directory }}
     steps:
       - uses: intility/reusable-elixir/.github/actions/set-env@main
         if: ${{ inputs.env != '' }}
@@ -232,15 +274,20 @@ jobs:
         with:
           elixir-version: ${{ inputs.elixir-version }}
           otp-version: ${{ inputs.otp-version }}
+          working-directory: ${{ inputs.directory }}
       - uses: intility/reusable-elixir/.github/actions/install-elixir@main
+        with:
+          directory: ${{ inputs.directory }}
       - uses: intility/reusable-elixir/.github/actions/mix-cache@main
         with:
           mix-env: test
           cache-build: "false"
+          directory: ${{ inputs.directory }}
       - uses: intility/reusable-elixir/.github/actions/mix-task@main
         with:
           mix-env: test
           task: format --check-formatted
+          directory: ${{ inputs.directory }}
       - name: Prepare Spark extensions
         if: ${{ inputs.spark-formatter && inputs.spark-extensions != '' }}
         id: spark-extensions
@@ -254,12 +301,16 @@ jobs:
         with:
           mix-env: test
           task: spark.formatter --check ${{ steps.spark-extensions.outputs.args }}
+          directory: ${{ inputs.directory }}
 
   credo:
     name: Credo
     runs-on: ubuntu-latest
     needs: deps
     if: ${{ inputs.credo }}
+    defaults:
+      run:
+        working-directory: ${{ inputs.directory }}
     steps:
       - uses: intility/reusable-elixir/.github/actions/set-env@main
         if: ${{ inputs.env != '' }}
@@ -270,20 +321,28 @@ jobs:
         with:
           elixir-version: ${{ inputs.elixir-version }}
           otp-version: ${{ inputs.otp-version }}
+          working-directory: ${{ inputs.directory }}
       - uses: intility/reusable-elixir/.github/actions/install-elixir@main
+        with:
+          directory: ${{ inputs.directory }}
       - uses: intility/reusable-elixir/.github/actions/mix-cache@main
         with:
           mix-env: test
+          directory: ${{ inputs.directory }}
       - uses: intility/reusable-elixir/.github/actions/mix-task@main
         with:
           mix-env: test
           task: credo --strict
+          directory: ${{ inputs.directory }}
 
   dialyzer:
     name: Dialyzer
     runs-on: ubuntu-latest
     needs: deps
     if: ${{ inputs.dialyzer }}
+    defaults:
+      run:
+        working-directory: ${{ inputs.directory }}
     steps:
       - uses: intility/reusable-elixir/.github/actions/set-env@main
         if: ${{ inputs.env != '' }}
@@ -294,22 +353,30 @@ jobs:
         with:
           elixir-version: ${{ inputs.elixir-version }}
           otp-version: ${{ inputs.otp-version }}
+          working-directory: ${{ inputs.directory }}
       - uses: intility/reusable-elixir/.github/actions/ssh-agent@main
         with:
           ssh-private-key: ${{ secrets.ssh-private-key }}
       - uses: intility/reusable-elixir/.github/actions/install-elixir@main
+        with:
+          directory: ${{ inputs.directory }}
       - uses: intility/reusable-elixir/.github/actions/mix-cache@main
         with:
           mix-env: dev
+          directory: ${{ inputs.directory }}
       - uses: intility/reusable-elixir/.github/actions/mix-dialyzer@main
         with:
           mix-env: dev
+          directory: ${{ inputs.directory }}
 
   sobelow:
     name: Sobelow
     runs-on: ubuntu-latest
     needs: deps
     if: ${{ inputs.sobelow }}
+    defaults:
+      run:
+        working-directory: ${{ inputs.directory }}
     steps:
       - uses: intility/reusable-elixir/.github/actions/set-env@main
         if: ${{ inputs.env != '' }}
@@ -320,19 +387,27 @@ jobs:
         with:
           elixir-version: ${{ inputs.elixir-version }}
           otp-version: ${{ inputs.otp-version }}
+          working-directory: ${{ inputs.directory }}
       - uses: intility/reusable-elixir/.github/actions/install-elixir@main
+        with:
+          directory: ${{ inputs.directory }}
       - uses: intility/reusable-elixir/.github/actions/mix-cache@main
         with:
           mix-env: test
+          directory: ${{ inputs.directory }}
       - uses: intility/reusable-elixir/.github/actions/mix-task@main
         with:
           mix-env: test
           task: sobelow
+          directory: ${{ inputs.directory }}
 
   test:
     name: Test
     runs-on: ubuntu-latest
     needs: build-test
+    defaults:
+      run:
+        working-directory: ${{ inputs.directory }}
     services:
       postgres:
         image: ${{ inputs.postgres != '' && format('postgres:{0}', inputs.postgres-version) || '' }}
@@ -359,14 +434,19 @@ jobs:
         with:
           elixir-version: ${{ inputs.elixir-version }}
           otp-version: ${{ inputs.otp-version }}
+          working-directory: ${{ inputs.directory }}
       - uses: intility/reusable-elixir/.github/actions/install-elixir@main
+        with:
+          directory: ${{ inputs.directory }}
       - uses: intility/reusable-elixir/.github/actions/mix-cache@main
         with:
           mix-env: test
+          directory: ${{ inputs.directory }}
       - uses: intility/reusable-elixir/.github/actions/download-artifacts@main
         if: ${{ inputs.artifacts != '' }}
         with:
           artifacts: ${{ inputs.artifacts }}
+          directory: ${{ inputs.directory }}
 
       - name: Setup Node
         if: ${{ inputs.npm-install }}
@@ -375,12 +455,12 @@ jobs:
           node-version: ${{ inputs.node-version }}
           registry-url: ${{ inputs.npm-registry }}
           cache: npm
-          cache-dependency-path: "**/package-lock.json"
+          cache-dependency-path: ${{ inputs.directory }}/${{ inputs.npm-working-directory }}/package-lock.json
 
       - name: Run npm install
         if: ${{ inputs.npm-install }}
         run: npm ci
-        working-directory: ${{ inputs.npm-working-directory }}
+        working-directory: ${{ inputs.directory }}/${{ inputs.npm-working-directory }}
         env:
           NODE_AUTH_TOKEN: ${{ secrets.npm-token }}
 
@@ -390,24 +470,28 @@ jobs:
         with:
           mix-env: test
           task: ash_postgres.generate_migrations --check
+          directory: ${{ inputs.directory }}
 
       - uses: intility/reusable-elixir/.github/actions/mix-task@main
         if: ${{ inputs.postgres == 'ash' }}
         with:
           mix-env: test
           task: ash_postgres.create
+          directory: ${{ inputs.directory }}
 
       - uses: intility/reusable-elixir/.github/actions/mix-task@main
         if: ${{ inputs.postgres == 'ash' }}
         with:
           mix-env: test
           task: ash_postgres.migrate
+          directory: ${{ inputs.directory }}
 
       - uses: intility/reusable-elixir/.github/actions/mix-task@main
         if: ${{ inputs.postgres == 'ash' }}
         with:
           mix-env: test
           task: ash_postgres.migrate --tenants
+          directory: ${{ inputs.directory }}
 
       # Ecto PostgreSQL
       - uses: intility/reusable-elixir/.github/actions/mix-task@main
@@ -415,12 +499,14 @@ jobs:
         with:
           mix-env: test
           task: ecto.create
+          directory: ${{ inputs.directory }}
 
       - uses: intility/reusable-elixir/.github/actions/mix-task@main
         if: ${{ inputs.postgres == 'ecto' }}
         with:
           mix-env: test
           task: ecto.migrate
+          directory: ${{ inputs.directory }}
 
       # Ash SQLite
       - uses: intility/reusable-elixir/.github/actions/mix-task@main
@@ -428,18 +514,21 @@ jobs:
         with:
           mix-env: test
           task: ash_sqlite.generate_migrations --check
+          directory: ${{ inputs.directory }}
 
       - uses: intility/reusable-elixir/.github/actions/mix-task@main
         if: ${{ inputs.sqlite == 'ash' }}
         with:
           mix-env: test
           task: ash_sqlite.create
+          directory: ${{ inputs.directory }}
 
       - uses: intility/reusable-elixir/.github/actions/mix-task@main
         if: ${{ inputs.sqlite == 'ash' }}
         with:
           mix-env: test
           task: ash_sqlite.migrate
+          directory: ${{ inputs.directory }}
 
       # Ecto SQLite
       - uses: intility/reusable-elixir/.github/actions/mix-task@main
@@ -447,17 +536,20 @@ jobs:
         with:
           mix-env: test
           task: ecto.create
+          directory: ${{ inputs.directory }}
 
       - uses: intility/reusable-elixir/.github/actions/mix-task@main
         if: ${{ inputs.sqlite == 'ecto' }}
         with:
           mix-env: test
           task: ecto.migrate
+          directory: ${{ inputs.directory }}
 
       # Run tests
       - uses: intility/reusable-elixir/.github/actions/mix-test@main
         with:
           mix-env: test
+          directory: ${{ inputs.directory }}
         env:
           PGHOST: localhost
           PGUSER: postgres

@@ -5,12 +5,17 @@ inputs:
   mix-env:
     description: MIX_ENV to run tests with
     required: true
+  directory:
+    description: Directory containing the Elixir project
+    required: false
+    default: "."
 
 runs:
   using: composite
   steps:
     - name: Run tests
       shell: bash
+      working-directory: ${{ inputs.directory }}
       run: mix test
       env:
         MIX_ENV: ${{ inputs.mix-env }}

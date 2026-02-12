@@ -9,12 +9,17 @@ inputs:
     description: Additional arguments to pass to mix compile
     required: false
     default: ""
+  directory:
+    description: Directory containing the Elixir project
+    required: false
+    default: "."
 
 runs:
   using: composite
   steps:
     - name: Compile
       shell: bash
+      working-directory: ${{ inputs.directory }}
       run: mix compile ${{ inputs.args }}
       env:
         MIX_ENV: ${{ inputs.mix-env }}
