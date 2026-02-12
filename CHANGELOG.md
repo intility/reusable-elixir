@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.1](https://github.com/intility/reusable-elixir/compare/v1.5.0...v1.5.1) (2026-02-12)
+
+
+### Bug Fixes
+
+* **ci:** remove invalid expression from input description ([b89669c](https://github.com/intility/reusable-elixir/commit/b89669c8009d744b73d51c71ae2699e35643adac))
+
 ## [1.5.0](https://github.com/intility/reusable-elixir/compare/v1.4.0...v1.5.0) (2026-02-12)
 
 
