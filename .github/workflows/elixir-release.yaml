@@ -86,7 +86,7 @@ on:
       image-name:
         type: string
         required: false
-        description: "GHCR image name (e.g., ghcr.io/intility/my-elixir-app). Defaults to ghcr.io/${{ github.repository }}"
+        description: "GHCR image name (e.g., ghcr.io/intility/my-elixir-app). Defaults to ghcr.io/<owner>/<repo>"
     secrets:
       hex-organization-key:
         required: false
