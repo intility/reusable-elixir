@@ -226,6 +226,7 @@ jobs:
         with:
           tags: ${{ steps.meta.outputs.tags }}
           registry: ghcr.io
+          directory: ${{ inputs.directory }}
           base-image: ${{ inputs.base-image }}
           platforms: ${{ inputs.platforms }}
           release: ${{ inputs.release }}
