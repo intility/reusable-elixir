@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.6.1](https://github.com/intility/reusable-elixir/compare/v1.6.0...v1.6.1) (2026-02-13)
+
+
+### Bug Fixes
+
+* **release:** directory input on ocibuild action ([9dec86b](https://github.com/intility/reusable-elixir/commit/9dec86bf7003ac97dc0dfee7fb89315bb068a63c))
+* **release:** directory input on ocibuild action ([eb9ba2c](https://github.com/intility/reusable-elixir/commit/eb9ba2c02038e88a48870779148005c2ec18da12))
+
 ## [1.6.0](https://github.com/intility/reusable-elixir/compare/v1.5.1...v1.6.0) (2026-02-12)
 
 
