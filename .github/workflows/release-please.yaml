@@ -14,6 +14,10 @@ concurrency:
 jobs:
   release-please:
     runs-on: ubuntu-latest
+    outputs:
+      releases_created: ${{ steps.release.outputs.releases_created }}
+      tag_name: ${{ steps.release.outputs.tag_name }}
+      sha: ${{ steps.release.outputs.sha }}
     steps:
       - uses: actions/create-github-app-token@29824e69f54612133e76f7eaac726eef6c875baf # v2.2.1
         id: app-token
@@ -22,7 +26,47 @@ jobs:
           private-key: ${{ secrets.RELEASE_BOT_PRIVATE_KEY }}
 
       - uses: googleapis/release-please-action@16a9c90856f42705d54a6fda1823352bdc62cf38 # v4.4.0
+        id: release
         with:
           token: ${{ steps.app-token.outputs.token }}
           config-file: .github/release-please-config.json
           manifest-file: .github/release-please-manifest.json
+
+  update-pinned-actions:
+    name: Update pinned action refs
+    runs-on: ubuntu-latest
+    needs: release-please
+    if: ${{ needs.release-please.outputs.releases_created == 'true' }}
+    steps:
+      - uses: actions/create-github-app-token@29824e69f54612133e76f7eaac726eef6c875baf # v2.2.1
+        id: app-token
+        with:
+          app-id: ${{ vars.RELEASE_BOT_APP_ID }}
+          private-key: ${{ secrets.RELEASE_BOT_PRIVATE_KEY }}
+
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v4
+        with:
+          token: ${{ steps.app-token.outputs.token }}
+
+      - name: Update internal action pins to release SHA
+        env:
+          NEW_SHA: ${{ needs.release-please.outputs.sha }}
+          TAG_NAME: ${{ needs.release-please.outputs.tag_name }}
+        run: |
+          for file in .github/workflows/elixir-test.yaml .github/workflows/elixir-docs.yaml .github/workflows/elixir-release.yaml; do
+            sed -i "s|\(intility/reusable-elixir/.github/actions/[^@]*\)@[a-f0-9]\{40\} # .*|\1@${NEW_SHA} # ${TAG_NAME}|g" "$file"
+          done
+
+      - name: Commit and push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add .github/workflows/
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "chore: pin internal actions to ${TAG_NAME}"
+            git push
+          fi
+        env:
+          TAG_NAME: ${{ needs.release-please.outputs.tag_name }}

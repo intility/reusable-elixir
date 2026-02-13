@@ -2,12 +2,7 @@
   "$schema": "https://raw.githubusercontent.com/googleapis/release-please/refs/heads/main/schemas/config.json",
   "packages": {
     ".": {
-      "release-type": "simple",
-      "extra-files": [
-        ".github/workflows/elixir-test.yaml",
-        ".github/workflows/elixir-docs.yaml",
-        ".github/workflows/elixir-release.yaml"
-      ]
+      "release-type": "simple"
     }
   }
 }
