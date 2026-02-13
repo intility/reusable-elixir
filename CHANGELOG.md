@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.6.2](https://github.com/intility/reusable-elixir/compare/v1.6.1...v1.6.2) (2026-02-13)
+
+
+### Bug Fixes
+
+* resolve 107 code scanning security alerts ([#36](https://github.com/intility/reusable-elixir/issues/36)) ([d40fa41](https://github.com/intility/reusable-elixir/commit/d40fa41fb092ab6b0f81159f6501eab148f6b1f1))
+
 ## [1.6.1](https://github.com/intility/reusable-elixir/compare/v1.6.0...v1.6.1) (2026-02-13)
 
 
