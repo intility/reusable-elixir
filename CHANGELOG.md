@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.6.4](https://github.com/intility/reusable-elixir/compare/v1.6.3...v1.6.4) (2026-02-13)
+
+
+### Bug Fixes
+
+* **ci:** restore build cache in formatter job ([#42](https://github.com/intility/reusable-elixir/issues/42)) ([9e6b6aa](https://github.com/intility/reusable-elixir/commit/9e6b6aab140378f2a0eda7e3c64b307411fb033e))
+
 ## [1.6.3](https://github.com/intility/reusable-elixir/compare/v1.6.2...v1.6.3) (2026-02-13)
 
 
