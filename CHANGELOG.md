@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.6.3](https://github.com/intility/reusable-elixir/compare/v1.6.2...v1.6.3) (2026-02-13)
+
+
+### Bug Fixes
+
+* **ci:** use conventional commit prefix for security fixes ([#39](https://github.com/intility/reusable-elixir/issues/39)) ([86e9b7a](https://github.com/intility/reusable-elixir/commit/86e9b7af6936c22b844b44e302ef22c207d4450f))
+
 ## [1.6.2](https://github.com/intility/reusable-elixir/compare/v1.6.1...v1.6.2) (2026-02-13)
 
 
