@@ -32,6 +32,10 @@ inputs:
   push-password:
     description: Registry password/token for pushing
     required: true
+  directory:
+    description: Working directory for running mix ocibuild
+    required: false
+    default: "."
 
 outputs:
   digest:
@@ -50,6 +54,7 @@ runs:
         OCIBUILD_PUSH_USERNAME: ${{ inputs.push-username }}
         OCIBUILD_PUSH_PASSWORD: ${{ inputs.push-password }}
       shell: bash
+      working-directory: ${{ inputs.directory }}
       run: |
 
         # Set SOURCE_DATE_EPOCH if provided (for reproducible builds and layer caching)
