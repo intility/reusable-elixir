@@ -266,7 +266,7 @@ jobs:
   formatter:
     name: Check Formatting
     runs-on: ubuntu-latest
-    needs: deps
+    needs: build-test
     defaults:
       run:
         working-directory: ${{ inputs.directory }}
@@ -287,7 +287,6 @@ jobs:
       - uses: intility/reusable-elixir/.github/actions/mix-cache@8da71a9d5c34808dc7d4325bd221f6cac7f2a1e4 # v1.6.1
         with:
           mix-env: test
-          cache-build: "false"
           directory: ${{ inputs.directory }}
       - uses: intility/reusable-elixir/.github/actions/mix-task@8da71a9d5c34808dc7d4325bd221f6cac7f2a1e4 # v1.6.1
         with:
