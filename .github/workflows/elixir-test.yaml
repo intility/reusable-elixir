@@ -313,7 +313,7 @@ jobs:
   credo:
     name: Credo
     runs-on: ubuntu-latest
-    needs: deps
+    needs: build-test
     if: ${{ inputs.credo }}
     defaults:
       run:
@@ -379,7 +379,7 @@ jobs:
   sobelow:
     name: Sobelow
     runs-on: ubuntu-latest
-    needs: deps
+    needs: build-test
     if: ${{ inputs.sobelow }}
     defaults:
       run:
