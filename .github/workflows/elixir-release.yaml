@@ -86,7 +86,7 @@ on:
       image-name:
         type: string
         required: false
-        description: "GHCR image name (e.g., ghcr.io/intility/my-elixir-app). Defaults to ghcr.io/<owner>/<repo>"
+        description: "Image name without registry prefix (e.g., my-app or my-org/my-app). Will be prefixed with ghcr.io/<owner>/. Defaults to the repository name."
     secrets:
       hex-organization-key:
         required: false
@@ -209,7 +209,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@c299e40c65443455700f0fdfc63efafe5b349051 # v5.10.0
         with:
-          images: ${{ inputs.image-name || format('ghcr.io/{0}', github.repository) }}
+          images: ghcr.io/${{ github.repository_owner }}/${{ inputs.image-name || github.event.repository.name }}
           sep-tags: ";"
           tags: ${{ inputs.tags }}
 
@@ -243,5 +243,5 @@ jobs:
         uses: actions/attest-build-provenance@96278af6caaf10aea03fd8d33a09a777ca52d62f # v3.2.0
         with:
           subject-digest: ${{ steps.ocibuild.outputs.digest }}
-          subject-name: ${{ inputs.image-name || format('ghcr.io/{0}', github.repository) }}
+          subject-name: ghcr.io/${{ github.repository_owner }}/${{ inputs.image-name || github.event.repository.name }}
           push-to-registry: true

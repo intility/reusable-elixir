@@ -185,7 +185,7 @@ jobs:
 | `elixir-version`    | string  | -                  | Elixir version (uses `.tool-versions` if not specified)               |
 | `otp-version`       | string  | -                  | Erlang/OTP version (uses `.tool-versions` if not specified)           |
 | `hex-organization`  | string  | -                  | Hex organization for private packages                                 |
-| `image-name`        | string  | -                  | GHCR image name (defaults to `ghcr.io/${{ github.repository }}`)      |
+| `image-name`        | string  | -                  | Image name without registry prefix (e.g., `my-app`). Prefixed with `ghcr.io/<owner>/`. Defaults to repository name. |
 | `docker`            | boolean | `true`             | Build and push OCI image                                              |
 | `base-image`        | string  | -                  | Override base image (e.g., `elixir:1.19-slim`)                        |
 | `platforms`         | string  | -                  | Multi-arch platforms (e.g., `linux/amd64,linux/arm64`)                |
