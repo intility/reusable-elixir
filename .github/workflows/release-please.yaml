@@ -58,6 +58,8 @@ jobs:
           done
 
       - name: Commit and push
+        env:
+          TAG_NAME: ${{ needs.release-please.outputs.tag_name }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -68,5 +70,3 @@ jobs:
             git commit -m "chore: pin internal actions to ${TAG_NAME}"
             git push
           fi
-        env:
-          TAG_NAME: ${{ needs.release-please.outputs.tag_name }}
