@@ -1,5 +1,16 @@
 # Changelog
 
+## [2.0.0](https://github.com/intility/reusable-elixir/compare/v1.6.4...v2.0.0) (2026-02-13)
+
+
+### ⚠ BREAKING CHANGES
+
+* align image-name input with reusable-docker convention ([#44](https://github.com/intility/reusable-elixir/issues/44))
+
+### Bug Fixes
+
+* align image-name input with reusable-docker convention ([#44](https://github.com/intility/reusable-elixir/issues/44)) ([4f1efbb](https://github.com/intility/reusable-elixir/commit/4f1efbbcb96b1259cea7154388c0097215dd41bc))
+
 ## [1.6.4](https://github.com/intility/reusable-elixir/compare/v1.6.3...v1.6.4) (2026-02-13)
 
 
