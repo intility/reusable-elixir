@@ -27,8 +27,12 @@ runs:
       if: ${{ inputs.elixir-version != '' }}
       shell: bash
       working-directory: ${{ inputs.working-directory }}
+      env:
+        ELIXIR_VERSION: ${{ inputs.elixir-version }}
+        OTP_VERSION: ${{ inputs.otp-version }}
+        WORKING_DIR: ${{ inputs.working-directory }}
       run: |
-        echo "elixir ${{ inputs.elixir-version }}" > .tool-versions
-        echo "erlang ${{ inputs.otp-version }}" >> .tool-versions
-        echo "Generated .tool-versions in ${{ inputs.working-directory }}:"
+        echo "elixir ${ELIXIR_VERSION}" > .tool-versions
+        echo "erlang ${OTP_VERSION}" >> .tool-versions
+        echo "Generated .tool-versions in ${WORKING_DIR}:"
         cat .tool-versions

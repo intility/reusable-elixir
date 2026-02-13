@@ -115,18 +115,18 @@ jobs:
         with:
           fetch-depth: 1
 
-      - uses: intility/reusable-elixir/.github/actions/apt-packages@main
+      - uses: intility/reusable-elixir/.github/actions/apt-packages@8da71a9d5c34808dc7d4325bd221f6cac7f2a1e4 # v1.6.1
         if: ${{ inputs.apt-packages != '' }}
         with:
           packages: ${{ inputs.apt-packages }}
 
-      - uses: intility/reusable-elixir/.github/actions/setup-tool-versions@main
+      - uses: intility/reusable-elixir/.github/actions/setup-tool-versions@8da71a9d5c34808dc7d4325bd221f6cac7f2a1e4 # v1.6.1
         with:
           elixir-version: ${{ inputs.elixir-version }}
           otp-version: ${{ inputs.otp-version }}
           working-directory: ${{ inputs.directory }}
 
-      - uses: intility/reusable-elixir/.github/actions/ssh-agent@main
+      - uses: intility/reusable-elixir/.github/actions/ssh-agent@8da71a9d5c34808dc7d4325bd221f6cac7f2a1e4 # v1.6.1
         with:
           ssh-private-key: ${{ secrets.ssh-private-key }}
 
@@ -148,16 +148,18 @@ jobs:
 
       - name: Authorize Hex organization
         if: ${{ inputs.hex-organization != '' }}
-        run: mix hex.organization auth ${{ inputs.hex-organization }} --key ${{ secrets.hex-organization-key }}
         env:
           MIX_ENV: prod
+          HEX_ORG: ${{ inputs.hex-organization }}
+          HEX_ORG_KEY: ${{ secrets.hex-organization-key }}
+        run: mix hex.organization auth "${HEX_ORG}" --key "${HEX_ORG_KEY}"
 
       - name: Install dependencies
         run: mix deps.get
         env:
           MIX_ENV: prod
 
-      - uses: intility/reusable-elixir/.github/actions/download-artifacts@main
+      - uses: intility/reusable-elixir/.github/actions/download-artifacts@8da71a9d5c34808dc7d4325bd221f6cac7f2a1e4 # v1.6.1
         if: ${{ inputs.artifacts != '' }}
         with:
           artifacts: ${{ inputs.artifacts }}
@@ -222,7 +224,7 @@ jobs:
       - name: Build and push OCI image
         if: ${{ inputs.docker }}
         id: ocibuild
-        uses: intility/reusable-elixir/.github/actions/ocibuild@main
+        uses: intility/reusable-elixir/.github/actions/ocibuild@8da71a9d5c34808dc7d4325bd221f6cac7f2a1e4 # v1.6.1
         with:
           tags: ${{ steps.meta.outputs.tags }}
           registry: ghcr.io

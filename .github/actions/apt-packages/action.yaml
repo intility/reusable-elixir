@@ -11,6 +11,8 @@ runs:
   steps:
     - name: Install APT packages
       shell: bash
+      env:
+        PACKAGES: ${{ inputs.packages }}
       run: |
         sudo apt-get update
-        sudo apt-get install -y --no-install-recommends ${{ inputs.packages }}
+        sudo apt-get install -y --no-install-recommends ${PACKAGES}

@@ -53,35 +53,43 @@ runs:
         OCIBUILD_PULL_PASSWORD: ${{ inputs.pull-password }}
         OCIBUILD_PUSH_USERNAME: ${{ inputs.push-username }}
         OCIBUILD_PUSH_PASSWORD: ${{ inputs.push-password }}
+        INPUT_SOURCE_DATE_EPOCH: ${{ inputs.source-date-epoch }}
+        INPUT_TAGS: ${{ inputs.tags }}
+        INPUT_BASE_IMAGE: ${{ inputs.base-image }}
+        INPUT_PLATFORMS: ${{ inputs.platforms }}
+        INPUT_RELEASE: ${{ inputs.release }}
+        INPUT_REGISTRY: ${{ inputs.registry }}
       shell: bash
       working-directory: ${{ inputs.directory }}
       run: |
 
         # Set SOURCE_DATE_EPOCH if provided (for reproducible builds and layer caching)
-        if [ -n "${{ inputs.source-date-epoch }}" ]; then
-          export SOURCE_DATE_EPOCH="${{ inputs.source-date-epoch }}"
+        if [ -n "${INPUT_SOURCE_DATE_EPOCH}" ]; then
+          export SOURCE_DATE_EPOCH="${INPUT_SOURCE_DATE_EPOCH}"
         fi
 
-        # Set created annotation to actual build time
-        OCIBUILD_ARGS="--tag '${{ inputs.tags }}' -a org.opencontainers.image.created=$(date +%s)"
+        # Build argument array safely
+        ARGS=()
+        ARGS+=(--tag "${INPUT_TAGS}")
+        ARGS+=(-a "org.opencontainers.image.created=$(date +%s)")
 
         # Add optional base image override
-        if [ -n "${{ inputs.base-image }}" ]; then
-          OCIBUILD_ARGS="$OCIBUILD_ARGS --base ${{ inputs.base-image }}"
+        if [ -n "${INPUT_BASE_IMAGE}" ]; then
+          ARGS+=(--base "${INPUT_BASE_IMAGE}")
         fi
 
         # Add optional platforms for multi-arch
-        if [ -n "${{ inputs.platforms }}" ]; then
-          OCIBUILD_ARGS="$OCIBUILD_ARGS --platform ${{ inputs.platforms }}"
+        if [ -n "${INPUT_PLATFORMS}" ]; then
+          ARGS+=(--platform "${INPUT_PLATFORMS}")
         fi
 
         # Add optional release name
-        if [ -n "${{ inputs.release }}" ]; then
-          OCIBUILD_ARGS="$OCIBUILD_ARGS --release ${{ inputs.release }}"
+        if [ -n "${INPUT_RELEASE}" ]; then
+          ARGS+=(--release "${INPUT_RELEASE}")
         fi
 
         # Build and push in one step
-        OUTPUT=$(eval mix ocibuild $OCIBUILD_ARGS --push "${{ inputs.registry }}" 2>&1 | tee /dev/stderr)
+        OUTPUT=$(mix ocibuild "${ARGS[@]}" --push "${INPUT_REGISTRY}" 2>&1 | tee /dev/stderr)
 
         # Extract digest from output (format: sha256:...)
         DIGEST=$(echo "$OUTPUT" | grep -oE 'sha256:[a-f0-9]{64}' | tail -1)

@@ -16,9 +16,10 @@ inputs:
 runs:
   using: composite
   steps:
-    - name: Run mix ${{ inputs.task }}
+    - name: Run mix task
       shell: bash
       working-directory: ${{ inputs.directory }}
-      run: mix ${{ inputs.task }}
       env:
         MIX_ENV: ${{ inputs.mix-env }}
+        MIX_TASK: ${{ inputs.task }}
+      run: mix ${MIX_TASK}

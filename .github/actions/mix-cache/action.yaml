@@ -41,9 +41,14 @@ runs:
     - name: Touch cached deps files
       if: steps.deps-cache.outputs.cache-hit == 'true'
       shell: bash
-      run: find ${{ inputs.directory }}/deps -type f -exec touch {} + 2>/dev/null || true
+      env:
+        DIRECTORY: ${{ inputs.directory }}
+      run: find "${DIRECTORY}/deps" -type f -exec touch {} + 2>/dev/null || true
 
     - name: Touch cached build files
       if: steps.build-cache.outputs.cache-hit == 'true'
       shell: bash
-      run: find ${{ inputs.directory }}/_build/${{ inputs.mix-env }} -type f -exec touch {} + 2>/dev/null || true
+      env:
+        DIRECTORY: ${{ inputs.directory }}
+        MIX_ENV_NAME: ${{ inputs.mix-env }}
+      run: find "${DIRECTORY}/_build/${MIX_ENV_NAME}" -type f -exec touch {} + 2>/dev/null || true
