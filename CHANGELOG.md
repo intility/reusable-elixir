@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.1](https://github.com/intility/reusable-elixir/compare/v2.0.0...v2.0.1) (2026-02-16)
+
+
+### Bug Fixes
+
+* **ci:** Add mix deps get step before docs generation ([a41c3df](https://github.com/intility/reusable-elixir/commit/a41c3df3c5ff9b3c87b9de9c97fe855cb83b8f59))
+
 ## [2.0.0](https://github.com/intility/reusable-elixir/compare/v1.6.4...v2.0.0) (2026-02-13)
 
 
