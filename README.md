@@ -62,28 +62,29 @@ jobs:
 
 ### Inputs
 
-| Name                    | Type    | Default  | Description                                                           |
-|:------------------------|:--------|:---------|:----------------------------------------------------------------------|
-| `directory`             | string  | `.`      | Project directory (for subdirectory support)                          |
-| `elixir-version`        | string  | -        | Elixir version (uses `.tool-versions` if not specified)               |
-| `otp-version`           | string  | -        | Erlang/OTP version (uses `.tool-versions` if not specified)           |
-| `audit`                 | boolean | `true`   | Run hex.audit and deps.audit                                          |
-| `credo`                 | boolean | `true`   | Run Credo static analysis                                             |
-| `dialyzer`              | boolean | `true`   | Run Dialyzer type checking                                            |
-| `sobelow`               | boolean | `false`  | Run Sobelow security scanner (Phoenix projects)                       |
-| `postgres`              | string  | -        | PostgreSQL migrations: `ash` or `ecto` (starts service automatically) |
-| `postgres-version`      | string  | `18`     | PostgreSQL version                                                    |
-| `sqlite`                | string  | -        | SQLite migrations: `ash` or `ecto`                                    |
-| `npm-install`           | boolean | `false`  | Run npm install for assets                                            |
-| `npm-working-directory` | string  | `assets` | Directory for npm install                                             |
-| `npm-registry`          | string  | -        | Custom NPM registry URL (e.g., `https://npm.pkg.github.com`)          |
-| `node-version`          | string  | `latest` | Node.js version                                                       |
-| `spark-formatter`       | boolean | `false`  | Check Spark DSL formatting                                            |
-| `spark-extensions`      | string  | -        | Spark DSL extensions for formatter (multiline, one per line)          |
-| `hex-organization`      | string  | -        | Hex organization for private packages                                 |
-| `apt-packages`          | string  | -        | Space-separated APT packages to install (e.g., `libvips-dev`)         |
-| `env`                   | string  | -        | Environment variables for all jobs (one `KEY=VALUE` per line)          |
-| `artifacts`             | string  | -        | Multiline artifact definitions to download (`name:path` per line)     |
+| Name                    | Type    | Default    | Description                                                           |
+|:------------------------|:--------|:-----------|:----------------------------------------------------------------------|
+| `directory`             | string  | `.`        | Project directory (for subdirectory support)                          |
+| `elixir-version`        | string  | -          | Elixir version (uses `.tool-versions` if not specified)               |
+| `otp-version`           | string  | -          | Erlang/OTP version (uses `.tool-versions` if not specified)           |
+| `audit`                 | boolean | `true`     | Run hex.audit and deps.audit                                          |
+| `credo`                 | boolean | `true`     | Run Credo static analysis                                             |
+| `dialyzer`              | boolean | `true`     | Run Dialyzer type checking                                            |
+| `sobelow`               | boolean | `false`    | Run Sobelow security scanner (Phoenix projects)                       |
+| `postgres`              | string  | -          | PostgreSQL migrations: `ash` or `ecto` (starts service automatically) |
+| `postgres-image`        | string  | `postgres` | Docker image name without tag (e.g., `timescale/timescaledb`)         |
+| `postgres-version`      | string  | `18`       | Docker image tag for the postgres-image (e.g., `18`, `latest-pg18`)   |
+| `sqlite`                | string  | -          | SQLite migrations: `ash` or `ecto`                                    |
+| `npm-install`           | boolean | `false`    | Run npm install for assets                                            |
+| `npm-working-directory` | string  | `assets`   | Directory for npm install                                             |
+| `npm-registry`          | string  | -          | Custom NPM registry URL (e.g., `https://npm.pkg.github.com`)          |
+| `node-version`          | string  | `latest`   | Node.js version                                                       |
+| `spark-formatter`       | boolean | `false`    | Check Spark DSL formatting                                            |
+| `spark-extensions`      | string  | -          | Spark DSL extensions for formatter (multiline, one per line)          |
+| `hex-organization`      | string  | -          | Hex organization for private packages                                 |
+| `apt-packages`          | string  | -          | Space-separated APT packages to install (e.g., `libvips-dev`)         |
+| `env`                   | string  | -          | Environment variables for all jobs (one `KEY=VALUE` per line)         |
+| `artifacts`             | string  | -          | Multiline artifact definitions to download (`name:path` per line)     |
 
 ### Secrets
 
@@ -491,6 +492,20 @@ jobs:
       postgres: ecto   # Ecto/Phoenix: ecto.create + migrate
       postgres-version: "18"  # Optional, defaults to 18
 ```
+
+For PostgreSQL-compatible images (e.g., TimescaleDB), override the image name:
+
+```yaml
+jobs:
+  test:
+    uses: intility/reusable-elixir/.github/workflows/elixir-test.yaml@v1
+    with:
+      postgres: ash
+      postgres-image: timescale/timescaledb
+      postgres-version: latest-pg18
+```
+
+The service container image is built as `{postgres-image}:{postgres-version}`, defaulting to `postgres:18`.
 
 ### SQLite
 

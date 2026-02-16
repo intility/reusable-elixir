@@ -35,10 +35,14 @@ on:
         type: string
         required: false
         description: "PostgreSQL migrations: 'ash' or 'ecto' (starts service automatically)"
+      postgres-image:
+        type: string
+        default: "postgres"
+        description: "Docker image name without tag (e.g., 'timescale/timescaledb'). Combined with postgres-version to form the full image reference."
       postgres-version:
         type: string
         default: "18"
-        description: PostgreSQL version
+        description: "Docker image tag for the postgres-image (e.g., '18', 'latest-pg18')"
       sqlite:
         type: string
         required: false
@@ -417,7 +421,7 @@ jobs:
         working-directory: ${{ inputs.directory }}
     services:
       postgres:
-        image: ${{ inputs.postgres != '' && format('postgres:{0}', inputs.postgres-version) || '' }}
+        image: ${{ inputs.postgres != '' && format('{0}:{1}', inputs.postgres-image, inputs.postgres-version) || '' }}
         env:
           POSTGRES_HOST_AUTH_METHOD: trust
         options: >-
