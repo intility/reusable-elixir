@@ -58,7 +58,10 @@ jobs:
       # sqlite: ash   # For Ash Framework projects
       # sqlite: ecto  # For Ecto projects
 
-      # Phoenix assets
+      # Phoenix assets (Mix-managed, no npm)
+      # assets-deploy: true
+
+      # Phoenix assets (npm-managed)
       # npm-install: true
       # npm-working-directory: assets
       # node-version: "22"

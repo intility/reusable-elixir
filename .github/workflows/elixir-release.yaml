@@ -49,6 +49,10 @@ on:
         type: string
         required: false
         description: "SOURCE_DATE_EPOCH for reproducible builds (use '0' for layer caching)"
+      assets-deploy:
+        type: boolean
+        default: false
+        description: Run mix assets.deploy to build and digest static assets before release
       tailwind-install:
         type: boolean
         default: false
@@ -193,7 +197,7 @@ jobs:
           MIX_ENV: prod
 
       - name: Deploy assets
-        if: ${{ inputs.npm-install }}
+        if: ${{ inputs.npm-install || inputs.assets-deploy }}
         run: mix assets.deploy
         env:
           MIX_ENV: prod
