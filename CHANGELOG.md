@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.1.0](https://github.com/intility/reusable-elixir/compare/v2.0.1...v2.1.0) (2026-02-17)
+
+
+### Features
+
+* add assets-deploy input for Mix-managed asset pipelines ([#51](https://github.com/intility/reusable-elixir/issues/51)) ([11a52dd](https://github.com/intility/reusable-elixir/commit/11a52dd037ada3da51fc60fe4ac7e474daf61cd7))
+* Add support for PostgreSQL-compatible Docker images ([686899d](https://github.com/intility/reusable-elixir/commit/686899d1cecf4af01767532f95ef0716f50d3d2d))
+
 ## [2.0.1](https://github.com/intility/reusable-elixir/compare/v2.0.0...v2.0.1) (2026-02-16)
 
 
