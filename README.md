@@ -193,6 +193,7 @@ jobs:
 | `release`           | string  | -                  | Release name if multiple configured                                   |
 | `tags`              | string  | semver + branch/pr | Docker metadata tags                                                  |
 | `source-date-epoch` | string  | -                  | SOURCE_DATE_EPOCH for reproducible builds (use `0` for layer caching) |
+| `assets-deploy`     | boolean | `false`            | Run `mix assets.deploy` to build and digest static assets             |
 | `npm-install`       | boolean | `false`            | Run npm install and `mix assets.deploy`                               |
 | `npm-working-directory` | string | `assets`        | Directory for npm install                                             |
 | `npm-registry`      | string  | -                  | Custom NPM registry URL (e.g., `https://npm.pkg.github.com`)          |
@@ -525,7 +526,23 @@ jobs:
 
 ## Phoenix Assets
 
-For Phoenix projects with JavaScript assets:
+For Phoenix projects using Mix-based asset tools (Tailwind, esbuild) without npm:
+
+```yaml
+jobs:
+  release:
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+      attestations: write
+    uses: intility/reusable-elixir/.github/workflows/elixir-release.yaml@v1
+    with:
+      assets-deploy: true
+    secrets: inherit
+```
+
+For Phoenix projects with JavaScript assets managed by npm:
 
 ```yaml
 jobs:
@@ -541,7 +558,7 @@ jobs:
     secrets: inherit
 ```
 
-This runs `npm ci` in the `assets` directory followed by `mix assets.deploy` before building the release.
+Both options run `mix assets.deploy` before building the release. Use `npm-install` when your assets require `npm ci` first, or `assets-deploy` when your project uses Mix-managed tools like Tailwind and esbuild directly.
 
 ## Environment Variables
 
