@@ -119,18 +119,18 @@ jobs:
         with:
           fetch-depth: 1
 
-      - uses: intility/reusable-elixir/.github/actions/apt-packages@2998ae7271b95c5813e85805e8270156e1db26c4 # v2.0.1
+      - uses: intility/reusable-elixir/.github/actions/apt-packages@35793177b62123d562f2f8e60c07d3acc32d1538 # v2.1.0
         if: ${{ inputs.apt-packages != '' }}
         with:
           packages: ${{ inputs.apt-packages }}
 
-      - uses: intility/reusable-elixir/.github/actions/setup-tool-versions@2998ae7271b95c5813e85805e8270156e1db26c4 # v2.0.1
+      - uses: intility/reusable-elixir/.github/actions/setup-tool-versions@35793177b62123d562f2f8e60c07d3acc32d1538 # v2.1.0
         with:
           elixir-version: ${{ inputs.elixir-version }}
           otp-version: ${{ inputs.otp-version }}
           working-directory: ${{ inputs.directory }}
 
-      - uses: intility/reusable-elixir/.github/actions/ssh-agent@2998ae7271b95c5813e85805e8270156e1db26c4 # v2.0.1
+      - uses: intility/reusable-elixir/.github/actions/ssh-agent@35793177b62123d562f2f8e60c07d3acc32d1538 # v2.1.0
         with:
           ssh-private-key: ${{ secrets.ssh-private-key }}
 
@@ -163,7 +163,7 @@ jobs:
         env:
           MIX_ENV: prod
 
-      - uses: intility/reusable-elixir/.github/actions/download-artifacts@2998ae7271b95c5813e85805e8270156e1db26c4 # v2.0.1
+      - uses: intility/reusable-elixir/.github/actions/download-artifacts@35793177b62123d562f2f8e60c07d3acc32d1538 # v2.1.0
         if: ${{ inputs.artifacts != '' }}
         with:
           artifacts: ${{ inputs.artifacts }}
@@ -228,7 +228,7 @@ jobs:
       - name: Build and push OCI image
         if: ${{ inputs.docker }}
         id: ocibuild
-        uses: intility/reusable-elixir/.github/actions/ocibuild@2998ae7271b95c5813e85805e8270156e1db26c4 # v2.0.1
+        uses: intility/reusable-elixir/.github/actions/ocibuild@35793177b62123d562f2f8e60c07d3acc32d1538 # v2.1.0
         with:
           tags: ${{ steps.meta.outputs.tags }}
           registry: ghcr.io
