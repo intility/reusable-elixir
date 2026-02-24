@@ -36,7 +36,6 @@ runs:
         key: ${{ runner.os }}-build-${{ inputs.mix-env }}-${{ hashFiles(format('{0}/.tool-versions', inputs.directory)) }}-${{ hashFiles(format('{0}/mix.lock', inputs.directory)) }}-${{ hashFiles(format('{0}/**/*.ex', inputs.directory), format('{0}/**/*.exs', inputs.directory)) }}
         restore-keys: |
           ${{ runner.os }}-build-${{ inputs.mix-env }}-${{ hashFiles(format('{0}/.tool-versions', inputs.directory)) }}-${{ hashFiles(format('{0}/mix.lock', inputs.directory)) }}-
-          ${{ runner.os }}-build-${{ inputs.mix-env }}-${{ hashFiles(format('{0}/.tool-versions', inputs.directory)) }}-
 
     - name: Clean stale deps on partial cache hit
       if: steps.deps-cache.outputs.cache-hit != 'true'
