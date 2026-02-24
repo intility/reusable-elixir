@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.1.1](https://github.com/intility/reusable-elixir/compare/v2.1.0...v2.1.1) (2026-02-24)
+
+
+### Bug Fixes
+
+* **cache:** clean stale deps on partial cache hit to prevent poisoning ([#53](https://github.com/intility/reusable-elixir/issues/53)) ([2171e6b](https://github.com/intility/reusable-elixir/commit/2171e6b3510f073dc890f50655e08a6ceae83000))
+* **cache:** remove cross-lockfile build cache restore-key ([#56](https://github.com/intility/reusable-elixir/issues/56)) ([53ae721](https://github.com/intility/reusable-elixir/commit/53ae72100d8bb11d1b971c0beb65886b40e7db17))
+
 ## [2.1.0](https://github.com/intility/reusable-elixir/compare/v2.0.1...v2.1.0) (2026-02-17)
 
 
