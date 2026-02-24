@@ -38,6 +38,17 @@ runs:
           ${{ runner.os }}-build-${{ inputs.mix-env }}-${{ hashFiles(format('{0}/.tool-versions', inputs.directory)) }}-${{ hashFiles(format('{0}/mix.lock', inputs.directory)) }}-
           ${{ runner.os }}-build-${{ inputs.mix-env }}-${{ hashFiles(format('{0}/.tool-versions', inputs.directory)) }}-
 
+    - name: Clean stale deps on partial cache hit
+      if: steps.deps-cache.outputs.cache-hit != 'true'
+      shell: bash
+      env:
+        DIRECTORY: ${{ inputs.directory }}
+      run: |
+        if [ -d "${DIRECTORY}/deps" ]; then
+          echo "Deps restored from partial cache match, cleaning to prevent stale versions"
+          rm -rf "${DIRECTORY}/deps"
+        fi
+
     - name: Touch cached deps files
       if: steps.deps-cache.outputs.cache-hit == 'true'
       shell: bash
