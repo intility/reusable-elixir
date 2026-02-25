@@ -73,6 +73,15 @@ on:
         type: string
         default: latest
         description: Node.js version
+      env:
+        type: string
+        required: false
+        description: |
+          Environment variables to set for the release job (one KEY=VALUE per line).
+          Example:
+            env: |
+              MY_VAR=value
+              MY_OTHER_VAR=value
       apt-packages:
         type: string
         required: false
@@ -118,6 +127,11 @@ jobs:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           fetch-depth: 1
+
+      - uses: intility/reusable-elixir/.github/actions/set-env@53ae72100d8bb11d1b971c0beb65886b40e7db17 # v2.1.0
+        if: ${{ inputs.env != '' }}
+        with:
+          env: ${{ inputs.env }}
 
       - uses: intility/reusable-elixir/.github/actions/apt-packages@53ae72100d8bb11d1b971c0beb65886b40e7db17 # v2.1.0
         if: ${{ inputs.apt-packages != '' }}
