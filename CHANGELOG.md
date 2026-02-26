@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.2.0](https://github.com/intility/reusable-elixir/compare/v2.1.1...v2.2.0) (2026-02-26)
+
+
+### Features
+
+* add env input and fix named release support ([aa15a27](https://github.com/intility/reusable-elixir/commit/aa15a27e2340c63d83622e029e56e06aecd57704))
+* **workflows:** add env input to elixir-release workflow ([4a8e83c](https://github.com/intility/reusable-elixir/commit/4a8e83c2eac459619729b76d898aa4145b074a5b))
+
 ## [2.1.1](https://github.com/intility/reusable-elixir/compare/v2.1.0...v2.1.1) (2026-02-24)
 
 
