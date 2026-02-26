@@ -218,7 +218,7 @@ jobs:
 
       - name: Build release
         if: ${{ inputs.docker }}
-        run: mix release --overwrite
+        run: mix release ${{ inputs.release }} --overwrite
         env:
           MIX_ENV: prod
 
