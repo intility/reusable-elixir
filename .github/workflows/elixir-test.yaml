@@ -122,23 +122,23 @@ jobs:
       run:
         working-directory: ${{ inputs.directory }}
     steps:
-      - uses: intility/reusable-elixir/.github/actions/set-env@53ae72100d8bb11d1b971c0beb65886b40e7db17 # v2.1.0
+      - uses: intility/reusable-elixir/.github/actions/set-env@8fa37d77b6155c08b3b5f5d777cc17b26580a21a # v2.1.0
         if: ${{ inputs.env != '' }}
         with:
           env: ${{ inputs.env }}
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v4
-      - uses: intility/reusable-elixir/.github/actions/setup-tool-versions@53ae72100d8bb11d1b971c0beb65886b40e7db17 # v2.1.0
+      - uses: intility/reusable-elixir/.github/actions/setup-tool-versions@8fa37d77b6155c08b3b5f5d777cc17b26580a21a # v2.1.0
         with:
           elixir-version: ${{ inputs.elixir-version }}
           otp-version: ${{ inputs.otp-version }}
           working-directory: ${{ inputs.directory }}
-      - uses: intility/reusable-elixir/.github/actions/ssh-agent@53ae72100d8bb11d1b971c0beb65886b40e7db17 # v2.1.0
+      - uses: intility/reusable-elixir/.github/actions/ssh-agent@8fa37d77b6155c08b3b5f5d777cc17b26580a21a # v2.1.0
         with:
           ssh-private-key: ${{ secrets.ssh-private-key }}
-      - uses: intility/reusable-elixir/.github/actions/install-elixir@53ae72100d8bb11d1b971c0beb65886b40e7db17 # v2.1.0
+      - uses: intility/reusable-elixir/.github/actions/install-elixir@8fa37d77b6155c08b3b5f5d777cc17b26580a21a # v2.1.0
         with:
           directory: ${{ inputs.directory }}
-      - uses: intility/reusable-elixir/.github/actions/mix-cache@53ae72100d8bb11d1b971c0beb65886b40e7db17 # v2.1.0
+      - uses: intility/reusable-elixir/.github/actions/mix-cache@8fa37d77b6155c08b3b5f5d777cc17b26580a21a # v2.1.0
         with:
           mix-env: test
           cache-build: "false"
@@ -149,7 +149,7 @@ jobs:
           HEX_ORG: ${{ inputs.hex-organization }}
           HEX_ORG_KEY: ${{ secrets.hex-organization-key }}
         run: mix hex.organization auth "${HEX_ORG}" --key "${HEX_ORG_KEY}"
-      - uses: intility/reusable-elixir/.github/actions/mix-deps-get@53ae72100d8bb11d1b971c0beb65886b40e7db17 # v2.1.0
+      - uses: intility/reusable-elixir/.github/actions/mix-deps-get@8fa37d77b6155c08b3b5f5d777cc17b26580a21a # v2.1.0
         with:
           directory: ${{ inputs.directory }}
 
@@ -162,28 +162,28 @@ jobs:
       run:
         working-directory: ${{ inputs.directory }}
     steps:
-      - uses: intility/reusable-elixir/.github/actions/set-env@53ae72100d8bb11d1b971c0beb65886b40e7db17 # v2.1.0
+      - uses: intility/reusable-elixir/.github/actions/set-env@8fa37d77b6155c08b3b5f5d777cc17b26580a21a # v2.1.0
         if: ${{ inputs.env != '' }}
         with:
           env: ${{ inputs.env }}
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v4
-      - uses: intility/reusable-elixir/.github/actions/setup-tool-versions@53ae72100d8bb11d1b971c0beb65886b40e7db17 # v2.1.0
+      - uses: intility/reusable-elixir/.github/actions/setup-tool-versions@8fa37d77b6155c08b3b5f5d777cc17b26580a21a # v2.1.0
         with:
           elixir-version: ${{ inputs.elixir-version }}
           otp-version: ${{ inputs.otp-version }}
           working-directory: ${{ inputs.directory }}
-      - uses: intility/reusable-elixir/.github/actions/ssh-agent@53ae72100d8bb11d1b971c0beb65886b40e7db17 # v2.1.0
+      - uses: intility/reusable-elixir/.github/actions/ssh-agent@8fa37d77b6155c08b3b5f5d777cc17b26580a21a # v2.1.0
         with:
           ssh-private-key: ${{ secrets.ssh-private-key }}
-      - uses: intility/reusable-elixir/.github/actions/install-elixir@53ae72100d8bb11d1b971c0beb65886b40e7db17 # v2.1.0
+      - uses: intility/reusable-elixir/.github/actions/install-elixir@8fa37d77b6155c08b3b5f5d777cc17b26580a21a # v2.1.0
         with:
           directory: ${{ inputs.directory }}
-      - uses: intility/reusable-elixir/.github/actions/mix-cache@53ae72100d8bb11d1b971c0beb65886b40e7db17 # v2.1.0
+      - uses: intility/reusable-elixir/.github/actions/mix-cache@8fa37d77b6155c08b3b5f5d777cc17b26580a21a # v2.1.0
         with:
           mix-env: test
           cache-build: "false"
           directory: ${{ inputs.directory }}
-      - uses: intility/reusable-elixir/.github/actions/mix-hex-audit@53ae72100d8bb11d1b971c0beb65886b40e7db17 # v2.1.0
+      - uses: intility/reusable-elixir/.github/actions/mix-hex-audit@8fa37d77b6155c08b3b5f5d777cc17b26580a21a # v2.1.0
         with:
           directory: ${{ inputs.directory }}
 
@@ -195,31 +195,31 @@ jobs:
       run:
         working-directory: ${{ inputs.directory }}
     steps:
-      - uses: intility/reusable-elixir/.github/actions/set-env@53ae72100d8bb11d1b971c0beb65886b40e7db17 # v2.1.0
+      - uses: intility/reusable-elixir/.github/actions/set-env@8fa37d77b6155c08b3b5f5d777cc17b26580a21a # v2.1.0
         if: ${{ inputs.env != '' }}
         with:
           env: ${{ inputs.env }}
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v4
-      - uses: intility/reusable-elixir/.github/actions/apt-packages@53ae72100d8bb11d1b971c0beb65886b40e7db17 # v2.1.0
+      - uses: intility/reusable-elixir/.github/actions/apt-packages@8fa37d77b6155c08b3b5f5d777cc17b26580a21a # v2.1.0
         if: ${{ inputs.apt-packages != '' }}
         with:
           packages: ${{ inputs.apt-packages }}
-      - uses: intility/reusable-elixir/.github/actions/setup-tool-versions@53ae72100d8bb11d1b971c0beb65886b40e7db17 # v2.1.0
+      - uses: intility/reusable-elixir/.github/actions/setup-tool-versions@8fa37d77b6155c08b3b5f5d777cc17b26580a21a # v2.1.0
         with:
           elixir-version: ${{ inputs.elixir-version }}
           otp-version: ${{ inputs.otp-version }}
           working-directory: ${{ inputs.directory }}
-      - uses: intility/reusable-elixir/.github/actions/ssh-agent@53ae72100d8bb11d1b971c0beb65886b40e7db17 # v2.1.0
+      - uses: intility/reusable-elixir/.github/actions/ssh-agent@8fa37d77b6155c08b3b5f5d777cc17b26580a21a # v2.1.0
         with:
           ssh-private-key: ${{ secrets.ssh-private-key }}
-      - uses: intility/reusable-elixir/.github/actions/install-elixir@53ae72100d8bb11d1b971c0beb65886b40e7db17 # v2.1.0
+      - uses: intility/reusable-elixir/.github/actions/install-elixir@8fa37d77b6155c08b3b5f5d777cc17b26580a21a # v2.1.0
         with:
           directory: ${{ inputs.directory }}
-      - uses: intility/reusable-elixir/.github/actions/mix-cache@53ae72100d8bb11d1b971c0beb65886b40e7db17 # v2.1.0
+      - uses: intility/reusable-elixir/.github/actions/mix-cache@8fa37d77b6155c08b3b5f5d777cc17b26580a21a # v2.1.0
         with:
           mix-env: test
           directory: ${{ inputs.directory }}
-      - uses: intility/reusable-elixir/.github/actions/download-artifacts@53ae72100d8bb11d1b971c0beb65886b40e7db17 # v2.1.0
+      - uses: intility/reusable-elixir/.github/actions/download-artifacts@8fa37d77b6155c08b3b5f5d777cc17b26580a21a # v2.1.0
         if: ${{ inputs.artifacts != '' }}
         with:
           artifacts: ${{ inputs.artifacts }}
@@ -230,7 +230,7 @@ jobs:
           HEX_ORG: ${{ inputs.hex-organization }}
           HEX_ORG_KEY: ${{ secrets.hex-organization-key }}
         run: mix hex.organization auth "${HEX_ORG}" --key "${HEX_ORG_KEY}"
-      - uses: intility/reusable-elixir/.github/actions/mix-compile@53ae72100d8bb11d1b971c0beb65886b40e7db17 # v2.1.0
+      - uses: intility/reusable-elixir/.github/actions/mix-compile@8fa37d77b6155c08b3b5f5d777cc17b26580a21a # v2.1.0
         with:
           mix-env: test
           directory: ${{ inputs.directory }}
@@ -243,25 +243,25 @@ jobs:
       run:
         working-directory: ${{ inputs.directory }}
     steps:
-      - uses: intility/reusable-elixir/.github/actions/set-env@53ae72100d8bb11d1b971c0beb65886b40e7db17 # v2.1.0
+      - uses: intility/reusable-elixir/.github/actions/set-env@8fa37d77b6155c08b3b5f5d777cc17b26580a21a # v2.1.0
         if: ${{ inputs.env != '' }}
         with:
           env: ${{ inputs.env }}
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v4
-      - uses: intility/reusable-elixir/.github/actions/setup-tool-versions@53ae72100d8bb11d1b971c0beb65886b40e7db17 # v2.1.0
+      - uses: intility/reusable-elixir/.github/actions/setup-tool-versions@8fa37d77b6155c08b3b5f5d777cc17b26580a21a # v2.1.0
         with:
           elixir-version: ${{ inputs.elixir-version }}
           otp-version: ${{ inputs.otp-version }}
           working-directory: ${{ inputs.directory }}
-      - uses: intility/reusable-elixir/.github/actions/install-elixir@53ae72100d8bb11d1b971c0beb65886b40e7db17 # v2.1.0
+      - uses: intility/reusable-elixir/.github/actions/install-elixir@8fa37d77b6155c08b3b5f5d777cc17b26580a21a # v2.1.0
         with:
           directory: ${{ inputs.directory }}
-      - uses: intility/reusable-elixir/.github/actions/mix-cache@53ae72100d8bb11d1b971c0beb65886b40e7db17 # v2.1.0
+      - uses: intility/reusable-elixir/.github/actions/mix-cache@8fa37d77b6155c08b3b5f5d777cc17b26580a21a # v2.1.0
         with:
           mix-env: test
           cache-build: "false"
           directory: ${{ inputs.directory }}
-      - uses: intility/reusable-elixir/.github/actions/mix-task@53ae72100d8bb11d1b971c0beb65886b40e7db17 # v2.1.0
+      - uses: intility/reusable-elixir/.github/actions/mix-task@8fa37d77b6155c08b3b5f5d777cc17b26580a21a # v2.1.0
         with:
           mix-env: test
           task: deps.unlock --check-unused
@@ -275,24 +275,24 @@ jobs:
       run:
         working-directory: ${{ inputs.directory }}
     steps:
-      - uses: intility/reusable-elixir/.github/actions/set-env@53ae72100d8bb11d1b971c0beb65886b40e7db17 # v2.1.0
+      - uses: intility/reusable-elixir/.github/actions/set-env@8fa37d77b6155c08b3b5f5d777cc17b26580a21a # v2.1.0
         if: ${{ inputs.env != '' }}
         with:
           env: ${{ inputs.env }}
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v4
-      - uses: intility/reusable-elixir/.github/actions/setup-tool-versions@53ae72100d8bb11d1b971c0beb65886b40e7db17 # v2.1.0
+      - uses: intility/reusable-elixir/.github/actions/setup-tool-versions@8fa37d77b6155c08b3b5f5d777cc17b26580a21a # v2.1.0
         with:
           elixir-version: ${{ inputs.elixir-version }}
           otp-version: ${{ inputs.otp-version }}
           working-directory: ${{ inputs.directory }}
-      - uses: intility/reusable-elixir/.github/actions/install-elixir@53ae72100d8bb11d1b971c0beb65886b40e7db17 # v2.1.0
+      - uses: intility/reusable-elixir/.github/actions/install-elixir@8fa37d77b6155c08b3b5f5d777cc17b26580a21a # v2.1.0
         with:
           directory: ${{ inputs.directory }}
-      - uses: intility/reusable-elixir/.github/actions/mix-cache@53ae72100d8bb11d1b971c0beb65886b40e7db17 # v2.1.0
+      - uses: intility/reusable-elixir/.github/actions/mix-cache@8fa37d77b6155c08b3b5f5d777cc17b26580a21a # v2.1.0
         with:
           mix-env: test
           directory: ${{ inputs.directory }}
-      - uses: intility/reusable-elixir/.github/actions/mix-task@53ae72100d8bb11d1b971c0beb65886b40e7db17 # v2.1.0
+      - uses: intility/reusable-elixir/.github/actions/mix-task@8fa37d77b6155c08b3b5f5d777cc17b26580a21a # v2.1.0
         with:
           mix-env: test
           task: format --check-formatted
@@ -307,7 +307,7 @@ jobs:
           extensions=$(echo "${SPARK_EXTENSIONS}" | grep -v '^$' | tr '\n' ',' | sed 's/,*$//')
           echo "args=--extensions ${extensions}" >> "$GITHUB_OUTPUT"
       - name: Spark (DSL)
-        uses: intility/reusable-elixir/.github/actions/mix-task@53ae72100d8bb11d1b971c0beb65886b40e7db17 # v2.1.0
+        uses: intility/reusable-elixir/.github/actions/mix-task@8fa37d77b6155c08b3b5f5d777cc17b26580a21a # v2.1.0
         if: ${{ inputs.spark-formatter }}
         with:
           mix-env: test
@@ -323,24 +323,24 @@ jobs:
       run:
         working-directory: ${{ inputs.directory }}
     steps:
-      - uses: intility/reusable-elixir/.github/actions/set-env@53ae72100d8bb11d1b971c0beb65886b40e7db17 # v2.1.0
+      - uses: intility/reusable-elixir/.github/actions/set-env@8fa37d77b6155c08b3b5f5d777cc17b26580a21a # v2.1.0
         if: ${{ inputs.env != '' }}
         with:
           env: ${{ inputs.env }}
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v4
-      - uses: intility/reusable-elixir/.github/actions/setup-tool-versions@53ae72100d8bb11d1b971c0beb65886b40e7db17 # v2.1.0
+      - uses: intility/reusable-elixir/.github/actions/setup-tool-versions@8fa37d77b6155c08b3b5f5d777cc17b26580a21a # v2.1.0
         with:
           elixir-version: ${{ inputs.elixir-version }}
           otp-version: ${{ inputs.otp-version }}
           working-directory: ${{ inputs.directory }}
-      - uses: intility/reusable-elixir/.github/actions/install-elixir@53ae72100d8bb11d1b971c0beb65886b40e7db17 # v2.1.0
+      - uses: intility/reusable-elixir/.github/actions/install-elixir@8fa37d77b6155c08b3b5f5d777cc17b26580a21a # v2.1.0
         with:
           directory: ${{ inputs.directory }}
-      - uses: intility/reusable-elixir/.github/actions/mix-cache@53ae72100d8bb11d1b971c0beb65886b40e7db17 # v2.1.0
+      - uses: intility/reusable-elixir/.github/actions/mix-cache@8fa37d77b6155c08b3b5f5d777cc17b26580a21a # v2.1.0
         with:
           mix-env: test
           directory: ${{ inputs.directory }}
-      - uses: intility/reusable-elixir/.github/actions/mix-task@53ae72100d8bb11d1b971c0beb65886b40e7db17 # v2.1.0
+      - uses: intility/reusable-elixir/.github/actions/mix-task@8fa37d77b6155c08b3b5f5d777cc17b26580a21a # v2.1.0
         with:
           mix-env: test
           task: credo --strict
@@ -355,27 +355,27 @@ jobs:
       run:
         working-directory: ${{ inputs.directory }}
     steps:
-      - uses: intility/reusable-elixir/.github/actions/set-env@53ae72100d8bb11d1b971c0beb65886b40e7db17 # v2.1.0
+      - uses: intility/reusable-elixir/.github/actions/set-env@8fa37d77b6155c08b3b5f5d777cc17b26580a21a # v2.1.0
         if: ${{ inputs.env != '' }}
         with:
           env: ${{ inputs.env }}
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v4
-      - uses: intility/reusable-elixir/.github/actions/setup-tool-versions@53ae72100d8bb11d1b971c0beb65886b40e7db17 # v2.1.0
+      - uses: intility/reusable-elixir/.github/actions/setup-tool-versions@8fa37d77b6155c08b3b5f5d777cc17b26580a21a # v2.1.0
         with:
           elixir-version: ${{ inputs.elixir-version }}
           otp-version: ${{ inputs.otp-version }}
           working-directory: ${{ inputs.directory }}
-      - uses: intility/reusable-elixir/.github/actions/ssh-agent@53ae72100d8bb11d1b971c0beb65886b40e7db17 # v2.1.0
+      - uses: intility/reusable-elixir/.github/actions/ssh-agent@8fa37d77b6155c08b3b5f5d777cc17b26580a21a # v2.1.0
         with:
           ssh-private-key: ${{ secrets.ssh-private-key }}
-      - uses: intility/reusable-elixir/.github/actions/install-elixir@53ae72100d8bb11d1b971c0beb65886b40e7db17 # v2.1.0
+      - uses: intility/reusable-elixir/.github/actions/install-elixir@8fa37d77b6155c08b3b5f5d777cc17b26580a21a # v2.1.0
         with:
           directory: ${{ inputs.directory }}
-      - uses: intility/reusable-elixir/.github/actions/mix-cache@53ae72100d8bb11d1b971c0beb65886b40e7db17 # v2.1.0
+      - uses: intility/reusable-elixir/.github/actions/mix-cache@8fa37d77b6155c08b3b5f5d777cc17b26580a21a # v2.1.0
         with:
           mix-env: dev
           directory: ${{ inputs.directory }}
-      - uses: intility/reusable-elixir/.github/actions/mix-dialyzer@53ae72100d8bb11d1b971c0beb65886b40e7db17 # v2.1.0
+      - uses: intility/reusable-elixir/.github/actions/mix-dialyzer@8fa37d77b6155c08b3b5f5d777cc17b26580a21a # v2.1.0
         with:
           mix-env: dev
           directory: ${{ inputs.directory }}
@@ -389,24 +389,24 @@ jobs:
       run:
         working-directory: ${{ inputs.directory }}
     steps:
-      - uses: intility/reusable-elixir/.github/actions/set-env@53ae72100d8bb11d1b971c0beb65886b40e7db17 # v2.1.0
+      - uses: intility/reusable-elixir/.github/actions/set-env@8fa37d77b6155c08b3b5f5d777cc17b26580a21a # v2.1.0
         if: ${{ inputs.env != '' }}
         with:
           env: ${{ inputs.env }}
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v4
-      - uses: intility/reusable-elixir/.github/actions/setup-tool-versions@53ae72100d8bb11d1b971c0beb65886b40e7db17 # v2.1.0
+      - uses: intility/reusable-elixir/.github/actions/setup-tool-versions@8fa37d77b6155c08b3b5f5d777cc17b26580a21a # v2.1.0
         with:
           elixir-version: ${{ inputs.elixir-version }}
           otp-version: ${{ inputs.otp-version }}
           working-directory: ${{ inputs.directory }}
-      - uses: intility/reusable-elixir/.github/actions/install-elixir@53ae72100d8bb11d1b971c0beb65886b40e7db17 # v2.1.0
+      - uses: intility/reusable-elixir/.github/actions/install-elixir@8fa37d77b6155c08b3b5f5d777cc17b26580a21a # v2.1.0
         with:
           directory: ${{ inputs.directory }}
-      - uses: intility/reusable-elixir/.github/actions/mix-cache@53ae72100d8bb11d1b971c0beb65886b40e7db17 # v2.1.0
+      - uses: intility/reusable-elixir/.github/actions/mix-cache@8fa37d77b6155c08b3b5f5d777cc17b26580a21a # v2.1.0
         with:
           mix-env: test
           directory: ${{ inputs.directory }}
-      - uses: intility/reusable-elixir/.github/actions/mix-task@53ae72100d8bb11d1b971c0beb65886b40e7db17 # v2.1.0
+      - uses: intility/reusable-elixir/.github/actions/mix-task@8fa37d77b6155c08b3b5f5d777cc17b26580a21a # v2.1.0
         with:
           mix-env: test
           task: sobelow
@@ -432,28 +432,28 @@ jobs:
         ports:
           - 5432:5432
     steps:
-      - uses: intility/reusable-elixir/.github/actions/set-env@53ae72100d8bb11d1b971c0beb65886b40e7db17 # v2.1.0
+      - uses: intility/reusable-elixir/.github/actions/set-env@8fa37d77b6155c08b3b5f5d777cc17b26580a21a # v2.1.0
         if: ${{ inputs.env != '' }}
         with:
           env: ${{ inputs.env }}
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v4
-      - uses: intility/reusable-elixir/.github/actions/apt-packages@53ae72100d8bb11d1b971c0beb65886b40e7db17 # v2.1.0
+      - uses: intility/reusable-elixir/.github/actions/apt-packages@8fa37d77b6155c08b3b5f5d777cc17b26580a21a # v2.1.0
         if: ${{ inputs.apt-packages != '' }}
         with:
           packages: ${{ inputs.apt-packages }}
-      - uses: intility/reusable-elixir/.github/actions/setup-tool-versions@53ae72100d8bb11d1b971c0beb65886b40e7db17 # v2.1.0
+      - uses: intility/reusable-elixir/.github/actions/setup-tool-versions@8fa37d77b6155c08b3b5f5d777cc17b26580a21a # v2.1.0
         with:
           elixir-version: ${{ inputs.elixir-version }}
           otp-version: ${{ inputs.otp-version }}
           working-directory: ${{ inputs.directory }}
-      - uses: intility/reusable-elixir/.github/actions/install-elixir@53ae72100d8bb11d1b971c0beb65886b40e7db17 # v2.1.0
+      - uses: intility/reusable-elixir/.github/actions/install-elixir@8fa37d77b6155c08b3b5f5d777cc17b26580a21a # v2.1.0
         with:
           directory: ${{ inputs.directory }}
-      - uses: intility/reusable-elixir/.github/actions/mix-cache@53ae72100d8bb11d1b971c0beb65886b40e7db17 # v2.1.0
+      - uses: intility/reusable-elixir/.github/actions/mix-cache@8fa37d77b6155c08b3b5f5d777cc17b26580a21a # v2.1.0
         with:
           mix-env: test
           directory: ${{ inputs.directory }}
-      - uses: intility/reusable-elixir/.github/actions/download-artifacts@53ae72100d8bb11d1b971c0beb65886b40e7db17 # v2.1.0
+      - uses: intility/reusable-elixir/.github/actions/download-artifacts@8fa37d77b6155c08b3b5f5d777cc17b26580a21a # v2.1.0
         if: ${{ inputs.artifacts != '' }}
         with:
           artifacts: ${{ inputs.artifacts }}
@@ -476,28 +476,28 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.npm-token }}
 
       # Ash PostgreSQL
-      - uses: intility/reusable-elixir/.github/actions/mix-task@53ae72100d8bb11d1b971c0beb65886b40e7db17 # v2.1.0
+      - uses: intility/reusable-elixir/.github/actions/mix-task@8fa37d77b6155c08b3b5f5d777cc17b26580a21a # v2.1.0
         if: ${{ inputs.postgres == 'ash' }}
         with:
           mix-env: test
           task: ash_postgres.generate_migrations --check
           directory: ${{ inputs.directory }}
 
-      - uses: intility/reusable-elixir/.github/actions/mix-task@53ae72100d8bb11d1b971c0beb65886b40e7db17 # v2.1.0
+      - uses: intility/reusable-elixir/.github/actions/mix-task@8fa37d77b6155c08b3b5f5d777cc17b26580a21a # v2.1.0
         if: ${{ inputs.postgres == 'ash' }}
         with:
           mix-env: test
           task: ash_postgres.create
           directory: ${{ inputs.directory }}
 
-      - uses: intility/reusable-elixir/.github/actions/mix-task@53ae72100d8bb11d1b971c0beb65886b40e7db17 # v2.1.0
+      - uses: intility/reusable-elixir/.github/actions/mix-task@8fa37d77b6155c08b3b5f5d777cc17b26580a21a # v2.1.0
         if: ${{ inputs.postgres == 'ash' }}
         with:
           mix-env: test
           task: ash_postgres.migrate
           directory: ${{ inputs.directory }}
 
-      - uses: intility/reusable-elixir/.github/actions/mix-task@53ae72100d8bb11d1b971c0beb65886b40e7db17 # v2.1.0
+      - uses: intility/reusable-elixir/.github/actions/mix-task@8fa37d77b6155c08b3b5f5d777cc17b26580a21a # v2.1.0
         if: ${{ inputs.postgres == 'ash' }}
         with:
           mix-env: test
@@ -505,14 +505,14 @@ jobs:
           directory: ${{ inputs.directory }}
 
       # Ecto PostgreSQL
-      - uses: intility/reusable-elixir/.github/actions/mix-task@53ae72100d8bb11d1b971c0beb65886b40e7db17 # v2.1.0
+      - uses: intility/reusable-elixir/.github/actions/mix-task@8fa37d77b6155c08b3b5f5d777cc17b26580a21a # v2.1.0
         if: ${{ inputs.postgres == 'ecto' }}
         with:
           mix-env: test
           task: ecto.create
           directory: ${{ inputs.directory }}
 
-      - uses: intility/reusable-elixir/.github/actions/mix-task@53ae72100d8bb11d1b971c0beb65886b40e7db17 # v2.1.0
+      - uses: intility/reusable-elixir/.github/actions/mix-task@8fa37d77b6155c08b3b5f5d777cc17b26580a21a # v2.1.0
         if: ${{ inputs.postgres == 'ecto' }}
         with:
           mix-env: test
@@ -520,21 +520,21 @@ jobs:
           directory: ${{ inputs.directory }}
 
       # Ash SQLite
-      - uses: intility/reusable-elixir/.github/actions/mix-task@53ae72100d8bb11d1b971c0beb65886b40e7db17 # v2.1.0
+      - uses: intility/reusable-elixir/.github/actions/mix-task@8fa37d77b6155c08b3b5f5d777cc17b26580a21a # v2.1.0
         if: ${{ inputs.sqlite == 'ash' }}
         with:
           mix-env: test
           task: ash_sqlite.generate_migrations --check
           directory: ${{ inputs.directory }}
 
-      - uses: intility/reusable-elixir/.github/actions/mix-task@53ae72100d8bb11d1b971c0beb65886b40e7db17 # v2.1.0
+      - uses: intility/reusable-elixir/.github/actions/mix-task@8fa37d77b6155c08b3b5f5d777cc17b26580a21a # v2.1.0
         if: ${{ inputs.sqlite == 'ash' }}
         with:
           mix-env: test
           task: ash_sqlite.create
           directory: ${{ inputs.directory }}
 
-      - uses: intility/reusable-elixir/.github/actions/mix-task@53ae72100d8bb11d1b971c0beb65886b40e7db17 # v2.1.0
+      - uses: intility/reusable-elixir/.github/actions/mix-task@8fa37d77b6155c08b3b5f5d777cc17b26580a21a # v2.1.0
         if: ${{ inputs.sqlite == 'ash' }}
         with:
           mix-env: test
@@ -542,14 +542,14 @@ jobs:
           directory: ${{ inputs.directory }}
 
       # Ecto SQLite
-      - uses: intility/reusable-elixir/.github/actions/mix-task@53ae72100d8bb11d1b971c0beb65886b40e7db17 # v2.1.0
+      - uses: intility/reusable-elixir/.github/actions/mix-task@8fa37d77b6155c08b3b5f5d777cc17b26580a21a # v2.1.0
         if: ${{ inputs.sqlite == 'ecto' }}
         with:
           mix-env: test
           task: ecto.create
           directory: ${{ inputs.directory }}
 
-      - uses: intility/reusable-elixir/.github/actions/mix-task@53ae72100d8bb11d1b971c0beb65886b40e7db17 # v2.1.0
+      - uses: intility/reusable-elixir/.github/actions/mix-task@8fa37d77b6155c08b3b5f5d777cc17b26580a21a # v2.1.0
         if: ${{ inputs.sqlite == 'ecto' }}
         with:
           mix-env: test
@@ -557,7 +557,7 @@ jobs:
           directory: ${{ inputs.directory }}
 
       # Run tests
-      - uses: intility/reusable-elixir/.github/actions/mix-test@53ae72100d8bb11d1b971c0beb65886b40e7db17 # v2.1.0
+      - uses: intility/reusable-elixir/.github/actions/mix-test@8fa37d77b6155c08b3b5f5d777cc17b26580a21a # v2.1.0
         with:
           mix-env: test
           directory: ${{ inputs.directory }}
