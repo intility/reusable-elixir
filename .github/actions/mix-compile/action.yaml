@@ -24,3 +24,22 @@ runs:
         MIX_ENV: ${{ inputs.mix-env }}
         COMPILE_ARGS: ${{ inputs.args }}
       run: mix compile ${COMPILE_ARGS}
+
+    - name: Dereference symbolic links
+      shell: bash
+      working-directory: ${{ inputs.directory }}
+      env:
+        MIX_ENV: ${{ inputs.mix-env }}
+      run: |
+        # Replace priv symlinks in _build with real copies so NIF .so files
+        # are included in the build cache (tar stores symlinks as-is, causing
+        # NIF artifacts to be lost when deps/ and _build/ are cached separately).
+        for link in _build/${MIX_ENV}/lib/*/priv; do
+          if [ -L "$link" ]; then
+            target=$(readlink -f "$link" 2>/dev/null) || continue
+            if [ -d "$target" ]; then
+              rm "$link"
+              cp -rL "$target" "$link"
+            fi
+          fi
+        done
