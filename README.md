@@ -1,12 +1,14 @@
-# Reusable Elixir Workflows
+<h1 align="center">
+  <img src="https://avatars.githubusercontent.com/u/35199565" width="124px"/><br/>
+  Reusable Elixir Workflows
+</h1>
 
-Reusable GitHub Actions workflows for Elixir projects. Three workflows are available:
+<p align="center">
+Opinionated reusable GitHub Actions workflows for Elixir projects. 
+Ready workflows for testing, linting, static code analysis, documentation and building OCI compliant container images.
+</p>
 
-- **elixir-test** - Testing, linting, and static analysis
-- **elixir-docs** - Build and deploy documentation to GitHub Pages
-- **elixir-release** - Build and push OCI container images
-
-## elixir-test
+## 🔮 elixir-test
 
 Runs tests and static analysis for Elixir projects.
 
@@ -96,7 +98,7 @@ jobs:
 
 ---
 
-## elixir-docs
+## 📚 elixir-docs
 
 Builds and deploys Elixir documentation to GitHub Pages.
 
@@ -137,7 +139,7 @@ jobs:
 
 ---
 
-## elixir-release
+## 📦 elixir-release
 
 > [!IMPORTANT]
 > This workflow expects your project to use the [ocibuild](https://hex.pm/packages/ocibuild) library for building container images.
