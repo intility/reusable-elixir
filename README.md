@@ -676,3 +676,15 @@ jobs:
       base-image: "elixir:1.19-slim"
       platforms: "linux/amd64,linux/arm64"
 ```
+
+---
+
+## Contributing
+
+Contributions are welcome. Please read [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on reporting issues, submitting pull requests, and the overall project structure.
+
+---
+
+## License
+
+This project is licensed under the [MIT License](LICENSE).
