@@ -37,7 +37,7 @@ on:
 jobs:
   test:
     # Uses .tool-versions from your project
-    uses: intility/reusable-elixir/.github/workflows/elixir-test.yaml@v1
+    uses: intility/reusable-elixir/.github/workflows/elixir-test.yaml@8538d07c58d0c44e844e68a773ec729f21ee4ed7 # v2.2.1
 ```
 
 Or specify versions explicitly:
@@ -45,7 +45,7 @@ Or specify versions explicitly:
 ```yaml
 jobs:
   test:
-    uses: intility/reusable-elixir/.github/workflows/elixir-test.yaml@v1
+    uses: intility/reusable-elixir/.github/workflows/elixir-test.yaml@8538d07c58d0c44e844e68a773ec729f21ee4ed7 # v2.2.1
     with:
       elixir-version: "1.19"
       otp-version: "28"
@@ -56,7 +56,7 @@ For projects where the Elixir app lives in a subdirectory:
 ```yaml
 jobs:
   test:
-    uses: intility/reusable-elixir/.github/workflows/elixir-test.yaml@v1
+    uses: intility/reusable-elixir/.github/workflows/elixir-test.yaml@8538d07c58d0c44e844e68a773ec729f21ee4ed7 # v2.2.1
     with:
       directory: apps/my-elixir-app
       postgres: ecto
@@ -116,7 +116,7 @@ jobs:
     permissions:
       pages: write
       id-token: write
-    uses: intility/reusable-elixir/.github/workflows/elixir-docs.yaml@v1
+    uses: intility/reusable-elixir/.github/workflows/elixir-docs.yaml@8538d07c58d0c44e844e68a773ec729f21ee4ed7 # v2.2.1
 ```
 
 ### Inputs
@@ -174,7 +174,7 @@ jobs:
       id-token: write
       attestations: write
     # Uses .tool-versions from your project
-    uses: intility/reusable-elixir/.github/workflows/elixir-release.yaml@v1
+    uses: intility/reusable-elixir/.github/workflows/elixir-release.yaml@8538d07c58d0c44e844e68a773ec729f21ee4ed7 # v2.2.1
     with:
       source-date-epoch: "0" # Set mtime on all files in the archive to January 1, 1970 00:00:00 UTC to allow reproducible builds
     secrets: inherit
@@ -230,7 +230,7 @@ Set `source-date-epoch: "0"` to enable reproducible builds and layer caching:
 ```yaml
 jobs:
   release:
-    uses: intility/reusable-elixir/.github/workflows/elixir-release.yaml@v1
+    uses: intility/reusable-elixir/.github/workflows/elixir-release.yaml@8538d07c58d0c44e844e68a773ec729f21ee4ed7 # v2.2.1
     with:
       source-date-epoch: "0"
 ```
@@ -270,7 +270,7 @@ jobs:
 
   test:
     needs: [build-native]
-    uses: intility/reusable-elixir/.github/workflows/elixir-test.yaml@v1
+    uses: intility/reusable-elixir/.github/workflows/elixir-test.yaml@8538d07c58d0c44e844e68a773ec729f21ee4ed7 # v2.2.1
     with:
       artifacts: |
         cel-evaluator:apps/my_app/priv/bin
@@ -282,7 +282,7 @@ jobs:
       packages: write
       id-token: write
       attestations: write
-    uses: intility/reusable-elixir/.github/workflows/elixir-release.yaml@v1
+    uses: intility/reusable-elixir/.github/workflows/elixir-release.yaml@8538d07c58d0c44e844e68a773ec729f21ee4ed7 # v2.2.1
     with:
       artifacts: |
         cel-evaluator:apps/my_app/priv/bin
@@ -319,7 +319,7 @@ on:
 
 jobs:
   test:
-    uses: intility/reusable-elixir/.github/workflows/elixir-test.yaml@v1
+    uses: intility/reusable-elixir/.github/workflows/elixir-test.yaml@8538d07c58d0c44e844e68a773ec729f21ee4ed7 # v2.2.1
     with:
       postgres: ash
 
@@ -331,7 +331,7 @@ jobs:
       packages: write
       id-token: write
       attestations: write
-    uses: intility/reusable-elixir/.github/workflows/elixir-release.yaml@v1
+    uses: intility/reusable-elixir/.github/workflows/elixir-release.yaml@8538d07c58d0c44e844e68a773ec729f21ee4ed7 # v2.2.1
     with:
       source-date-epoch: "0"
     secrets: inherit
@@ -348,7 +348,7 @@ If your project has a `.tool-versions` file, simply omit the version inputs:
 ```yaml
 jobs:
   test:
-    uses: intility/reusable-elixir/.github/workflows/elixir-test.yaml@v1
+    uses: intility/reusable-elixir/.github/workflows/elixir-test.yaml@8538d07c58d0c44e844e68a773ec729f21ee4ed7 # v2.2.1
     # Uses versions from .tool-versions automatically
 ```
 
@@ -365,7 +365,7 @@ Override `.tool-versions` by specifying versions explicitly:
 ```yaml
 jobs:
   test:
-    uses: intility/reusable-elixir/.github/workflows/elixir-test.yaml@v1
+    uses: intility/reusable-elixir/.github/workflows/elixir-test.yaml@8538d07c58d0c44e844e68a773ec729f21ee4ed7 # v2.2.1
     with:
       elixir-version: "1.19"
       otp-version: "28"
@@ -390,7 +390,7 @@ jobs:
             otp: "27"
           - elixir: "1.19"
             otp: "28"
-    uses: intility/reusable-elixir/.github/workflows/elixir-test.yaml@v1
+    uses: intility/reusable-elixir/.github/workflows/elixir-test.yaml@8538d07c58d0c44e844e68a773ec729f21ee4ed7 # v2.2.1
     with:
       elixir-version: ${{ matrix.elixir }}
       otp-version: ${{ matrix.otp }}
@@ -408,7 +408,7 @@ For projects using private Hex organization packages:
 ```yaml
 jobs:
   test:
-    uses: intility/reusable-elixir/.github/workflows/elixir-test.yaml@v1
+    uses: intility/reusable-elixir/.github/workflows/elixir-test.yaml@8538d07c58d0c44e844e68a773ec729f21ee4ed7 # v2.2.1
     with:
       hex-organization: intility
     secrets:
@@ -416,7 +416,7 @@ jobs:
 
   release:
     needs: test
-    uses: intility/reusable-elixir/.github/workflows/elixir-release.yaml@v1
+    uses: intility/reusable-elixir/.github/workflows/elixir-release.yaml@8538d07c58d0c44e844e68a773ec729f21ee4ed7 # v2.2.1
     with:
       hex-organization: intility
     secrets:
@@ -430,7 +430,7 @@ For projects with dependencies hosted in private Git repositories:
 ```yaml
 jobs:
   test:
-    uses: intility/reusable-elixir/.github/workflows/elixir-test.yaml@v1
+    uses: intility/reusable-elixir/.github/workflows/elixir-test.yaml@8538d07c58d0c44e844e68a773ec729f21ee4ed7 # v2.2.1
     secrets:
       ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
@@ -441,7 +441,7 @@ jobs:
       packages: write
       id-token: write
       attestations: write
-    uses: intility/reusable-elixir/.github/workflows/elixir-release.yaml@v1
+    uses: intility/reusable-elixir/.github/workflows/elixir-release.yaml@8538d07c58d0c44e844e68a773ec729f21ee4ed7 # v2.2.1
     secrets:
       ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 ```
@@ -464,7 +464,7 @@ For Phoenix projects with assets from private NPM registries:
 ```yaml
 jobs:
   test:
-    uses: intility/reusable-elixir/.github/workflows/elixir-test.yaml@v1
+    uses: intility/reusable-elixir/.github/workflows/elixir-test.yaml@8538d07c58d0c44e844e68a773ec729f21ee4ed7 # v2.2.1
     with:
       npm-install: true
       npm-registry: https://npm.pkg.github.com
@@ -488,7 +488,7 @@ Set `postgres` to start a PostgreSQL service and run migrations:
 ```yaml
 jobs:
   test:
-    uses: intility/reusable-elixir/.github/workflows/elixir-test.yaml@v1
+    uses: intility/reusable-elixir/.github/workflows/elixir-test.yaml@8538d07c58d0c44e844e68a773ec729f21ee4ed7 # v2.2.1
     with:
       postgres: ash    # Ash Framework: ash_postgres.create + migrate
       # or
@@ -501,7 +501,7 @@ For PostgreSQL-compatible images (e.g., TimescaleDB), override the image name:
 ```yaml
 jobs:
   test:
-    uses: intility/reusable-elixir/.github/workflows/elixir-test.yaml@v1
+    uses: intility/reusable-elixir/.github/workflows/elixir-test.yaml@8538d07c58d0c44e844e68a773ec729f21ee4ed7 # v2.2.1
     with:
       postgres: ash
       postgres-image: timescale/timescaledb
@@ -517,7 +517,7 @@ Set `sqlite` to run SQLite migrations (no service needed):
 ```yaml
 jobs:
   test:
-    uses: intility/reusable-elixir/.github/workflows/elixir-test.yaml@v1
+    uses: intility/reusable-elixir/.github/workflows/elixir-test.yaml@8538d07c58d0c44e844e68a773ec729f21ee4ed7 # v2.2.1
     with:
       sqlite: ash    # Ash Framework: ash_sqlite.create + migrate
       # or
@@ -538,7 +538,7 @@ jobs:
       packages: write
       id-token: write
       attestations: write
-    uses: intility/reusable-elixir/.github/workflows/elixir-release.yaml@v1
+    uses: intility/reusable-elixir/.github/workflows/elixir-release.yaml@8538d07c58d0c44e844e68a773ec729f21ee4ed7 # v2.2.1
     with:
       assets-deploy: true
     secrets: inherit
@@ -554,7 +554,7 @@ jobs:
       packages: write
       id-token: write
       attestations: write
-    uses: intility/reusable-elixir/.github/workflows/elixir-release.yaml@v1
+    uses: intility/reusable-elixir/.github/workflows/elixir-release.yaml@8538d07c58d0c44e844e68a773ec729f21ee4ed7 # v2.2.1
     with:
       npm-install: true
     secrets: inherit
@@ -569,7 +569,7 @@ For projects that need custom environment variables at compile time or test time
 ```yaml
 jobs:
   test:
-    uses: intility/reusable-elixir/.github/workflows/elixir-test.yaml@v1
+    uses: intility/reusable-elixir/.github/workflows/elixir-test.yaml@8538d07c58d0c44e844e68a773ec729f21ee4ed7 # v2.2.1
     with:
       env: |
         CLOAK_KEY=b23S/6av/mvyVEh27ksmXb+784i50afsp1FD0DUf87E=
@@ -588,7 +588,7 @@ The `mix-cache` composite action manages two independent caches:
 By default both caches are active. Jobs that only need dependencies (formatting, linting, auditing) can skip the build cache:
 
 ```yaml
-- uses: intility/reusable-elixir/.github/actions/mix-cache@main
+- uses: intility/reusable-elixir/.github/actions/mix-cache@8538d07c58d0c44e844e68a773ec729f21ee4ed7 # v2.2.1
   with:
     mix-env: test
     cache-build: "false"   # Only cache deps/
@@ -629,15 +629,15 @@ The workflows are built from lightweight composite actions in `.github/actions/`
 ```yaml
 steps:
   - uses: actions/checkout@v4
-  - uses: intility/reusable-elixir/.github/actions/install-elixir@main
-  - uses: intility/reusable-elixir/.github/actions/mix-cache@main
+  - uses: intility/reusable-elixir/.github/actions/install-elixir@8538d07c58d0c44e844e68a773ec729f21ee4ed7 # v2.2.1
+  - uses: intility/reusable-elixir/.github/actions/mix-cache@8538d07c58d0c44e844e68a773ec729f21ee4ed7 # v2.2.1
     with:
       mix-env: test
-  - uses: intility/reusable-elixir/.github/actions/mix-deps-get@main
-  - uses: intility/reusable-elixir/.github/actions/mix-compile@main
+  - uses: intility/reusable-elixir/.github/actions/mix-deps-get@8538d07c58d0c44e844e68a773ec729f21ee4ed7 # v2.2.1
+  - uses: intility/reusable-elixir/.github/actions/mix-compile@8538d07c58d0c44e844e68a773ec729f21ee4ed7 # v2.2.1
     with:
       mix-env: test
-  - uses: intility/reusable-elixir/.github/actions/mix-task@main
+  - uses: intility/reusable-elixir/.github/actions/mix-task@8538d07c58d0c44e844e68a773ec729f21ee4ed7 # v2.2.1
     with:
       mix-env: test
       task: credo --strict
@@ -648,17 +648,17 @@ All actions support a `directory` input (default `.`) for monorepo projects:
 ```yaml
 steps:
   - uses: actions/checkout@v4
-  - uses: intility/reusable-elixir/.github/actions/install-elixir@main
+  - uses: intility/reusable-elixir/.github/actions/install-elixir@8538d07c58d0c44e844e68a773ec729f21ee4ed7 # v2.2.1
     with:
       directory: apps/my-app
-  - uses: intility/reusable-elixir/.github/actions/mix-cache@main
+  - uses: intility/reusable-elixir/.github/actions/mix-cache@8538d07c58d0c44e844e68a773ec729f21ee4ed7 # v2.2.1
     with:
       mix-env: test
       directory: apps/my-app
-  - uses: intility/reusable-elixir/.github/actions/mix-deps-get@main
+  - uses: intility/reusable-elixir/.github/actions/mix-deps-get@8538d07c58d0c44e844e68a773ec729f21ee4ed7 # v2.2.1
     with:
       directory: apps/my-app
-  - uses: intility/reusable-elixir/.github/actions/mix-test@main
+  - uses: intility/reusable-elixir/.github/actions/mix-test@8538d07c58d0c44e844e68a773ec729f21ee4ed7 # v2.2.1
     with:
       mix-env: test
       directory: apps/my-app
@@ -671,7 +671,7 @@ For multi-architecture images (requires `include_erts: false` in your release co
 ```yaml
 jobs:
   release:
-    uses: intility/reusable-elixir/.github/workflows/elixir-release.yaml@v1
+    uses: intility/reusable-elixir/.github/workflows/elixir-release.yaml@8538d07c58d0c44e844e68a773ec729f21ee4ed7 # v2.2.1
     with:
       base-image: "elixir:1.19-slim"
       platforms: "linux/amd64,linux/arm64"

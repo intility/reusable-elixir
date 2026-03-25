@@ -14,7 +14,7 @@ jobs:
   # Run tests, linting, and static analysis
   # Option 1: Use .tool-versions from your project (simplest)
   # test:
-  #   uses: intility/reusable-elixir/.github/workflows/elixir-test.yaml@v1
+  #   uses: intility/reusable-elixir/.github/workflows/elixir-test.yaml@8538d07c58d0c44e844e68a773ec729f21ee4ed7 # v2.2.1
 
   # Option 2: Matrix strategy for testing multiple Elixir/OTP versions
   test:
@@ -30,7 +30,7 @@ jobs:
             otp: "27"
           - elixir: "1.19"
             otp: "28"
-    uses: intility/reusable-elixir/.github/workflows/elixir-test.yaml@v1
+    uses: intility/reusable-elixir/.github/workflows/elixir-test.yaml@8538d07c58d0c44e844e68a773ec729f21ee4ed7 # v2.2.1
     with:
       elixir-version: ${{ matrix.elixir }}
       otp-version: ${{ matrix.otp }}
@@ -43,31 +43,40 @@ jobs:
       # - credo: true
       # - dialyzer: false (enable if needed, slow)
       # - sobelow: false (enable for Phoenix projects)
-      # Pre-built artifacts from upstream jobs
-      # artifacts: |
-      #   my-binary:apps/my_app/priv/bin
       dialyzer: true
       # sobelow: true
 
       # Database support (starts PostgreSQL service automatically)
       # postgres: ash   # For Ash Framework projects
       # postgres: ecto  # For Ecto/Phoenix projects
+      # postgres-image: timescale/timescaledb
       # postgres-version: "18"
 
       # SQLite support
       # sqlite: ash   # For Ash Framework projects
       # sqlite: ecto  # For Ecto projects
 
-      # Phoenix assets (Mix-managed, no npm)
-      # assets-deploy: true
-
       # Phoenix assets (npm-managed)
       # npm-install: true
       # npm-working-directory: assets
+      # npm-registry: https://npm.pkg.github.com
       # node-version: "22"
 
       # Spark DSL formatter
       # spark-formatter: true
+      # spark-extensions: |
+      #   MyApp.Resource.Extension
+
+      # System packages
+      # apt-packages: libvips-dev imagemagick
+
+      # Environment variables for all jobs
+      # env: |
+      #   CLOAK_KEY=base64encodedkey
+
+      # Pre-built artifacts from upstream jobs
+      # artifacts: |
+      #   my-binary:apps/my_app/priv/bin
 
       # Private Hex packages
       # hex-organization: intility
@@ -83,29 +92,49 @@ jobs:
       packages: write
       id-token: write
       attestations: write
-    uses: intility/reusable-elixir/.github/workflows/elixir-release.yaml@v1
+    uses: intility/reusable-elixir/.github/workflows/elixir-release.yaml@8538d07c58d0c44e844e68a773ec729f21ee4ed7 # v2.2.1
     with:
       # Uses .tool-versions from your project (or specify explicitly)
       # elixir-version: "1.19"
       # otp-version: "28"
 
       # Enable reproducible builds and layer caching
-      # Pre-built artifacts from upstream jobs
-      # artifacts: |
-      #   my-binary:apps/my_app/priv/bin
       source-date-epoch: "0"
 
       # Optional: Custom GHCR image name (defaults to ghcr.io/${{ github.repository }})
-      # image-name: "ghcr.io/intility/my-elixir-app"
+      # image-name: my-elixir-app
 
       # Optional: Override base image (defaults to project config)
-      # base-image: "elixir:1.19-slim"
+      # base-image: elixir:1.19-slim
 
       # Optional: Multi-platform builds (requires include_erts: false)
-      # platforms: "linux/amd64,linux/arm64"
+      # platforms: linux/amd64,linux/arm64
 
       # Optional: Release name if multiple releases configured
-      # release: "my_app"
+      # release: my_app
+
+      # Phoenix assets (Mix-managed, no npm)
+      # assets-deploy: true
+
+      # Install Tailwind binary before asset deploy
+      # tailwind-install: true
+
+      # Phoenix assets (npm-managed)
+      # npm-install: true
+      # npm-working-directory: assets
+      # npm-registry: https://npm.pkg.github.com
+      # node-version: "22"
+
+      # System packages
+      # apt-packages: libvips-dev
+
+      # Environment variables for the release job
+      # env: |
+      #   MY_VAR=value
+
+      # Pre-built artifacts from upstream jobs
+      # artifacts: |
+      #   my-binary:apps/my_app/priv/bin
 
       # Private Hex packages
       # hex-organization: intility
