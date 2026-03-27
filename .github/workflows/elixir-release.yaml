@@ -125,7 +125,7 @@ jobs:
   release:
     runs-on: ubuntu-latest
     outputs:
-      digest: ${{ steps.ocibuild.outputs.digest }}
+      digest: ${{ steps.image-digest.outputs.digest }}
     defaults:
       run:
         working-directory: ${{ inputs.directory }}
@@ -270,3 +270,12 @@ jobs:
           subject-digest: ${{ steps.ocibuild.outputs.digest }}
           subject-name: ghcr.io/${{ github.repository_owner }}/${{ inputs.image-name || github.event.repository.name }}
           push-to-registry: true
+
+      - name: Get image digest
+        if: ${{ inputs.docker }}
+        id: image-digest
+        env:
+          IMAGE: ghcr.io/${{ github.repository_owner }}/${{ inputs.image-name || github.event.repository.name }}:${{ steps.meta.outputs.version }}
+        run: |
+          digest=$(crane digest "${IMAGE}")
+          echo "digest=${digest}" >> "$GITHUB_OUTPUT"
