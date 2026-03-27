@@ -116,10 +116,16 @@ on:
       pull-password:
         required: false
         description: Password/token for pulling base image (defaults to GITHUB_TOKEN)
+    outputs:
+      digest:
+        description: "The digest of the pushed OCI image. Empty string when the docker input is false."
+        value: ${{ jobs.release.outputs.digest }}
 
 jobs:
   release:
     runs-on: ubuntu-latest
+    outputs:
+      digest: ${{ steps.ocibuild.outputs.digest }}
     defaults:
       run:
         working-directory: ${{ inputs.directory }}
