@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.3.0](https://github.com/intility/reusable-elixir/compare/v2.2.1...v2.3.0) (2026-03-27)
+
+
+### Features
+
+* **release:** expose image digest as workflow output ([#72](https://github.com/intility/reusable-elixir/issues/72)) ([9106810](https://github.com/intility/reusable-elixir/commit/9106810aeb190f4a87f78f61dbd67e18a56a7e58))
+* **release:** expose image digest as workflow output ([#73](https://github.com/intility/reusable-elixir/issues/73)) ([06faa31](https://github.com/intility/reusable-elixir/commit/06faa3112461f1e4d347bb78dffa0488a7c8244f))
+
 ## [2.2.1](https://github.com/intility/reusable-elixir/compare/v2.2.0...v2.2.1) (2026-03-04)
 
 
