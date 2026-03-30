@@ -134,23 +134,23 @@ jobs:
         with:
           fetch-depth: 1
 
-      - uses: intility/reusable-elixir/.github/actions/set-env@8538d07c58d0c44e844e68a773ec729f21ee4ed7 # v2.1.0
+      - uses: intility/reusable-elixir/.github/actions/set-env@a778bb81048836a3239b47dcfaaf1f8b8760df97 # v2.1.0
         if: ${{ inputs.env != '' }}
         with:
           env: ${{ inputs.env }}
 
-      - uses: intility/reusable-elixir/.github/actions/apt-packages@8538d07c58d0c44e844e68a773ec729f21ee4ed7 # v2.1.0
+      - uses: intility/reusable-elixir/.github/actions/apt-packages@a778bb81048836a3239b47dcfaaf1f8b8760df97 # v2.1.0
         if: ${{ inputs.apt-packages != '' }}
         with:
           packages: ${{ inputs.apt-packages }}
 
-      - uses: intility/reusable-elixir/.github/actions/setup-tool-versions@8538d07c58d0c44e844e68a773ec729f21ee4ed7 # v2.1.0
+      - uses: intility/reusable-elixir/.github/actions/setup-tool-versions@a778bb81048836a3239b47dcfaaf1f8b8760df97 # v2.1.0
         with:
           elixir-version: ${{ inputs.elixir-version }}
           otp-version: ${{ inputs.otp-version }}
           working-directory: ${{ inputs.directory }}
 
-      - uses: intility/reusable-elixir/.github/actions/ssh-agent@8538d07c58d0c44e844e68a773ec729f21ee4ed7 # v2.1.0
+      - uses: intility/reusable-elixir/.github/actions/ssh-agent@a778bb81048836a3239b47dcfaaf1f8b8760df97 # v2.1.0
         with:
           ssh-private-key: ${{ secrets.ssh-private-key }}
 
@@ -183,7 +183,7 @@ jobs:
         env:
           MIX_ENV: prod
 
-      - uses: intility/reusable-elixir/.github/actions/download-artifacts@8538d07c58d0c44e844e68a773ec729f21ee4ed7 # v2.1.0
+      - uses: intility/reusable-elixir/.github/actions/download-artifacts@a778bb81048836a3239b47dcfaaf1f8b8760df97 # v2.1.0
         if: ${{ inputs.artifacts != '' }}
         with:
           artifacts: ${{ inputs.artifacts }}
@@ -249,7 +249,7 @@ jobs:
       - name: Build and push OCI image
         if: ${{ inputs.docker }}
         id: ocibuild
-        uses: intility/reusable-elixir/.github/actions/ocibuild@8538d07c58d0c44e844e68a773ec729f21ee4ed7 # v2.1.0
+        uses: intility/reusable-elixir/.github/actions/ocibuild@a778bb81048836a3239b47dcfaaf1f8b8760df97 # v2.1.0
         with:
           tags: ${{ steps.meta.outputs.tags }}
           registry: ghcr.io
