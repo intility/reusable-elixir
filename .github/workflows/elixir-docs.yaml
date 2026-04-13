@@ -82,7 +82,7 @@ jobs:
       - uses: intility/reusable-elixir/.github/actions/mix-docs@a778bb81048836a3239b47dcfaaf1f8b8760df97 # v2.1.0
         with:
           mix-env: dev
-      - uses: actions/upload-pages-artifact@7b1f4a764d45c48632c6b24a0339c27f5614fb0b # v4.0.0
+      - uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
         with:
           path: doc/
 
