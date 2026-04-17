@@ -103,6 +103,25 @@ on:
             artifacts: |
               my-binary:apps/my_app/priv/bin
               my-assets:apps/my_app/priv/static
+      services:
+        type: string
+        required: false
+        description: |
+          Multiline YAML list of Docker sidecar services to run alongside tests.
+          Each entry supports: name (required), image (required), ports, env,
+          volumes, options, health-cmd, health-timeout. Ports are published on
+          localhost. Containers share the 'ci-services' network and are removed
+          automatically at the end of the test job.
+          Example:
+            services: |
+              - name: redis
+                image: redis:7-alpine
+                ports: 6379:6379
+                health-cmd: redis-cli ping
+              - name: mosquitto
+                image: eclipse-mosquitto:2
+                ports: 1883:1883
+                volumes: ./ci/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
     secrets:
       hex-organization-key:
         required: false
@@ -459,6 +478,12 @@ jobs:
           artifacts: ${{ inputs.artifacts }}
           directory: ${{ inputs.directory }}
 
+      - name: Start Docker services
+        if: ${{ inputs.services != '' }}
+        uses: intility/reusable-elixir/.github/actions/docker-services-up@main
+        with:
+          services: ${{ inputs.services }}
+
       - name: Setup Node
         if: ${{ inputs.npm-install }}
         uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v4
@@ -565,3 +590,14 @@ jobs:
           PGHOST: localhost
           PGUSER: postgres
           PGPASSWORD: postgres
+
+      - name: Stop Docker services
+        if: ${{ always() && inputs.services != '' }}
+        shell: bash
+        run: |
+          ids=$(docker ps -aq --filter label=reusable-elixir-ci=1 || true)
+          if [[ -n "$ids" ]]; then
+            # shellcheck disable=SC2086  # word splitting intended: $ids is a space-separated list
+            docker rm -f $ids
+          fi
+          docker network rm ci-services 2>/dev/null || true
