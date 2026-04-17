@@ -9,7 +9,8 @@ inputs:
     description: |
       Multiline YAML list describing services to start. Each entry supports:
       name (required), image (required), ports, env, volumes, options,
-      health-cmd, health-timeout.
+      health-cmd, health-timeout. Env-var references ($VAR / ${VAR}) in
+      volume entries are expanded at runtime (e.g. $GITHUB_WORKSPACE/...).
     required: true
 
 runs:

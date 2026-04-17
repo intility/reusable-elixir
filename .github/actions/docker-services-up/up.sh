@@ -11,6 +11,7 @@ fi
 
 command -v yq >/dev/null || { echo "::error::yq is required but not installed"; exit 1; }
 command -v docker >/dev/null || { echo "::error::docker is required but not installed"; exit 1; }
+command -v envsubst >/dev/null || { echo "::error::envsubst is required but not installed (usually in gettext-base)"; exit 1; }
 
 # Output one entry per line from a field that may be:
 #   - missing (no output)
@@ -80,9 +81,12 @@ for i in $(seq 0 $((count - 1))); do
     args+=(--env-file "$env_file")
   fi
 
-  # Volumes
+  # Volumes. Env-var references are expanded so callers can use
+  # `$GITHUB_WORKSPACE/...` for bind-mount paths. Only $VAR / ${VAR} forms
+  # are substituted; command substitution ($() / backticks) is not.
   while IFS= read -r vol; do
     [[ -z "$vol" ]] && continue
+    vol=$(envsubst <<<"$vol")
     args+=(-v "$vol")
   done < <(extract_lines "$i" volumes)
 

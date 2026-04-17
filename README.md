@@ -117,7 +117,7 @@ jobs:
         - name: mosquitto
           image: eclipse-mosquitto:2
           ports: 1883:1883
-          volumes: ${{ github.workspace }}/ci/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
+          volumes: $GITHUB_WORKSPACE/ci/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
 ```
 
 Supported per-service fields: `name` (required), `image` (required), `ports`,
