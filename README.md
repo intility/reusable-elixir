@@ -134,9 +134,10 @@ readiness (e.g. retrying in test setup).
 - `options` is a raw pass-through to `docker run` that word-splits on
   whitespace. Don't rely on embedded spaces in quoted values; use `env:` or
   `volumes:` for structured values.
-- Avoid `--network`, `--name`, and `--label` flags inside `options`, they
-  override the action's own flags and will break container isolation and
-  cleanup.
+- Avoid `--network` and `--name` inside `options`; they override the
+  action's own flags and break container isolation or naming. Extra
+  `--label` flags are fine as long as `reusable-elixir-ci=1` remains
+  present so cleanup still matches.
 - On self-hosted runners shared by concurrent jobs, containers are labeled
   `reusable-elixir-ci=1` regardless of which workflow started them. Parallel
   jobs using this feature on the same runner host can interfere during
