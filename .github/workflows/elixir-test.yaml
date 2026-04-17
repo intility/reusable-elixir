@@ -480,8 +480,7 @@ jobs:
 
       - name: Start Docker services
         if: ${{ inputs.services != '' }}
-        # TODO(release): pin to SHA + version comment, matching the other uses: lines
-        uses: intility/reusable-elixir/.github/actions/docker-services-up@main
+        uses: intility/reusable-elixir/.github/actions/docker-services-up@52e1ceb799e920d25de010c99a2874141dac5623
         with:
           services: ${{ inputs.services }}
 
