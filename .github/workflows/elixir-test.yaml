@@ -114,9 +114,9 @@ on:
           automatically at the end of the test job.
           Env-var references ($VAR / ${VAR}) inside volume entries are
           expanded at runtime, so $GITHUB_WORKSPACE/... can be used for
-          bind-mount paths. ${{ github.workspace }} is NOT a valid substitute
-          here: the expression is evaluated at workflow-call time, before any
-          runner is assigned, so it resolves to the empty string.
+          bind-mount paths. Do NOT use the github.workspace context
+          expression here: it is evaluated at workflow-call time, before any
+          runner is assigned, and resolves to the empty string.
           Example:
             services: |
               - name: redis
