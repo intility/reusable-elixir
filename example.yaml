@@ -52,12 +52,12 @@ jobs:
       # postgres-image: timescale/timescaledb
       # postgres-version: "18"
 
-      # Additional Docker sidecar services (Redis, MQTT, etc.)
+      # Additional Docker sidecar services (Valkey, MQTT, etc.)
       # services: |
-      #   - name: redis
-      #     image: redis:7-alpine
+      #   - name: valkey
+      #     image: valkey/valkey:8-alpine
       #     ports: 6379:6379
-      #     health-cmd: redis-cli ping
+      #     health-cmd: valkey-cli ping
 
       # SQLite support
       # sqlite: ash   # For Ash Framework projects
