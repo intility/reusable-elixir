@@ -52,6 +52,13 @@ jobs:
       # postgres-image: timescale/timescaledb
       # postgres-version: "18"
 
+      # Additional Docker sidecar services (Redis, MQTT, etc.)
+      # services: |
+      #   - name: redis
+      #     image: redis:7-alpine
+      #     ports: 6379:6379
+      #     health-cmd: redis-cli ping
+
       # SQLite support
       # sqlite: ash   # For Ash Framework projects
       # sqlite: ecto  # For Ecto projects
