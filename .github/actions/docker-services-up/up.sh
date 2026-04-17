@@ -24,14 +24,14 @@ fi
 echo "Starting $count service(s)"
 
 for i in $(seq 0 $((count - 1))); do
-  name=$(yq ".[$i].name" <<<"$SERVICES_YAML")
-  image=$(yq ".[$i].image" <<<"$SERVICES_YAML")
+  name=$(yq ".[$i].name // \"\"" <<<"$SERVICES_YAML")
+  image=$(yq ".[$i].image // \"\"" <<<"$SERVICES_YAML")
 
-  if [[ "$name" == "null" || -z "$name" ]]; then
+  if [[ -z "$name" ]]; then
     echo "::error::services[$i] is missing required field 'name'"
     exit 1
   fi
-  if [[ "$image" == "null" || -z "$image" ]]; then
+  if [[ -z "$image" ]]; then
     echo "::error::services[$i] (name=$name) is missing required field 'image'"
     exit 1
   fi
