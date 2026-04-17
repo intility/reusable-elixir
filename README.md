@@ -87,6 +87,7 @@ jobs:
 | `apt-packages`          | string  | -          | Space-separated APT packages to install (e.g., `libvips-dev`)         |
 | `env`                   | string  | -          | Environment variables for all jobs (one `KEY=VALUE` per line)         |
 | `artifacts`             | string  | -          | Multiline artifact definitions to download (`name:path` per line)     |
+| `services`              | string  | -          | Multiline YAML list of Docker sidecar services (see below)            |
 
 ### Secrets
 
@@ -95,6 +96,51 @@ jobs:
 | `hex-organization-key` | No       | Hex organization auth key                            |
 | `ssh-private-key`      | No       | SSH private key(s) for private Git repository access |
 | `npm-token`            | No       | NPM authentication token for private registries      |
+
+### Additional Services
+
+Declare arbitrary Docker containers to run alongside your tests. Containers
+share a dedicated `ci-services` network, publish their ports on `localhost`,
+and are removed automatically when the job ends (including on failure).
+
+```yaml
+jobs:
+  test:
+    uses: intility/reusable-elixir/.github/workflows/elixir-test.yaml@<sha>
+    with:
+      postgres: ecto
+      services: |
+        - name: redis
+          image: redis:7-alpine
+          ports: 6379:6379
+          health-cmd: redis-cli ping
+        - name: mosquitto
+          image: eclipse-mosquitto:2
+          ports: 1883:1883
+          volumes: ${{ github.workspace }}/ci/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
+```
+
+Supported per-service fields: `name` (required), `image` (required), `ports`,
+`env`, `volumes`, `options` (raw `docker run` flags), `health-cmd`,
+`health-timeout` (seconds, default `60`). Multi-value fields accept either a
+YAML sequence or a pipe-block scalar with one entry per line.
+
+When `health-cmd` is set, the step waits for the container to report `healthy`
+before continuing. Without `health-cmd`, the caller is responsible for
+readiness (e.g. retrying in test setup).
+
+#### Notes & limitations
+
+- `options` is a raw pass-through to `docker run` that word-splits on
+  whitespace. Don't rely on embedded spaces in quoted values; use `env:` or
+  `volumes:` for structured values.
+- Avoid `--network`, `--name`, and `--label` flags inside `options`, they
+  override the action's own flags and will break container isolation and
+  cleanup.
+- On self-hosted runners shared by concurrent jobs, containers are labeled
+  `reusable-elixir-ci=1` regardless of which workflow started them. Parallel
+  jobs using this feature on the same runner host can interfere during
+  cleanup. GitHub-hosted runners (a fresh VM per job) are unaffected.
 
 ---
 
