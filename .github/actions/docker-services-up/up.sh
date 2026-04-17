@@ -96,6 +96,15 @@ for i in $(seq 0 $((count - 1))); do
   health_cmd=$(yq -r ".[$i].\"health-cmd\" // \"\"" <<<"$SERVICES_YAML")
   health_timeout=$(yq -r ".[$i].\"health-timeout\" // \"60\"" <<<"$SERVICES_YAML")
 
+  if [[ -n "$health_cmd" ]] && ! [[ "$health_timeout" =~ ^[1-9][0-9]*$ ]]; then
+    echo "::error::services[$i] (name=$name) has invalid 'health-timeout': '$health_timeout' (expected positive integer seconds)"
+    exit 1
+  fi
+
+  # Fixed healthcheck cadence: 2s interval x 30 retries ~= 60s to 'unhealthy'.
+  # The polling 'health-timeout' below is independent and controls how long
+  # this script waits before giving up, not how long Docker waits before
+  # flipping status.
   if [[ -n "$health_cmd" ]]; then
     args+=(--health-cmd "$health_cmd")
     args+=(--health-interval 2s)
