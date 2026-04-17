@@ -23,6 +23,13 @@ if ! docker network inspect "$NETWORK" >/dev/null 2>&1; then
   docker network create "$NETWORK" >/dev/null
 fi
 
+# Remove stale containers from a previous job (runner may not have cleaned up).
+stale=$(docker ps -aq --filter "label=$LABEL" || true)
+if [[ -n "$stale" ]]; then
+  echo "Removing stale containers from a previous job: $stale"
+  docker rm -f $stale >/dev/null
+fi
+
 echo "Starting $count service(s) on network $NETWORK"
 
 for i in $(seq 0 $((count - 1))); do
@@ -44,8 +51,9 @@ for i in $(seq 0 $((count - 1))); do
 
   if [[ "${DRY_RUN:-}" == "1" ]]; then
     echo "DRY_RUN: docker ${args[*]} $image"
-  else
-    docker "${args[@]}" "$image" >/dev/null
+  elif ! docker "${args[@]}" "$image" >/dev/null; then
+    echo "::error::Failed to start service '$name' (image=$image)"
+    exit 1
   fi
 
   echo "::endgroup::"
