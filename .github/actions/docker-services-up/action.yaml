@@ -19,4 +19,4 @@ runs:
       shell: bash
       env:
         SERVICES_YAML: ${{ inputs.services }}
-      run: ${{ github.action_path }}/up.sh
+      run: "$GITHUB_ACTION_PATH/up.sh"
