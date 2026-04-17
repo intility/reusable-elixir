@@ -93,12 +93,49 @@ for i in $(seq 0 $((count - 1))); do
     args+=($opt)
   done < <(extract_lines "$i" options)
 
+  health_cmd=$(yq -r ".[$i].\"health-cmd\" // \"\"" <<<"$SERVICES_YAML")
+  health_timeout=$(yq -r ".[$i].\"health-timeout\" // \"60\"" <<<"$SERVICES_YAML")
+
+  if [[ -n "$health_cmd" ]]; then
+    args+=(--health-cmd "$health_cmd")
+    args+=(--health-interval 2s)
+    args+=(--health-retries 30)
+    args+=(--health-timeout 5s)
+  fi
+
   if [[ "${DRY_RUN:-}" == "1" ]]; then
     echo "DRY_RUN: docker ${args[*]} $image"
   elif ! docker "${args[@]}" "$image" >/dev/null; then
     rm -f "$env_file"
     echo "::error::Failed to start service '$name' (image=$image)"
     exit 1
+  fi
+
+  if [[ -n "$health_cmd" && "${DRY_RUN:-}" != "1" ]]; then
+    echo "Waiting up to ${health_timeout}s for $name to report healthy"
+    deadline=$(( $(date +%s) + health_timeout ))
+    while true; do
+      status=$(docker inspect --format='{{.State.Health.Status}}' "$name" 2>/dev/null || echo "missing")
+      case "$status" in
+        healthy)
+          echo "$name is healthy"
+          break
+          ;;
+        unhealthy)
+          rm -f "$env_file"
+          echo "::error::$name reported unhealthy"
+          docker logs "$name" || true
+          exit 1
+          ;;
+      esac
+      if (( $(date +%s) >= deadline )); then
+        rm -f "$env_file"
+        echo "::error::$name did not become healthy within ${health_timeout}s (last status: $status)"
+        docker logs "$name" || true
+        exit 1
+      fi
+      sleep 1
+    done
   fi
 
   # After docker run, env file is no longer needed.
