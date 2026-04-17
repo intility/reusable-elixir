@@ -1,5 +1,27 @@
 # Changelog
 
+## [2.4.0](https://github.com/intility/reusable-elixir/compare/v2.3.0...v2.4.0) (2026-04-17)
+
+
+### Features
+
+* **docker-services-up:** parse services YAML and validate required fields ([3564717](https://github.com/intility/reusable-elixir/commit/35647176eee56bc2588fd4dbc012a505943d5f66))
+* **docker-services-up:** pass ports, env, volumes, options to docker run ([378e760](https://github.com/intility/reusable-elixir/commit/378e760031914659b473769deca7ddaef7616109))
+* **docker-services-up:** scaffold composite action ([ef087f1](https://github.com/intility/reusable-elixir/commit/ef087f117ac8faf8b3fe49a08e9b015c4b58c850))
+* **docker-services-up:** start containers on shared bridge network ([3f503b5](https://github.com/intility/reusable-elixir/commit/3f503b588fbf8ac8b1af1e61c86c9a8b4db7d137))
+* **docker-services-up:** wait for health-cmd to report healthy ([201163a](https://github.com/intility/reusable-elixir/commit/201163ad91d3f2df169e0bbd42e5d8061adf2799))
+* **docker-services:** Add environment variable expansion for volume paths ([c1f36ae](https://github.com/intility/reusable-elixir/commit/c1f36ae1c44df941ab51b34540cae89193c0bb3c))
+* **elixir-test:** add services input for arbitrary Docker sidecars ([8c6558f](https://github.com/intility/reusable-elixir/commit/8c6558fd441d74067d7b95fd710adfb656fda5cb))
+
+
+### Bug Fixes
+
+* **docker-services-up:** annotate docker run failures and clean stale containers ([6325e25](https://github.com/intility/reusable-elixir/commit/6325e25120e6fde5fae4e0340017738dfe8406e8))
+* **docker-services-up:** normalize yq null output to catch '~' name/image ([dffa029](https://github.com/intility/reusable-elixir/commit/dffa029114f38a9577c449e215a29870d6f02d9e))
+* **docker-services-up:** strip trailing whitespace and clean env-file on failure ([7edc8bd](https://github.com/intility/reusable-elixir/commit/7edc8bde2ee7a2e6f1333372edad227fc0baf3a6))
+* **docker-services-up:** use $GITHUB_ACTION_PATH to silence code-injection alert ([931a513](https://github.com/intility/reusable-elixir/commit/931a5132760d8eb9a58386ce5c58af62a80ead75))
+* **docker-services-up:** validate health-timeout and document fixed healthcheck cadence ([b5296a1](https://github.com/intility/reusable-elixir/commit/b5296a1846fcce680bb3d801f876a37cb80b6879))
+
 ## [2.3.0](https://github.com/intility/reusable-elixir/compare/v2.2.1...v2.3.0) (2026-03-27)
 
 
