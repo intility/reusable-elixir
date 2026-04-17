@@ -1,0 +1,22 @@
+name: Start Docker sidecar services
+description: |
+  Starts a caller-supplied set of Docker containers as sidecars for the current job.
+  Containers are labeled `reusable-elixir-ci=1` for later cleanup. All containers
+  attach to a shared user-defined bridge network named `ci-services`.
+
+inputs:
+  services:
+    description: |
+      Multiline YAML list describing services to start. Each entry supports:
+      name (required), image (required), ports, env, volumes, options,
+      health-cmd, health-timeout.
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Start services
+      shell: bash
+      env:
+        SERVICES_YAML: ${{ inputs.services }}
+      run: ${{ github.action_path }}/up.sh
