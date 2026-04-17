@@ -1,19 +1,16 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+readonly NETWORK=ci-services
+readonly LABEL=reusable-elixir-ci=1
+
 if [[ -z "${SERVICES_YAML:-}" ]]; then
   echo "SERVICES_YAML is empty, nothing to do"
   exit 0
 fi
 
-command -v yq >/dev/null || {
-  echo "::error::yq is required but not installed"
-  exit 1
-}
-command -v docker >/dev/null || {
-  echo "::error::docker is required but not installed"
-  exit 1
-}
+command -v yq >/dev/null || { echo "::error::yq is required but not installed"; exit 1; }
+command -v docker >/dev/null || { echo "::error::docker is required but not installed"; exit 1; }
 
 count=$(yq 'length' <<<"$SERVICES_YAML")
 if [[ "$count" == "0" || "$count" == "null" ]]; then
@@ -21,7 +18,12 @@ if [[ "$count" == "0" || "$count" == "null" ]]; then
   exit 0
 fi
 
-echo "Starting $count service(s)"
+# Create shared network (idempotent).
+if ! docker network inspect "$NETWORK" >/dev/null 2>&1; then
+  docker network create "$NETWORK" >/dev/null
+fi
+
+echo "Starting $count service(s) on network $NETWORK"
 
 for i in $(seq 0 $((count - 1))); do
   name=$(yq ".[$i].name // \"\"" <<<"$SERVICES_YAML")
@@ -37,6 +39,14 @@ for i in $(seq 0 $((count - 1))); do
   fi
 
   echo "::group::Starting service: $name ($image)"
-  echo "  (container start will be implemented in the next task)"
+
+  args=(run -d --name "$name" --network "$NETWORK" --label "$LABEL")
+
+  if [[ "${DRY_RUN:-}" == "1" ]]; then
+    echo "DRY_RUN: docker ${args[*]} $image"
+  else
+    docker "${args[@]}" "$image" >/dev/null
+  fi
+
   echo "::endgroup::"
 done
