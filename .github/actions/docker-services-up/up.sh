@@ -22,6 +22,7 @@ extract_lines() {
     .[$idx].$field
     | ((select(tag == \"!!seq\") | .[]),
        (select(tag == \"!!str\") | split(\"\n\") | .[]))
+    | sub(\"\\s+$\"; \"\")
     | select(. != \"\" and . != null)
   " <<<"$SERVICES_YAML"
 }
@@ -95,6 +96,7 @@ for i in $(seq 0 $((count - 1))); do
   if [[ "${DRY_RUN:-}" == "1" ]]; then
     echo "DRY_RUN: docker ${args[*]} $image"
   elif ! docker "${args[@]}" "$image" >/dev/null; then
+    rm -f "$env_file"
     echo "::error::Failed to start service '$name' (image=$image)"
     exit 1
   fi
