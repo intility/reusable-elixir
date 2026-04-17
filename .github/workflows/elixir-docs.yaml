@@ -48,27 +48,27 @@ jobs:
     name: Build Docs
     runs-on: ubuntu-latest
     steps:
-      - uses: intility/reusable-elixir/.github/actions/set-env@8538d07c58d0c44e844e68a773ec729f21ee4ed7 # v2.1.0
+      - uses: intility/reusable-elixir/.github/actions/set-env@a778bb81048836a3239b47dcfaaf1f8b8760df97 # v2.1.0
         if: ${{ inputs.env != '' }}
         with:
           env: ${{ inputs.env }}
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v4
-      - uses: intility/reusable-elixir/.github/actions/apt-packages@8538d07c58d0c44e844e68a773ec729f21ee4ed7 # v2.1.0
+      - uses: intility/reusable-elixir/.github/actions/apt-packages@a778bb81048836a3239b47dcfaaf1f8b8760df97 # v2.1.0
         if: ${{ inputs.apt-packages != '' }}
         with:
           packages: ${{ inputs.apt-packages }}
-      - uses: intility/reusable-elixir/.github/actions/setup-tool-versions@8538d07c58d0c44e844e68a773ec729f21ee4ed7 # v2.1.0
+      - uses: intility/reusable-elixir/.github/actions/setup-tool-versions@a778bb81048836a3239b47dcfaaf1f8b8760df97 # v2.1.0
         with:
           elixir-version: ${{ inputs.elixir-version }}
           otp-version: ${{ inputs.otp-version }}
-      - uses: intility/reusable-elixir/.github/actions/ssh-agent@8538d07c58d0c44e844e68a773ec729f21ee4ed7 # v2.1.0
+      - uses: intility/reusable-elixir/.github/actions/ssh-agent@a778bb81048836a3239b47dcfaaf1f8b8760df97 # v2.1.0
         with:
           ssh-private-key: ${{ secrets.ssh-private-key }}
-      - uses: intility/reusable-elixir/.github/actions/install-elixir@8538d07c58d0c44e844e68a773ec729f21ee4ed7 # v2.1.0
-      - uses: intility/reusable-elixir/.github/actions/mix-cache@8538d07c58d0c44e844e68a773ec729f21ee4ed7 # v2.1.0
+      - uses: intility/reusable-elixir/.github/actions/install-elixir@a778bb81048836a3239b47dcfaaf1f8b8760df97 # v2.1.0
+      - uses: intility/reusable-elixir/.github/actions/mix-cache@a778bb81048836a3239b47dcfaaf1f8b8760df97 # v2.1.0
         with:
           mix-env: dev
-      - uses: intility/reusable-elixir/.github/actions/download-artifacts@8538d07c58d0c44e844e68a773ec729f21ee4ed7 # v2.1.0
+      - uses: intility/reusable-elixir/.github/actions/download-artifacts@a778bb81048836a3239b47dcfaaf1f8b8760df97 # v2.1.0
         if: ${{ inputs.artifacts != '' }}
         with:
           artifacts: ${{ inputs.artifacts }}
@@ -78,11 +78,11 @@ jobs:
           HEX_ORG: ${{ inputs.hex-organization }}
           HEX_ORG_KEY: ${{ secrets.hex-organization-key }}
         run: mix hex.organization auth "${HEX_ORG}" --key "${HEX_ORG_KEY}"
-      - uses: intility/reusable-elixir/.github/actions/mix-deps-get@8538d07c58d0c44e844e68a773ec729f21ee4ed7 # v2.1.0
-      - uses: intility/reusable-elixir/.github/actions/mix-docs@8538d07c58d0c44e844e68a773ec729f21ee4ed7 # v2.1.0
+      - uses: intility/reusable-elixir/.github/actions/mix-deps-get@a778bb81048836a3239b47dcfaaf1f8b8760df97 # v2.1.0
+      - uses: intility/reusable-elixir/.github/actions/mix-docs@a778bb81048836a3239b47dcfaaf1f8b8760df97 # v2.1.0
         with:
           mix-env: dev
-      - uses: actions/upload-pages-artifact@7b1f4a764d45c48632c6b24a0339c27f5614fb0b # v4.0.0
+      - uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
         with:
           path: doc/
 
@@ -99,4 +99,4 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4.0.5
+        uses: actions/deploy-pages@cd2ce8fcbc39b97be8ca5fce6e763baed58fa128 # v5.0.0
