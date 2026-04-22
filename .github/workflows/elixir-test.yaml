@@ -485,7 +485,7 @@ jobs:
 
       - name: Start Docker services
         if: ${{ inputs.services != '' }}
-        uses: intility/reusable-elixir/.github/actions/docker-services-up@a778bb81048836a3239b47dcfaaf1f8b8760df97
+        uses: intility/reusable-elixir/.github/actions/docker-services-up@a563c703810d276f1bf7c89895db971c958c713e # v2.4.0
         with:
           services: ${{ inputs.services }}
 
