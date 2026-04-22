@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.4.1](https://github.com/intility/reusable-elixir/compare/v2.4.0...v2.4.1) (2026-04-22)
+
+
+### Bug Fixes
+
+* **ci:** Update docker-services-up action to v2.4.0 ([a3ed0d1](https://github.com/intility/reusable-elixir/commit/a3ed0d1c204ed7495f95a1a190fe4db0f8b5adf7))
+
 ## [2.4.0](https://github.com/intility/reusable-elixir/compare/v2.3.0...v2.4.0) (2026-04-17)
 
 
