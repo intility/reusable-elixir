@@ -1,5 +1,83 @@
 # Changelog
 
+## [3.0.0](https://github.com/intility/reusable-elixir/compare/v2.4.2...v3.0.0) (2026-04-22)
+
+
+### ⚠ BREAKING CHANGES
+
+* align image-name input with reusable-docker convention ([#44](https://github.com/intility/reusable-elixir/issues/44))
+
+### Features
+
+* add artifact injection support to workflows ([a30666d](https://github.com/intility/reusable-elixir/commit/a30666d5d488f756ac8644c7a79f7bb07dacdb69))
+* add artifacts input to elixir-release workflow ([b616ba8](https://github.com/intility/reusable-elixir/commit/b616ba8cefb919e991326b76f5c3065ca8aa9a88))
+* add artifacts input to elixir-test workflow ([173b3a8](https://github.com/intility/reusable-elixir/commit/173b3a8f73f05686e517ff3829134a78540602c5))
+* add assets-deploy input for Mix-managed asset pipelines ([#51](https://github.com/intility/reusable-elixir/issues/51)) ([11a52dd](https://github.com/intility/reusable-elixir/commit/11a52dd037ada3da51fc60fe4ac7e474daf61cd7))
+* add download-artifacts composite action ([25255fa](https://github.com/intility/reusable-elixir/commit/25255fab6aae18d63f26d9ee636b705a1e01a229))
+* add env input and fix named release support ([aa15a27](https://github.com/intility/reusable-elixir/commit/aa15a27e2340c63d83622e029e56e06aecd57704))
+* Add reusable Elixir workflow with OCI build support ([edc0c3c](https://github.com/intility/reusable-elixir/commit/edc0c3c17bca569cdd9807ceca975ce9d3c4b002))
+* Add support for PostgreSQL-compatible Docker images ([686899d](https://github.com/intility/reusable-elixir/commit/686899d1cecf4af01767532f95ef0716f50d3d2d))
+* **ci:** add Mix cache action to improve build performance ([530cd7a](https://github.com/intility/reusable-elixir/commit/530cd7a44a19e2aaa50ce7a5055f7d096725108c))
+* **ci:** add setup-tool-versions GitHub Action ([f515169](https://github.com/intility/reusable-elixir/commit/f515169003eb5965c75efdaaf4e5d7ecb2ee58da))
+* **ci:** add support for APT package installation ([e323b71](https://github.com/intility/reusable-elixir/commit/e323b71d276238e6a8840a53f296919153f75239))
+* **ci:** Add support for private NPM registries and authentication ([9b421c1](https://github.com/intility/reusable-elixir/commit/9b421c1b34f0940159be4a30759ebbcbd31c4497))
+* **ci:** add Tailwind binary installation step to release workflow ([70a2e40](https://github.com/intility/reusable-elixir/commit/70a2e402587eca45722fda96c41a0c19830eb3c5))
+* **ci:** Make SOURCE_DATE_EPOCH configurable via input parameter ([801c3c1](https://github.com/intility/reusable-elixir/commit/801c3c111570ae819da2f2cb7c07e39463065ad1))
+* **ci:** replace staple-actions with lightweight composite actions ([d2307f7](https://github.com/intility/reusable-elixir/commit/d2307f76f0e3fa29f30924ff4e94e1b71ec2bca4))
+* **ci:** Touch cached Mix files to preserve modification times ([af7b085](https://github.com/intility/reusable-elixir/commit/af7b08550ed7174d0bc766dd5a620f17480b20b2))
+* **docker-services-up:** parse services YAML and validate required fields ([3564717](https://github.com/intility/reusable-elixir/commit/35647176eee56bc2588fd4dbc012a505943d5f66))
+* **docker-services-up:** pass ports, env, volumes, options to docker run ([378e760](https://github.com/intility/reusable-elixir/commit/378e760031914659b473769deca7ddaef7616109))
+* **docker-services-up:** scaffold composite action ([ef087f1](https://github.com/intility/reusable-elixir/commit/ef087f117ac8faf8b3fe49a08e9b015c4b58c850))
+* **docker-services-up:** start containers on shared bridge network ([3f503b5](https://github.com/intility/reusable-elixir/commit/3f503b588fbf8ac8b1af1e61c86c9a8b4db7d137))
+* **docker-services-up:** wait for health-cmd to report healthy ([201163a](https://github.com/intility/reusable-elixir/commit/201163ad91d3f2df169e0bbd42e5d8061adf2799))
+* **docker-services:** Add environment variable expansion for volume paths ([c1f36ae](https://github.com/intility/reusable-elixir/commit/c1f36ae1c44df941ab51b34540cae89193c0bb3c))
+* **elixir-test:** add services input for arbitrary Docker sidecars ([8c6558f](https://github.com/intility/reusable-elixir/commit/8c6558fd441d74067d7b95fd710adfb656fda5cb))
+* **ocibuild:** Add separate pull credentials for base images ([0eca565](https://github.com/intility/reusable-elixir/commit/0eca565fd45d508c5cfc168f223e7f2099805ba2))
+* **release:** add optional image-name input ([86d8d36](https://github.com/intility/reusable-elixir/commit/86d8d360be2ccabcc1a01ed5888f3367c6f841a5))
+* **release:** add optional image-name input ([73bcd0a](https://github.com/intility/reusable-elixir/commit/73bcd0a9ed711f5313691fa370237ae9a5e85a4a))
+* **release:** expose image digest as workflow output ([#72](https://github.com/intility/reusable-elixir/issues/72)) ([9106810](https://github.com/intility/reusable-elixir/commit/9106810aeb190f4a87f78f61dbd67e18a56a7e58))
+* **release:** expose image digest as workflow output ([#73](https://github.com/intility/reusable-elixir/issues/73)) ([06faa31](https://github.com/intility/reusable-elixir/commit/06faa3112461f1e4d347bb78dffa0488a7c8244f))
+* support passing environment variables to reusable workflow ([652dee3](https://github.com/intility/reusable-elixir/commit/652dee3f02636caba3d43ebb3f395fe5fc04479d))
+* support passing environment variables to reusable workflow ([e4d5381](https://github.com/intility/reusable-elixir/commit/e4d5381cc1958cf23ef96732e4a4c011299e1e63)), closes [#22](https://github.com/intility/reusable-elixir/issues/22)
+* **test:** add directory support for mix tasks ([db9686e](https://github.com/intility/reusable-elixir/commit/db9686edfb7d7231e252e270c75ecc244e350790))
+* **test:** add directory support for mix tasks ([80cc79e](https://github.com/intility/reusable-elixir/commit/80cc79e15e6e69efc9e8676fc382cd4fa07f0173))
+* **workflows:** add env input to elixir-release workflow ([4a8e83c](https://github.com/intility/reusable-elixir/commit/4a8e83c2eac459619729b76d898aa4145b074a5b))
+* **workflows:** Add SSH private key support for Git dependencies ([a0d284e](https://github.com/intility/reusable-elixir/commit/a0d284e0858099124fea880ac24b65d91a4c8acd))
+
+
+### Bug Fixes
+
+* align image-name input with reusable-docker convention ([#44](https://github.com/intility/reusable-elixir/issues/44)) ([4f1efbb](https://github.com/intility/reusable-elixir/commit/4f1efbbcb96b1259cea7154388c0097215dd41bc))
+* **cache:** clean stale deps on partial cache hit to prevent poisoning ([#53](https://github.com/intility/reusable-elixir/issues/53)) ([2171e6b](https://github.com/intility/reusable-elixir/commit/2171e6b3510f073dc890f50655e08a6ceae83000))
+* **cache:** remove cross-lockfile build cache restore-key ([#56](https://github.com/intility/reusable-elixir/issues/56)) ([53ae721](https://github.com/intility/reusable-elixir/commit/53ae72100d8bb11d1b971c0beb65886b40e7db17))
+* **ci:** Add mix deps get step before docs generation ([a41c3df](https://github.com/intility/reusable-elixir/commit/a41c3df3c5ff9b3c87b9de9c97fe855cb83b8f59))
+* **ci:** correct action version comments from v2.1.0 to v2.4.0 ([a5512a0](https://github.com/intility/reusable-elixir/commit/a5512a0cebc2855f2335291b940bfef6ee00524d))
+* **ci:** correct pinned SHA for actions/deploy-pages v4.0.5 ([d95aefc](https://github.com/intility/reusable-elixir/commit/d95aefc356af74c7f563cca427ea71d4c2047369))
+* **ci:** improve spark-extensions parsing in workflow ([452f661](https://github.com/intility/reusable-elixir/commit/452f661c8e36dfcbaf93902b67d38612fc7ff551))
+* **ci:** remove invalid expression from input description ([b89669c](https://github.com/intility/reusable-elixir/commit/b89669c8009d744b73d51c71ae2699e35643adac))
+* **ci:** restore build cache in formatter job ([#42](https://github.com/intility/reusable-elixir/issues/42)) ([9e6b6aa](https://github.com/intility/reusable-elixir/commit/9e6b6aab140378f2a0eda7e3c64b307411fb033e))
+* **ci:** Update docker-services-up action to v2.4.0 ([a3ed0d1](https://github.com/intility/reusable-elixir/commit/a3ed0d1c204ed7495f95a1a190fe4db0f8b5adf7))
+* **ci:** use conventional commit prefix for security fixes ([#39](https://github.com/intility/reusable-elixir/issues/39)) ([86e9b7a](https://github.com/intility/reusable-elixir/commit/86e9b7af6936c22b844b44e302ef22c207d4450f))
+* **docker-services-up:** annotate docker run failures and clean stale containers ([6325e25](https://github.com/intility/reusable-elixir/commit/6325e25120e6fde5fae4e0340017738dfe8406e8))
+* **docker-services-up:** normalize yq null output to catch '~' name/image ([dffa029](https://github.com/intility/reusable-elixir/commit/dffa029114f38a9577c449e215a29870d6f02d9e))
+* **docker-services-up:** strip trailing whitespace and clean env-file on failure ([7edc8bd](https://github.com/intility/reusable-elixir/commit/7edc8bde2ee7a2e6f1333372edad227fc0baf3a6))
+* **docker-services-up:** use $GITHUB_ACTION_PATH to silence code-injection alert ([931a513](https://github.com/intility/reusable-elixir/commit/931a5132760d8eb9a58386ce5c58af62a80ead75))
+* **docker-services-up:** validate health-timeout and document fixed healthcheck cadence ([b5296a1](https://github.com/intility/reusable-elixir/commit/b5296a1846fcce680bb3d801f876a37cb80b6879))
+* **mix-compile:** Dereference priv symlinks for NIF caching ([8fa37d7](https://github.com/intility/reusable-elixir/commit/8fa37d77b6155c08b3b5f5d777cc17b26580a21a))
+* **ocibuild:** Make pull credentials optional for anonymous registry access ([08b92fc](https://github.com/intility/reusable-elixir/commit/08b92fc236efc6f1306549ee005c266d39ae317e))
+* **ocibuild:** Remove fallback to push credentials for pull operations ([d12256a](https://github.com/intility/reusable-elixir/commit/d12256a58a985b403151299179565ad16af4d770))
+* prevent conflicting build caches in test job ([561d159](https://github.com/intility/reusable-elixir/commit/561d159858fbd5d47663d42b0405a01858a7e92d))
+* **release:** directory input on ocibuild action ([9dec86b](https://github.com/intility/reusable-elixir/commit/9dec86bf7003ac97dc0dfee7fb89315bb068a63c))
+* **release:** directory input on ocibuild action ([eb9ba2c](https://github.com/intility/reusable-elixir/commit/eb9ba2c02038e88a48870779148005c2ec18da12))
+* resolve 107 code scanning security alerts ([#36](https://github.com/intility/reusable-elixir/issues/36)) ([d40fa41](https://github.com/intility/reusable-elixir/commit/d40fa41fb092ab6b0f81159f6501eab148f6b1f1))
+* Set MIX_ENV ([5d794fa](https://github.com/intility/reusable-elixir/commit/5d794fafb348d79853d8c2be33dd2afacf82e578))
+* split mix-cache into separate deps and build caches ([20d3aa5](https://github.com/intility/reusable-elixir/commit/20d3aa5b78ea35e16fc6e103c6174029eb55eac8)), closes [#27](https://github.com/intility/reusable-elixir/issues/27)
+
+
+### Performance Improvements
+
+* **ci:** Remove wasteful deps compilation from deps job ([6bd0d1e](https://github.com/intility/reusable-elixir/commit/6bd0d1ed6080066e379683d50eb8b6aec6850ba5))
+
 ## [2.4.2](https://github.com/intility/reusable-elixir/compare/v2.4.1...v2.4.2) (2026-04-22)
 
 
