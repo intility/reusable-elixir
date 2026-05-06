@@ -160,15 +160,10 @@ jobs:
           version-file: ${{ inputs.directory }}/.tool-versions
           version-type: strict
 
-      - name: Restore dependencies cache
-        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+      - uses: intility/reusable-elixir/.github/actions/mix-cache@a563c703810d276f1bf7c89895db971c958c713e # v2.4.0
         with:
-          path: |
-            ${{ inputs.directory }}/deps
-            ${{ inputs.directory }}/_build
-          key: ${{ runner.os }}-mix-${{ hashFiles(format('{0}/.tool-versions', inputs.directory)) }}-${{ hashFiles('**/mix.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-mix-${{ hashFiles(format('{0}/.tool-versions', inputs.directory)) }}-
+          mix-env: prod
+          directory: ${{ inputs.directory }}
 
       - name: Authorize Hex organization
         if: ${{ inputs.hex-organization != '' }}
@@ -211,10 +206,11 @@ jobs:
         env:
           MIX_ENV: prod
 
-      - name: Compile
-        run: mix compile --warnings-as-errors
-        env:
-          MIX_ENV: prod
+      - uses: intility/reusable-elixir/.github/actions/mix-compile@a563c703810d276f1bf7c89895db971c958c713e # v2.4.0
+        with:
+          mix-env: prod
+          args: --warnings-as-errors
+          directory: ${{ inputs.directory }}
 
       - name: Deploy assets
         if: ${{ inputs.npm-install || inputs.assets-deploy }}
