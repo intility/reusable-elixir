@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.0.2](https://github.com/intility/reusable-elixir/compare/v3.0.1...v3.0.2) (2026-05-14)
+
+
+### Bug Fixes
+
+* Include source files hash in PLT cache key ([37be523](https://github.com/intility/reusable-elixir/commit/37be523266eadda34813a43cccffc16c51f6e15e))
+
 ## [3.0.1](https://github.com/intility/reusable-elixir/compare/v3.0.0...v3.0.1) (2026-05-14)
 
 
