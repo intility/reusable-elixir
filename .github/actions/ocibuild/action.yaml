@@ -68,6 +68,12 @@ runs:
           export SOURCE_DATE_EPOCH="${INPUT_SOURCE_DATE_EPOCH}"
         fi
 
+        # Fail early if no tags were provided (e.g. docker/metadata-action produced empty output)
+        if [ -z "${INPUT_TAGS}" ]; then
+          echo "::error::No image tags provided. This usually means docker/metadata-action could not extract a version from the git tag. If using release-please with component-prefixed tags (e.g. server-v1.0.0), add type=match patterns to the tags input."
+          exit 1
+        fi
+
         # Build argument array safely
         ARGS=()
         ARGS+=(--tag "${INPUT_TAGS}")
