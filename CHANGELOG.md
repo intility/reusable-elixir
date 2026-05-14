@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.0.1](https://github.com/intility/reusable-elixir/compare/v3.0.0...v3.0.1) (2026-05-14)
+
+
+### Bug Fixes
+
+* Add validation for empty image tags in OCI build ([7c41981](https://github.com/intility/reusable-elixir/commit/7c41981065653f5a3a7f32b86493631c488782ea))
+
 ## [3.0.0](https://github.com/intility/reusable-elixir/compare/v2.4.2...v3.0.0) (2026-04-22)
 
 
