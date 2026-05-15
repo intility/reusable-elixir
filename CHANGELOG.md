@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.0.3](https://github.com/intility/reusable-elixir/compare/v3.0.2...v3.0.3) (2026-05-15)
+
+
+### Bug Fixes
+
+* **ci:** Update internal action pins to include PLT cache fix ([#93](https://github.com/intility/reusable-elixir/issues/93)) ([e18cda4](https://github.com/intility/reusable-elixir/commit/e18cda4400aabbbab8cd28b14f43df6cade15c25))
+
 ## [3.0.2](https://github.com/intility/reusable-elixir/compare/v3.0.1...v3.0.2) (2026-05-14)
 
 
