@@ -235,6 +235,43 @@ jobs:
           MIX_ENV: prod
           RELEASE_NAME: ${{ inputs.release }}
 
+      - name: Create release tarball
+        if: ${{ inputs.tarball }}
+        id: tarball
+        env:
+          MIX_ENV: prod
+          RELEASE_NAME: ${{ inputs.release }}
+        run: |
+          if [ -n "${RELEASE_NAME}" ]; then
+            NAME="${RELEASE_NAME}"
+          else
+            NAME=$(mix eval 'IO.puts(Mix.Project.config()[:app])')
+          fi
+
+          VERSION=$(mix eval 'IO.puts(Mix.Project.config()[:version])')
+
+          OS=$(uname -s | tr '[:upper:]' '[:lower:]')
+          ARCH=$(uname -m)
+          case "$ARCH" in
+            x86_64)  ARCH=amd64 ;;
+            aarch64) ARCH=arm64 ;;
+          esac
+
+          TARBALL="${NAME}-${VERSION}-${OS}-${ARCH}.tar.gz"
+
+          if [ ! -d "_build/prod/rel/${NAME}" ]; then
+            echo "::error::Release directory _build/prod/rel/${NAME} not found"
+            exit 1
+          fi
+
+          tar -czf "${TARBALL}" -C "_build/prod/rel/${NAME}" .
+          sha256sum "${TARBALL}" > "${TARBALL}.sha256"
+
+          echo "tarball-name=${TARBALL}" >> "$GITHUB_OUTPUT"
+          echo "tarball-path=$(pwd)/${TARBALL}" >> "$GITHUB_OUTPUT"
+
+          echo "::notice::Created ${TARBALL} ($(du -h "${TARBALL}" | cut -f1))"
+
       - name: Docker meta
         if: ${{ inputs.docker }}
         id: meta
