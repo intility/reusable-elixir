@@ -191,7 +191,7 @@ jobs:
 > [!IMPORTANT]
 > This workflow expects your project to use the [ocibuild](https://hex.pm/packages/ocibuild) library for building container images.
 
-Builds and publishes Elixir releases as OCI container images with supply chain security.
+Builds and publishes Elixir releases as OCI container images or downloadable tarballs with supply chain security.
 
 ### Features
 
@@ -202,6 +202,7 @@ Builds and publishes Elixir releases as OCI container images with supply chain s
 - **SBOM generation** (Software Bill of Materials) included in images
 - **Private Hex packages** support via organization authentication
 - **Multi-platform builds** support (requires `include_erts: false`)
+- **Release tarballs** for deploying to regular servers (uploaded to GitHub Releases)
 
 ### Usage
 
@@ -227,6 +228,29 @@ jobs:
     secrets: inherit
 ```
 
+### Release Tarballs
+
+To build a release tarball and upload it to the GitHub Release instead of (or alongside) a container image:
+
+```yaml
+jobs:
+  release:
+    permissions:
+      contents: write       # Upload release assets
+      id-token: write       # OIDC token for attestation
+      attestations: write   # Create build provenance attestation
+    uses: intility/reusable-elixir/.github/workflows/elixir-release.yaml@<sha>
+    with:
+      docker: false
+      tarball: true
+    secrets: inherit
+```
+
+The tarball is named `<app>-<version>-<os>-<arch>.tar.gz` and includes a `.sha256` checksum file. Both are uploaded as assets to the GitHub Release matching the current tag.
+
+> [!NOTE]
+> The `tarball` input requires a GitHub Release to exist for the current tag. Use it with tag-triggered workflows or release-please.
+
 ### Inputs
 
 | Name                | Type    | Default            | Description                                                           |
@@ -237,6 +261,7 @@ jobs:
 | `hex-organization`  | string  | -                  | Hex organization for private packages                                 |
 | `image-name`        | string  | -                  | Image name without registry prefix (e.g., `my-app`). Prefixed with `ghcr.io/<owner>/`. Defaults to repository name. |
 | `docker`            | boolean | `true`             | Build and push OCI image                                              |
+| `tarball`           | boolean | `false`            | Build release tarball and upload to GitHub Release                     |
 | `base-image`        | string  | -                  | Override base image (e.g., `elixir:1.19-slim`)                        |
 | `platforms`         | string  | -                  | Multi-arch platforms (e.g., `linux/amd64,linux/arm64`)                |
 | `release`           | string  | -                  | Release name if multiple configured                                   |
@@ -260,6 +285,13 @@ jobs:
 | `pull-username`        | No       | Username for pulling base image (defaults to `github.actor`)   |
 | `pull-password`        | No       | Password for pulling base image (defaults to `GITHUB_TOKEN`)   |
 
+### Outputs
+
+| Name           | Description                                                       |
+|:---------------|:------------------------------------------------------------------|
+| `digest`       | The digest of the pushed OCI image (empty when `docker` is false) |
+| `tarball-name` | The filename of the uploaded tarball (empty when `tarball` is false) |
+
 ### Required Permissions
 
 ```yaml
@@ -268,6 +300,16 @@ permissions:
   packages: write     # Push to GitHub Container Registry
   id-token: write     # OIDC token for attestation
   attestations: write # Create build provenance attestation
+```
+
+When using `tarball: true`, the `contents` permission must be `write` (instead of `read`) to upload release assets:
+
+```yaml
+permissions:
+  contents: write       # Upload release assets (use 'read' for docker-only)
+  packages: write       # Push to GitHub Container Registry
+  id-token: write       # OIDC token for attestation
+  attestations: write   # Create build provenance attestation
 ```
 
 ### Reproducible Builds & Layer Caching
