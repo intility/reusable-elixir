@@ -23,6 +23,10 @@ on:
         type: boolean
         default: true
         description: Whether to build and push the OCI image to the container registry
+      tarball:
+        type: boolean
+        default: false
+        description: Build a release tarball and upload it to the GitHub Release for the current tag
       base-image:
         type: string
         required: false
@@ -122,12 +126,16 @@ on:
       digest:
         description: "The digest of the pushed OCI image. Empty string when the docker input is false."
         value: ${{ jobs.release.outputs.digest }}
+      tarball-name:
+        description: "The filename of the uploaded release tarball. Empty string when the tarball input is false."
+        value: ${{ jobs.release.outputs.tarball-name }}
 
 jobs:
   release:
     runs-on: ubuntu-latest
     outputs:
       digest: ${{ steps.ocibuild.outputs.digest }}
+      tarball-name: ${{ steps.tarball.outputs.tarball-name }}
     defaults:
       run:
         working-directory: ${{ inputs.directory }}
@@ -221,7 +229,7 @@ jobs:
           MIX_ENV: prod
 
       - name: Build release
-        if: ${{ inputs.docker }}
+        if: ${{ inputs.docker || inputs.tarball }}
         run: mix release "$RELEASE_NAME" --overwrite
         env:
           MIX_ENV: prod
