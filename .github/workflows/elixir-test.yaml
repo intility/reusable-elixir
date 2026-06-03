@@ -150,7 +150,7 @@ jobs:
         if: ${{ inputs.env != '' }}
         with:
           env: ${{ inputs.env }}
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v4
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v4
       - uses: intility/reusable-elixir/.github/actions/setup-tool-versions@58bc25fbe1e2acf9911a489ff79edabfa749e9bf # v3.0.1
         with:
           elixir-version: ${{ inputs.elixir-version }}
@@ -190,7 +190,7 @@ jobs:
         if: ${{ inputs.env != '' }}
         with:
           env: ${{ inputs.env }}
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v4
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v4
       - uses: intility/reusable-elixir/.github/actions/setup-tool-versions@58bc25fbe1e2acf9911a489ff79edabfa749e9bf # v3.0.1
         with:
           elixir-version: ${{ inputs.elixir-version }}
@@ -223,7 +223,7 @@ jobs:
         if: ${{ inputs.env != '' }}
         with:
           env: ${{ inputs.env }}
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v4
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v4
       - uses: intility/reusable-elixir/.github/actions/apt-packages@58bc25fbe1e2acf9911a489ff79edabfa749e9bf # v3.0.1
         if: ${{ inputs.apt-packages != '' }}
         with:
@@ -271,7 +271,7 @@ jobs:
         if: ${{ inputs.env != '' }}
         with:
           env: ${{ inputs.env }}
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v4
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v4
       - uses: intility/reusable-elixir/.github/actions/setup-tool-versions@58bc25fbe1e2acf9911a489ff79edabfa749e9bf # v3.0.1
         with:
           elixir-version: ${{ inputs.elixir-version }}
@@ -303,7 +303,7 @@ jobs:
         if: ${{ inputs.env != '' }}
         with:
           env: ${{ inputs.env }}
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v4
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v4
       - uses: intility/reusable-elixir/.github/actions/setup-tool-versions@58bc25fbe1e2acf9911a489ff79edabfa749e9bf # v3.0.1
         with:
           elixir-version: ${{ inputs.elixir-version }}
@@ -351,7 +351,7 @@ jobs:
         if: ${{ inputs.env != '' }}
         with:
           env: ${{ inputs.env }}
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v4
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v4
       - uses: intility/reusable-elixir/.github/actions/setup-tool-versions@58bc25fbe1e2acf9911a489ff79edabfa749e9bf # v3.0.1
         with:
           elixir-version: ${{ inputs.elixir-version }}
@@ -383,7 +383,7 @@ jobs:
         if: ${{ inputs.env != '' }}
         with:
           env: ${{ inputs.env }}
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v4
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v4
       - uses: intility/reusable-elixir/.github/actions/setup-tool-versions@58bc25fbe1e2acf9911a489ff79edabfa749e9bf # v3.0.1
         with:
           elixir-version: ${{ inputs.elixir-version }}
@@ -417,7 +417,7 @@ jobs:
         if: ${{ inputs.env != '' }}
         with:
           env: ${{ inputs.env }}
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v4
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v4
       - uses: intility/reusable-elixir/.github/actions/setup-tool-versions@58bc25fbe1e2acf9911a489ff79edabfa749e9bf # v3.0.1
         with:
           elixir-version: ${{ inputs.elixir-version }}
@@ -460,7 +460,7 @@ jobs:
         if: ${{ inputs.env != '' }}
         with:
           env: ${{ inputs.env }}
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v4
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v4
       - uses: intility/reusable-elixir/.github/actions/apt-packages@58bc25fbe1e2acf9911a489ff79edabfa749e9bf # v3.0.1
         if: ${{ inputs.apt-packages != '' }}
         with:
