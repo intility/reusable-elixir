@@ -272,6 +272,23 @@ jobs:
 
           echo "::notice::Created ${TARBALL} ($(du -h "${TARBALL}" | cut -f1))"
 
+      - name: Upload release assets
+        if: ${{ inputs.tarball }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TARBALL_NAME: ${{ steps.tarball.outputs.tarball-name }}
+        run: |
+          gh release upload "${{ github.ref_name }}" \
+            "${TARBALL_NAME}" \
+            "${TARBALL_NAME}.sha256" \
+            --clobber
+
+      - name: Generate tarball attestation
+        if: ${{ inputs.tarball }}
+        uses: actions/attest-build-provenance@a2bbfa25375fe432b6a289bc6b6cd05ecd0c4c32 # v4.1.0
+        with:
+          subject-path: ${{ steps.tarball.outputs.tarball-path }}
+
       - name: Docker meta
         if: ${{ inputs.docker }}
         id: meta
