@@ -230,7 +230,12 @@ jobs:
 
       - name: Build release
         if: ${{ inputs.docker || inputs.tarball }}
-        run: mix release "$RELEASE_NAME" --overwrite
+        run: |
+          if [ -n "${RELEASE_NAME}" ]; then
+            mix release "${RELEASE_NAME}" --overwrite
+          else
+            mix release --overwrite
+          fi
         env:
           MIX_ENV: prod
           RELEASE_NAME: ${{ inputs.release }}
@@ -238,7 +243,7 @@ jobs:
       - name: Create release tarball
         if: ${{ inputs.tarball }}
         id: tarball
-        uses: intility/reusable-elixir/.github/actions/create-tarball@58bc25fbe1e2acf9911a489ff79edabfa749e9bf # v3.0.1
+        uses: intility/reusable-elixir/.github/actions/create-tarball@58bc25fbe1e2acf9911a489ff79edabfa749e9bf # v3.0.3
         with:
           release: ${{ inputs.release }}
           directory: ${{ inputs.directory }}
@@ -250,6 +255,16 @@ jobs:
           TARBALL_NAME: ${{ steps.tarball.outputs.tarball-name }}
           REF_NAME: ${{ github.ref_name }}
         run: |
+          if [ "${GITHUB_REF_TYPE}" != "tag" ]; then
+            echo "::error::tarball: true requires a tag-triggered workflow (current ref type: ${GITHUB_REF_TYPE})"
+            exit 1
+          fi
+
+          if ! gh release view "${REF_NAME}" --json tagName > /dev/null 2>&1; then
+            echo "::error::No GitHub Release found for tag '${REF_NAME}'. Create a release before using tarball: true."
+            exit 1
+          fi
+
           gh release upload "${REF_NAME}" \
             "${TARBALL_NAME}" \
             "${TARBALL_NAME}.sha256" \
