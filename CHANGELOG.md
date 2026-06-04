@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.1.0](https://github.com/intility/reusable-elixir/compare/v3.0.3...v3.1.0) (2026-06-04)
+
+
+### Features
+
+* add release tarball support ([#100](https://github.com/intility/reusable-elixir/issues/100)) ([f3c66c8](https://github.com/intility/reusable-elixir/commit/f3c66c887424c351942de13f87530618b91b3046))
+
 ## [3.0.3](https://github.com/intility/reusable-elixir/compare/v3.0.2...v3.0.3) (2026-05-15)
 
 
