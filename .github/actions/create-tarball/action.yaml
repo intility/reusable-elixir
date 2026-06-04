@@ -1,0 +1,77 @@
+name: Create Release Tarball
+description: Package a mix release as a .tar.gz with a SHA256 checksum
+
+inputs:
+  release:
+    description: Release name. Required for umbrella projects or when multiple releases are configured; auto-detected otherwise.
+    required: false
+  directory:
+    description: Working directory of the Elixir project
+    required: false
+    default: "."
+
+outputs:
+  tarball-name:
+    description: Filename of the created tarball
+    value: ${{ steps.create.outputs.tarball-name }}
+  tarball-path:
+    description: Absolute path to the created tarball (for build provenance attestation)
+    value: ${{ steps.create.outputs.tarball-path }}
+
+runs:
+  using: composite
+  steps:
+    - name: Create release tarball
+      id: create
+      shell: bash
+      working-directory: ${{ inputs.directory }}
+      env:
+        MIX_ENV: prod
+        RELEASE_NAME: ${{ inputs.release }}
+      run: |
+        # Resolve the release name and version exactly as `mix release` does.
+        # Mix.Release.from_config!/3 handles single-app projects, umbrella
+        # projects, and explicitly-named releases uniformly. We cannot read
+        # Mix.Project.config()[:app] directly because it is nil at an umbrella root.
+        RELEASE_INFO=$(mix eval '
+          name =
+            case System.get_env("RELEASE_NAME") do
+              n when n in [nil, ""] -> nil
+              n -> String.to_atom(n)
+            end
+
+          release = Mix.Release.from_config!(name, Mix.Project.config(), [])
+          IO.puts("release-name=#{release.name}")
+          IO.puts("release-version=#{release.version}")
+        ')
+
+        NAME=$(printf '%s\n' "${RELEASE_INFO}" | grep '^release-name=' | cut -d= -f2-)
+        VERSION=$(printf '%s\n' "${RELEASE_INFO}" | grep '^release-version=' | cut -d= -f2-)
+
+        if [ -z "${NAME}" ] || [ -z "${VERSION}" ]; then
+          echo "::error::Could not determine release name/version. For umbrella projects or when multiple releases are configured, set the 'release' input."
+          printf '%s\n' "${RELEASE_INFO}"
+          exit 1
+        fi
+
+        OS=$(uname -s | tr '[:upper:]' '[:lower:]')
+        ARCH=$(uname -m)
+        case "${ARCH}" in
+          x86_64)  ARCH=amd64 ;;
+          aarch64) ARCH=arm64 ;;
+        esac
+
+        TARBALL="${NAME}-${VERSION}-${OS}-${ARCH}.tar.gz"
+
+        if [ ! -d "_build/prod/rel/${NAME}" ]; then
+          echo "::error::Release directory _build/prod/rel/${NAME} not found"
+          exit 1
+        fi
+
+        tar -czf "${TARBALL}" -C "_build/prod/rel/${NAME}" .
+        sha256sum "${TARBALL}" > "${TARBALL}.sha256"
+
+        echo "tarball-name=${TARBALL}" >> "$GITHUB_OUTPUT"
+        echo "tarball-path=$(pwd)/${TARBALL}" >> "$GITHUB_OUTPUT"
+
+        echo "::notice::Created ${TARBALL} ($(du -h "${TARBALL}" | cut -f1))"
