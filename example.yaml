@@ -117,6 +117,10 @@ jobs:
       # Optional: Multi-platform builds (requires include_erts: false)
       # platforms: linux/amd64,linux/arm64
 
+      # Build release tarball instead of (or alongside) a container image
+      # docker: false
+      # tarball: true
+
       # Optional: Release name if multiple releases configured
       # release: my_app
 
@@ -146,3 +150,20 @@ jobs:
       # Private Hex packages
       # hex-organization: intility
     secrets: inherit
+
+  # Build and upload release tarball to GitHub Release
+  # release:
+  #   needs: test
+  #   if: github.event_name != 'pull_request'
+  #   permissions:
+  #     contents: write
+  #     id-token: write
+  #     attestations: write
+  #   uses: intility/reusable-elixir/.github/workflows/elixir-release.yaml@<sha>
+  #   with:
+  #     docker: false
+  #     tarball: true
+  #
+  #     # Optional: Release name if multiple releases configured
+  #     # release: my_app
+  #   secrets: inherit

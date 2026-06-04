@@ -23,6 +23,10 @@ on:
         type: boolean
         default: true
         description: Whether to build and push the OCI image to the container registry
+      tarball:
+        type: boolean
+        default: false
+        description: Build a release tarball and upload it to the GitHub Release for the current tag
       base-image:
         type: string
         required: false
@@ -122,12 +126,16 @@ on:
       digest:
         description: "The digest of the pushed OCI image. Empty string when the docker input is false."
         value: ${{ jobs.release.outputs.digest }}
+      tarball-name:
+        description: "The filename of the uploaded release tarball. Empty string when the tarball input is false."
+        value: ${{ jobs.release.outputs.tarball-name }}
 
 jobs:
   release:
     runs-on: ubuntu-latest
     outputs:
       digest: ${{ steps.ocibuild.outputs.digest }}
+      tarball-name: ${{ steps.tarball.outputs.tarball-name }}
     defaults:
       run:
         working-directory: ${{ inputs.directory }}
@@ -221,11 +229,52 @@ jobs:
           MIX_ENV: prod
 
       - name: Build release
-        if: ${{ inputs.docker }}
-        run: mix release "$RELEASE_NAME" --overwrite
+        if: ${{ inputs.docker || inputs.tarball }}
+        run: |
+          if [ -n "${RELEASE_NAME}" ]; then
+            mix release "${RELEASE_NAME}" --overwrite
+          else
+            mix release --overwrite
+          fi
         env:
           MIX_ENV: prod
           RELEASE_NAME: ${{ inputs.release }}
+
+      - name: Create release tarball
+        if: ${{ inputs.tarball }}
+        id: tarball
+        uses: intility/reusable-elixir/.github/actions/create-tarball@58bc25fbe1e2acf9911a489ff79edabfa749e9bf # v3.0.3
+        with:
+          release: ${{ inputs.release }}
+          directory: ${{ inputs.directory }}
+
+      - name: Upload release assets
+        if: ${{ inputs.tarball }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TARBALL_NAME: ${{ steps.tarball.outputs.tarball-name }}
+          REF_NAME: ${{ github.ref_name }}
+        run: |
+          if [ "${GITHUB_REF_TYPE}" != "tag" ]; then
+            echo "::error::tarball: true requires a tag-triggered workflow (current ref type: ${GITHUB_REF_TYPE})"
+            exit 1
+          fi
+
+          if ! gh release view "${REF_NAME}" --json tagName > /dev/null 2>&1; then
+            echo "::error::No GitHub Release found for tag '${REF_NAME}'. Create a release before using tarball: true."
+            exit 1
+          fi
+
+          gh release upload "${REF_NAME}" \
+            "${TARBALL_NAME}" \
+            "${TARBALL_NAME}.sha256" \
+            --clobber
+
+      - name: Generate tarball attestation
+        if: ${{ inputs.tarball }}
+        uses: actions/attest-build-provenance@a2bbfa25375fe432b6a289bc6b6cd05ecd0c4c32 # v4.1.0
+        with:
+          subject-path: ${{ steps.tarball.outputs.tarball-path }}
 
       - name: Docker meta
         if: ${{ inputs.docker }}
