@@ -23,7 +23,6 @@ runs:
       env:
         SEVERITY_THRESHOLD: ${{ inputs.severity }}
       run: |
-        # Map severity names to numeric levels for comparison
         severity_level() {
           case "${1^^}" in
             NONE)     echo 0 ;;
@@ -37,22 +36,30 @@ runs:
 
         threshold=$(severity_level "$SEVERITY_THRESHOLD")
 
-        # Always run the audit and show full output
+        # When threshold is 0 (none), run mix hex.audit directly and let its
+        # exit code pass through unchanged. This preserves the original behavior
+        # for older Hex versions and any non-advisory failure modes.
+        if (( threshold == 0 )); then
+          mix hex.audit
+          exit $?
+        fi
+
+        # With a threshold configured, capture output to inspect severities
         output=$(mix hex.audit 2>&1) || true
         echo "$output"
 
-        # Check for retired packages (always fail on these)
+        # Retired packages always fail
         if echo "$output" | grep -q "Found retired packages"; then
           echo "::error::Found retired packages"
           exit 1
         fi
 
-        # If no advisories, we're done
+        # No advisories found, pass
         if ! echo "$output" | grep -q "Found packages with security advisories"; then
           exit 0
         fi
 
-        # Extract severity levels from advisory output and check against threshold
+        # Check whether any found severity meets the threshold
         found_severities=$(echo "$output" | grep -oE '\((LOW|MEDIUM|HIGH|CRITICAL)\)' | tr -d '()' | sort -u)
         max_found=0
 
