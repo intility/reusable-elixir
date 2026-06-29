@@ -1,11 +1,18 @@
 name: Mix Hex Audit
-description: Run mix hex.audit to check for retired packages
+description: Run mix hex.audit to check for retired packages and security advisories
 
 inputs:
   directory:
     description: Directory containing the Elixir project
     required: false
     default: "."
+  severity:
+    description: |
+      Minimum advisory severity that causes a failure.
+      Advisories below this threshold are reported but do not fail the step.
+      Values: none, low, medium, high, critical (default: none = fail on any advisory)
+    required: false
+    default: "none"
 
 runs:
   using: composite
@@ -13,4 +20,59 @@ runs:
     - name: Audit Hex packages
       shell: bash
       working-directory: ${{ inputs.directory }}
-      run: mix hex.audit
+      env:
+        SEVERITY_THRESHOLD: ${{ inputs.severity }}
+      run: |
+        severity_level() {
+          case "${1^^}" in
+            NONE)     echo 0 ;;
+            LOW)      echo 1 ;;
+            MEDIUM)   echo 2 ;;
+            HIGH)     echo 3 ;;
+            CRITICAL) echo 4 ;;
+            *)        echo "::error::Unknown severity: $1"; exit 1 ;;
+          esac
+        }
+
+        threshold=$(severity_level "$SEVERITY_THRESHOLD")
+
+        # When threshold is 0 (none), run mix hex.audit directly and let its
+        # exit code pass through unchanged. This preserves the original behavior
+        # for older Hex versions and any non-advisory failure modes.
+        if (( threshold == 0 )); then
+          mix hex.audit
+          exit $?
+        fi
+
+        # With a threshold configured, capture output to inspect severities
+        output=$(mix hex.audit 2>&1) || true
+        echo "$output"
+
+        # Retired packages always fail
+        if echo "$output" | grep -q "Found retired packages"; then
+          echo "::error::Found retired packages"
+          exit 1
+        fi
+
+        # No advisories found, pass
+        if ! echo "$output" | grep -q "Found packages with security advisories"; then
+          exit 0
+        fi
+
+        # Check whether any found severity meets the threshold
+        found_severities=$(echo "$output" | grep -oE '\((LOW|MEDIUM|HIGH|CRITICAL)\)' | tr -d '()' | sort -u)
+        max_found=0
+
+        for sev in $found_severities; do
+          level=$(severity_level "$sev")
+          if (( level > max_found )); then
+            max_found=$level
+          fi
+        done
+
+        if (( max_found >= threshold )); then
+          echo "::error::Found advisories at or above ${SEVERITY_THRESHOLD} severity"
+          exit 1
+        fi
+
+        echo "::warning::Found advisories below ${SEVERITY_THRESHOLD} severity (see output above)"

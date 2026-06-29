@@ -39,7 +39,8 @@ jobs:
       # directory: apps/my-elixir-app
 
       # Static analysis defaults:
-      # - audit: true (hex.audit and deps.audit)
+      # - audit: true (hex.audit)
+      # - audit-severity: none (fail on any advisory; set to high or critical to allow low/medium)
       # - credo: true
       # - dialyzer: false (enable if needed, slow)
       # - sobelow: false (enable for Phoenix projects)
