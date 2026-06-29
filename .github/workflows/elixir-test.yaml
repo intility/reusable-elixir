@@ -18,7 +18,13 @@ on:
       audit:
         type: boolean
         default: true
-        description: Run hex.audit and deps.audit
+        description: Run hex.audit
+      audit-severity:
+        type: string
+        default: "none"
+        description: |
+          Minimum advisory severity that causes a failure (none, low, medium, high, critical).
+          Advisories below this threshold are reported as warnings but do not fail the step.
       credo:
         type: boolean
         default: true
@@ -210,6 +216,7 @@ jobs:
       - uses: intility/reusable-elixir/.github/actions/mix-hex-audit@e57a7d7c69468613e5f521103f596acab3cc5b33 # v3.0.1
         with:
           directory: ${{ inputs.directory }}
+          severity: ${{ inputs.audit-severity }}
 
   build-test:
     name: Build Test
