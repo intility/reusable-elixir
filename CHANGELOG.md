@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.2.0](https://github.com/intility/reusable-elixir/compare/v3.1.0...v3.2.0) (2026-06-29)
+
+
+### Features
+
+* add severity threshold to hex audit action ([#104](https://github.com/intility/reusable-elixir/issues/104)) ([dafe26e](https://github.com/intility/reusable-elixir/commit/dafe26e762d178097fe0a890115409005dd49985))
+
 ## [3.1.0](https://github.com/intility/reusable-elixir/compare/v3.0.3...v3.1.0) (2026-06-04)
 
 
