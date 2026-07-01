@@ -168,7 +168,7 @@ jobs:
       - uses: intility/reusable-elixir/.github/actions/install-elixir@dafe26e762d178097fe0a890115409005dd49985 # v3.2.0
         with:
           directory: ${{ inputs.directory }}
-      - uses: intility/reusable-elixir/.github/actions/mix-cache@dafe26e762d178097fe0a890115409005dd49985 # v3.2.0
+      - uses: intility/reusable-elixir/.github/actions/mix-cache@bf5899eb8f897af6da47d33ac9836c700ce77219 # v3.2.0
         with:
           mix-env: test
           cache-build: "false"
@@ -208,7 +208,7 @@ jobs:
       - uses: intility/reusable-elixir/.github/actions/install-elixir@dafe26e762d178097fe0a890115409005dd49985 # v3.2.0
         with:
           directory: ${{ inputs.directory }}
-      - uses: intility/reusable-elixir/.github/actions/mix-cache@dafe26e762d178097fe0a890115409005dd49985 # v3.2.0
+      - uses: intility/reusable-elixir/.github/actions/mix-cache@bf5899eb8f897af6da47d33ac9836c700ce77219 # v3.2.0
         with:
           mix-env: test
           cache-build: "false"
@@ -246,7 +246,7 @@ jobs:
       - uses: intility/reusable-elixir/.github/actions/install-elixir@dafe26e762d178097fe0a890115409005dd49985 # v3.2.0
         with:
           directory: ${{ inputs.directory }}
-      - uses: intility/reusable-elixir/.github/actions/mix-cache@dafe26e762d178097fe0a890115409005dd49985 # v3.2.0
+      - uses: intility/reusable-elixir/.github/actions/mix-cache@bf5899eb8f897af6da47d33ac9836c700ce77219 # v3.2.0
         with:
           mix-env: test
           directory: ${{ inputs.directory }}
@@ -287,7 +287,7 @@ jobs:
       - uses: intility/reusable-elixir/.github/actions/install-elixir@dafe26e762d178097fe0a890115409005dd49985 # v3.2.0
         with:
           directory: ${{ inputs.directory }}
-      - uses: intility/reusable-elixir/.github/actions/mix-cache@dafe26e762d178097fe0a890115409005dd49985 # v3.2.0
+      - uses: intility/reusable-elixir/.github/actions/mix-cache@bf5899eb8f897af6da47d33ac9836c700ce77219 # v3.2.0
         with:
           mix-env: test
           cache-build: "false"
@@ -319,7 +319,7 @@ jobs:
       - uses: intility/reusable-elixir/.github/actions/install-elixir@dafe26e762d178097fe0a890115409005dd49985 # v3.2.0
         with:
           directory: ${{ inputs.directory }}
-      - uses: intility/reusable-elixir/.github/actions/mix-cache@dafe26e762d178097fe0a890115409005dd49985 # v3.2.0
+      - uses: intility/reusable-elixir/.github/actions/mix-cache@bf5899eb8f897af6da47d33ac9836c700ce77219 # v3.2.0
         with:
           mix-env: test
           directory: ${{ inputs.directory }}
@@ -367,7 +367,7 @@ jobs:
       - uses: intility/reusable-elixir/.github/actions/install-elixir@dafe26e762d178097fe0a890115409005dd49985 # v3.2.0
         with:
           directory: ${{ inputs.directory }}
-      - uses: intility/reusable-elixir/.github/actions/mix-cache@dafe26e762d178097fe0a890115409005dd49985 # v3.2.0
+      - uses: intility/reusable-elixir/.github/actions/mix-cache@bf5899eb8f897af6da47d33ac9836c700ce77219 # v3.2.0
         with:
           mix-env: test
           directory: ${{ inputs.directory }}
@@ -402,7 +402,7 @@ jobs:
       - uses: intility/reusable-elixir/.github/actions/install-elixir@dafe26e762d178097fe0a890115409005dd49985 # v3.2.0
         with:
           directory: ${{ inputs.directory }}
-      - uses: intility/reusable-elixir/.github/actions/mix-cache@dafe26e762d178097fe0a890115409005dd49985 # v3.2.0
+      - uses: intility/reusable-elixir/.github/actions/mix-cache@bf5899eb8f897af6da47d33ac9836c700ce77219 # v3.2.0
         with:
           mix-env: dev
           directory: ${{ inputs.directory }}
@@ -433,7 +433,7 @@ jobs:
       - uses: intility/reusable-elixir/.github/actions/install-elixir@dafe26e762d178097fe0a890115409005dd49985 # v3.2.0
         with:
           directory: ${{ inputs.directory }}
-      - uses: intility/reusable-elixir/.github/actions/mix-cache@dafe26e762d178097fe0a890115409005dd49985 # v3.2.0
+      - uses: intility/reusable-elixir/.github/actions/mix-cache@bf5899eb8f897af6da47d33ac9836c700ce77219 # v3.2.0
         with:
           mix-env: test
           directory: ${{ inputs.directory }}
@@ -480,7 +480,7 @@ jobs:
       - uses: intility/reusable-elixir/.github/actions/install-elixir@dafe26e762d178097fe0a890115409005dd49985 # v3.2.0
         with:
           directory: ${{ inputs.directory }}
-      - uses: intility/reusable-elixir/.github/actions/mix-cache@dafe26e762d178097fe0a890115409005dd49985 # v3.2.0
+      - uses: intility/reusable-elixir/.github/actions/mix-cache@bf5899eb8f897af6da47d33ac9836c700ce77219 # v3.2.0
         with:
           mix-env: test
           directory: ${{ inputs.directory }}
