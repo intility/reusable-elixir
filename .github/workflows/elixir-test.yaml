@@ -292,7 +292,7 @@ jobs:
           mix-env: test
           cache-build: "false"
           directory: ${{ inputs.directory }}
-      - uses: intility/reusable-elixir/.github/actions/mix-task@dafe26e762d178097fe0a890115409005dd49985 # v3.2.0
+      - uses: intility/reusable-elixir/.github/actions/mix-task@bf5899eb8f897af6da47d33ac9836c700ce77219 # v3.2.0
         with:
           mix-env: test
           task: deps.unlock --check-unused
@@ -323,7 +323,7 @@ jobs:
         with:
           mix-env: test
           directory: ${{ inputs.directory }}
-      - uses: intility/reusable-elixir/.github/actions/mix-task@dafe26e762d178097fe0a890115409005dd49985 # v3.2.0
+      - uses: intility/reusable-elixir/.github/actions/mix-task@bf5899eb8f897af6da47d33ac9836c700ce77219 # v3.2.0
         with:
           mix-env: test
           task: format --check-formatted
@@ -338,7 +338,7 @@ jobs:
           extensions=$(echo "${SPARK_EXTENSIONS}" | grep -v '^$' | tr '\n' ',' | sed 's/,*$//')
           echo "args=--extensions ${extensions}" >> "$GITHUB_OUTPUT"
       - name: Spark (DSL)
-        uses: intility/reusable-elixir/.github/actions/mix-task@dafe26e762d178097fe0a890115409005dd49985 # v3.2.0
+        uses: intility/reusable-elixir/.github/actions/mix-task@bf5899eb8f897af6da47d33ac9836c700ce77219 # v3.2.0
         if: ${{ inputs.spark-formatter }}
         with:
           mix-env: test
@@ -371,7 +371,7 @@ jobs:
         with:
           mix-env: test
           directory: ${{ inputs.directory }}
-      - uses: intility/reusable-elixir/.github/actions/mix-task@dafe26e762d178097fe0a890115409005dd49985 # v3.2.0
+      - uses: intility/reusable-elixir/.github/actions/mix-task@bf5899eb8f897af6da47d33ac9836c700ce77219 # v3.2.0
         with:
           mix-env: test
           task: credo --strict
@@ -437,7 +437,7 @@ jobs:
         with:
           mix-env: test
           directory: ${{ inputs.directory }}
-      - uses: intility/reusable-elixir/.github/actions/mix-task@dafe26e762d178097fe0a890115409005dd49985 # v3.2.0
+      - uses: intility/reusable-elixir/.github/actions/mix-task@bf5899eb8f897af6da47d33ac9836c700ce77219 # v3.2.0
         with:
           mix-env: test
           task: sobelow
@@ -513,28 +513,28 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.npm-token }}
 
       # Ash PostgreSQL
-      - uses: intility/reusable-elixir/.github/actions/mix-task@dafe26e762d178097fe0a890115409005dd49985 # v3.2.0
+      - uses: intility/reusable-elixir/.github/actions/mix-task@bf5899eb8f897af6da47d33ac9836c700ce77219 # v3.2.0
         if: ${{ inputs.postgres == 'ash' }}
         with:
           mix-env: test
           task: ash_postgres.generate_migrations --check
           directory: ${{ inputs.directory }}
 
-      - uses: intility/reusable-elixir/.github/actions/mix-task@dafe26e762d178097fe0a890115409005dd49985 # v3.2.0
+      - uses: intility/reusable-elixir/.github/actions/mix-task@bf5899eb8f897af6da47d33ac9836c700ce77219 # v3.2.0
         if: ${{ inputs.postgres == 'ash' }}
         with:
           mix-env: test
           task: ash_postgres.create
           directory: ${{ inputs.directory }}
 
-      - uses: intility/reusable-elixir/.github/actions/mix-task@dafe26e762d178097fe0a890115409005dd49985 # v3.2.0
+      - uses: intility/reusable-elixir/.github/actions/mix-task@bf5899eb8f897af6da47d33ac9836c700ce77219 # v3.2.0
         if: ${{ inputs.postgres == 'ash' }}
         with:
           mix-env: test
           task: ash_postgres.migrate
           directory: ${{ inputs.directory }}
 
-      - uses: intility/reusable-elixir/.github/actions/mix-task@dafe26e762d178097fe0a890115409005dd49985 # v3.2.0
+      - uses: intility/reusable-elixir/.github/actions/mix-task@bf5899eb8f897af6da47d33ac9836c700ce77219 # v3.2.0
         if: ${{ inputs.postgres == 'ash' }}
         with:
           mix-env: test
@@ -542,14 +542,14 @@ jobs:
           directory: ${{ inputs.directory }}
 
       # Ecto PostgreSQL
-      - uses: intility/reusable-elixir/.github/actions/mix-task@dafe26e762d178097fe0a890115409005dd49985 # v3.2.0
+      - uses: intility/reusable-elixir/.github/actions/mix-task@bf5899eb8f897af6da47d33ac9836c700ce77219 # v3.2.0
         if: ${{ inputs.postgres == 'ecto' }}
         with:
           mix-env: test
           task: ecto.create
           directory: ${{ inputs.directory }}
 
-      - uses: intility/reusable-elixir/.github/actions/mix-task@dafe26e762d178097fe0a890115409005dd49985 # v3.2.0
+      - uses: intility/reusable-elixir/.github/actions/mix-task@bf5899eb8f897af6da47d33ac9836c700ce77219 # v3.2.0
         if: ${{ inputs.postgres == 'ecto' }}
         with:
           mix-env: test
@@ -557,21 +557,21 @@ jobs:
           directory: ${{ inputs.directory }}
 
       # Ash SQLite
-      - uses: intility/reusable-elixir/.github/actions/mix-task@dafe26e762d178097fe0a890115409005dd49985 # v3.2.0
+      - uses: intility/reusable-elixir/.github/actions/mix-task@bf5899eb8f897af6da47d33ac9836c700ce77219 # v3.2.0
         if: ${{ inputs.sqlite == 'ash' }}
         with:
           mix-env: test
           task: ash_sqlite.generate_migrations --check
           directory: ${{ inputs.directory }}
 
-      - uses: intility/reusable-elixir/.github/actions/mix-task@dafe26e762d178097fe0a890115409005dd49985 # v3.2.0
+      - uses: intility/reusable-elixir/.github/actions/mix-task@bf5899eb8f897af6da47d33ac9836c700ce77219 # v3.2.0
         if: ${{ inputs.sqlite == 'ash' }}
         with:
           mix-env: test
           task: ash_sqlite.create
           directory: ${{ inputs.directory }}
 
-      - uses: intility/reusable-elixir/.github/actions/mix-task@dafe26e762d178097fe0a890115409005dd49985 # v3.2.0
+      - uses: intility/reusable-elixir/.github/actions/mix-task@bf5899eb8f897af6da47d33ac9836c700ce77219 # v3.2.0
         if: ${{ inputs.sqlite == 'ash' }}
         with:
           mix-env: test
@@ -579,14 +579,14 @@ jobs:
           directory: ${{ inputs.directory }}
 
       # Ecto SQLite
-      - uses: intility/reusable-elixir/.github/actions/mix-task@dafe26e762d178097fe0a890115409005dd49985 # v3.2.0
+      - uses: intility/reusable-elixir/.github/actions/mix-task@bf5899eb8f897af6da47d33ac9836c700ce77219 # v3.2.0
         if: ${{ inputs.sqlite == 'ecto' }}
         with:
           mix-env: test
           task: ecto.create
           directory: ${{ inputs.directory }}
 
-      - uses: intility/reusable-elixir/.github/actions/mix-task@dafe26e762d178097fe0a890115409005dd49985 # v3.2.0
+      - uses: intility/reusable-elixir/.github/actions/mix-task@bf5899eb8f897af6da47d33ac9836c700ce77219 # v3.2.0
         if: ${{ inputs.sqlite == 'ecto' }}
         with:
           mix-env: test
