@@ -53,7 +53,7 @@ jobs:
         with:
           env: ${{ inputs.env }}
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v4
-      - uses: intility/reusable-elixir/.github/actions/apt-packages@dafe26e762d178097fe0a890115409005dd49985 # v3.2.0
+      - uses: intility/reusable-elixir/.github/actions/apt-packages@db482319a030f8be81eb35266a8c31496d3e7b2c # v3.2.0
         if: ${{ inputs.apt-packages != '' }}
         with:
           packages: ${{ inputs.apt-packages }}
