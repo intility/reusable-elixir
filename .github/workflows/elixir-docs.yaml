@@ -64,7 +64,7 @@ jobs:
       - uses: intility/reusable-elixir/.github/actions/ssh-agent@dafe26e762d178097fe0a890115409005dd49985 # v3.2.0
         with:
           ssh-private-key: ${{ secrets.ssh-private-key }}
-      - uses: intility/reusable-elixir/.github/actions/install-elixir@fd53c83fec89fadcc9040060bff2e4860f66612e # v3.2.0
+      - uses: intility/reusable-elixir/.github/actions/install-elixir@db482319a030f8be81eb35266a8c31496d3e7b2c # v3.2.0
       - uses: intility/reusable-elixir/.github/actions/mix-cache@bf5899eb8f897af6da47d33ac9836c700ce77219 # v3.2.0
         with:
           mix-env: dev
