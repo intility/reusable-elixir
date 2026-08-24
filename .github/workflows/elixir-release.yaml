@@ -149,7 +149,7 @@ jobs:
         with:
           env: ${{ inputs.env }}
 
-      - uses: intility/reusable-elixir/.github/actions/apt-packages@59a54410ea5784a9faba523a1f6b2eb921fe8216 # v3.2.0
+      - uses: intility/reusable-elixir/.github/actions/apt-packages@ea833c16036b4e6aa9610ae18f9cc62b753f6561 # v3.2.0
         if: ${{ inputs.apt-packages != '' }}
         with:
           packages: ${{ inputs.apt-packages }}
