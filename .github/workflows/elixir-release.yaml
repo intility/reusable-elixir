@@ -296,7 +296,7 @@ jobs:
       - name: Build and push OCI image
         if: ${{ inputs.docker }}
         id: ocibuild
-        uses: intility/reusable-elixir/.github/actions/ocibuild@59a54410ea5784a9faba523a1f6b2eb921fe8216 # v3.2.0
+        uses: intility/reusable-elixir/.github/actions/ocibuild@f2fa68279e677610b351d4f59e1177ffd4a283ed # v3.2.0
         with:
           tags: ${{ steps.meta.outputs.tags }}
           registry: ghcr.io
