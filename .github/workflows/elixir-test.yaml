@@ -594,7 +594,7 @@ jobs:
           directory: ${{ inputs.directory }}
 
       # Run tests
-      - uses: intility/reusable-elixir/.github/actions/mix-test@22c0e830a86f4c204e2af2a5cd15a44565eec82b # v3.2.0
+      - uses: intility/reusable-elixir/.github/actions/mix-test@f2fa68279e677610b351d4f59e1177ffd4a283ed # v3.2.0
         with:
           mix-env: test
           directory: ${{ inputs.directory }}
