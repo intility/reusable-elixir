@@ -231,7 +231,7 @@ jobs:
         with:
           env: ${{ inputs.env }}
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v4
-      - uses: intility/reusable-elixir/.github/actions/apt-packages@ea833c16036b4e6aa9610ae18f9cc62b753f6561 # v3.2.0
+      - uses: intility/reusable-elixir/.github/actions/apt-packages@f2fa68279e677610b351d4f59e1177ffd4a283ed # v3.2.0
         if: ${{ inputs.apt-packages != '' }}
         with:
           packages: ${{ inputs.apt-packages }}
@@ -468,7 +468,7 @@ jobs:
         with:
           env: ${{ inputs.env }}
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v4
-      - uses: intility/reusable-elixir/.github/actions/apt-packages@ea833c16036b4e6aa9610ae18f9cc62b753f6561 # v3.2.0
+      - uses: intility/reusable-elixir/.github/actions/apt-packages@f2fa68279e677610b351d4f59e1177ffd4a283ed # v3.2.0
         if: ${{ inputs.apt-packages != '' }}
         with:
           packages: ${{ inputs.apt-packages }}
