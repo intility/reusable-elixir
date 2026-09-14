@@ -216,7 +216,7 @@ jobs:
         env:
           MIX_ENV: prod
 
-      - uses: intility/reusable-elixir/.github/actions/mix-compile@22c0e830a86f4c204e2af2a5cd15a44565eec82b # v3.2.0
+      - uses: intility/reusable-elixir/.github/actions/mix-compile@5a63b65a2f6bb56a3f16eca8841ab061759c097a # v3.2.0
         with:
           mix-env: prod
           args: --warnings-as-errors
