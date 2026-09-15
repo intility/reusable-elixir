@@ -243,7 +243,7 @@ jobs:
       - name: Create release tarball
         if: ${{ inputs.tarball }}
         id: tarball
-        uses: intility/reusable-elixir/.github/actions/create-tarball@cdf91a5f40013c8249e10d4e2a6edb27e8dcc283 # v3.2.0
+        uses: intility/reusable-elixir/.github/actions/create-tarball@5a63b65a2f6bb56a3f16eca8841ab061759c097a # v3.2.0
         with:
           release: ${{ inputs.release }}
           directory: ${{ inputs.directory }}
