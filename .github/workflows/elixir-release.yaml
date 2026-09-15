@@ -160,7 +160,7 @@ jobs:
           otp-version: ${{ inputs.otp-version }}
           working-directory: ${{ inputs.directory }}
 
-      - uses: intility/reusable-elixir/.github/actions/ssh-agent@dafe26e762d178097fe0a890115409005dd49985 # v3.2.0
+      - uses: intility/reusable-elixir/.github/actions/ssh-agent@5a63b65a2f6bb56a3f16eca8841ab061759c097a # v3.2.0
         with:
           ssh-private-key: ${{ secrets.ssh-private-key }}
 
