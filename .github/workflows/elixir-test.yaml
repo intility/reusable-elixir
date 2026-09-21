@@ -406,7 +406,7 @@ jobs:
         with:
           mix-env: dev
           directory: ${{ inputs.directory }}
-      - uses: intility/reusable-elixir/.github/actions/mix-dialyzer@ea833c16036b4e6aa9610ae18f9cc62b753f6561 # v3.2.0
+      - uses: intility/reusable-elixir/.github/actions/mix-dialyzer@d7721a04c488e73a8e3adeebd6cd65f68ddb6b11 # v3.2.0
         with:
           mix-env: dev
           directory: ${{ inputs.directory }}
