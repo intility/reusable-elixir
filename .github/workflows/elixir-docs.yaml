@@ -48,7 +48,7 @@ jobs:
     name: Build Docs
     runs-on: ubuntu-latest
     steps:
-      - uses: intility/reusable-elixir/.github/actions/set-env@5a63b65a2f6bb56a3f16eca8841ab061759c097a # v3.2.0
+      - uses: intility/reusable-elixir/.github/actions/set-env@d7721a04c488e73a8e3adeebd6cd65f68ddb6b11 # v3.2.0
         if: ${{ inputs.env != '' }}
         with:
           env: ${{ inputs.env }}
