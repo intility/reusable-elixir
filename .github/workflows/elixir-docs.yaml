@@ -61,7 +61,7 @@ jobs:
         with:
           elixir-version: ${{ inputs.elixir-version }}
           otp-version: ${{ inputs.otp-version }}
-      - uses: intility/reusable-elixir/.github/actions/ssh-agent@5a63b65a2f6bb56a3f16eca8841ab061759c097a # v3.2.0
+      - uses: intility/reusable-elixir/.github/actions/ssh-agent@ee5b46cc29564dbda84a0ba09367a7a5c4c1a423 # v3.2.0
         with:
           ssh-private-key: ${{ secrets.ssh-private-key }}
       - uses: intility/reusable-elixir/.github/actions/install-elixir@f2fa68279e677610b351d4f59e1177ffd4a283ed # v3.2.0
