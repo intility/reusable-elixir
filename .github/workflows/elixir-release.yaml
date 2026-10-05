@@ -144,7 +144,7 @@ jobs:
         with:
           fetch-depth: 1
 
-      - uses: intility/reusable-elixir/.github/actions/set-env@5766add3f8d55d3ae02b26949ce687540c390e16 # v3.2.0
+      - uses: intility/reusable-elixir/.github/actions/set-env@ee5b46cc29564dbda84a0ba09367a7a5c4c1a423 # v3.2.0
         if: ${{ inputs.env != '' }}
         with:
           env: ${{ inputs.env }}
