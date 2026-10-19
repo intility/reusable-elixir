@@ -79,7 +79,7 @@ jobs:
           HEX_ORG_KEY: ${{ secrets.hex-organization-key }}
         run: mix hex.organization auth "${HEX_ORG}" --key "${HEX_ORG_KEY}"
       - uses: intility/reusable-elixir/.github/actions/mix-deps-get@bf5899eb8f897af6da47d33ac9836c700ce77219 # v3.2.0
-      - uses: intility/reusable-elixir/.github/actions/mix-docs@832568f3031bff9b22fbbc8061e8f3e64b1bc332 # v3.2.0
+      - uses: intility/reusable-elixir/.github/actions/mix-docs@8727dbe54adf66920ebb7a53eb089ca6219466ab # v3.2.0
         with:
           mix-env: dev
       - uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
