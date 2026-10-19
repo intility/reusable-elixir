@@ -6,7 +6,7 @@ updates:
     ignore:
       # Self-references are bumped manually (chore:) only when .github/actions/ changes.
       # A deps: bump here triggers a release, which Dependabot would then bump again, forever.
-      - dependency-name: "intility/reusable-elixir"
+      - dependency-name: "intility/reusable-elixir*"
     commit-message:
       # release-please considers "deps:" as a releasable unit
       prefix: "deps:"
