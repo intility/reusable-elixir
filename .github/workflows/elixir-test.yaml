@@ -213,7 +213,7 @@ jobs:
           mix-env: test
           cache-build: "false"
           directory: ${{ inputs.directory }}
-      - uses: intility/reusable-elixir/.github/actions/mix-hex-audit@832568f3031bff9b22fbbc8061e8f3e64b1bc332 # v3.2.0
+      - uses: intility/reusable-elixir/.github/actions/mix-hex-audit@1df7300a8fee33aae55b6a474fbc24d996d1a764 # v3.2.0
         with:
           directory: ${{ inputs.directory }}
           severity: ${{ inputs.audit-severity }}
