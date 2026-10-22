@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.2.1](https://github.com/intility/reusable-elixir/compare/v3.2.0...v3.2.1) (2026-10-22)
+
+
+### Bug Fixes
+
+* bump setup-beam to v1.24.1 in install-elixir for Ubuntu 26 runners ([#190](https://github.com/intility/reusable-elixir/issues/190)) ([5b776d2](https://github.com/intility/reusable-elixir/commit/5b776d23ae47011068da1175a091f655d71c7acc))
+
 ## [3.2.0](https://github.com/intility/reusable-elixir/compare/v3.1.0...v3.2.0) (2026-06-29)
 
 
