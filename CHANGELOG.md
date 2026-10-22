@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.2.2](https://github.com/intility/reusable-elixir/compare/v3.2.1...v3.2.2) (2026-10-22)
+
+
+### Bug Fixes
+
+* pin release job to ubuntu-24.04 so bundled ERTS runs on debian:stable-slim ([#193](https://github.com/intility/reusable-elixir/issues/193)) ([efcc047](https://github.com/intility/reusable-elixir/commit/efcc047a15b76027b21cf792af87ce9d63c6924c))
+
 ## [3.2.1](https://github.com/intility/reusable-elixir/compare/v3.2.0...v3.2.1) (2026-10-22)
 
 
