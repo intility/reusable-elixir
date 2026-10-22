@@ -144,23 +144,23 @@ jobs:
         with:
           fetch-depth: 1
 
-      - uses: intility/reusable-elixir/.github/actions/set-env@8727dbe54adf66920ebb7a53eb089ca6219466ab # main (post v3.2.0)
+      - uses: intility/reusable-elixir/.github/actions/set-env@5b776d23ae47011068da1175a091f655d71c7acc # main (post v3.2.0)
         if: ${{ inputs.env != '' }}
         with:
           env: ${{ inputs.env }}
 
-      - uses: intility/reusable-elixir/.github/actions/apt-packages@8727dbe54adf66920ebb7a53eb089ca6219466ab # main (post v3.2.0)
+      - uses: intility/reusable-elixir/.github/actions/apt-packages@5b776d23ae47011068da1175a091f655d71c7acc # main (post v3.2.0)
         if: ${{ inputs.apt-packages != '' }}
         with:
           packages: ${{ inputs.apt-packages }}
 
-      - uses: intility/reusable-elixir/.github/actions/setup-tool-versions@8727dbe54adf66920ebb7a53eb089ca6219466ab # main (post v3.2.0)
+      - uses: intility/reusable-elixir/.github/actions/setup-tool-versions@5b776d23ae47011068da1175a091f655d71c7acc # main (post v3.2.0)
         with:
           elixir-version: ${{ inputs.elixir-version }}
           otp-version: ${{ inputs.otp-version }}
           working-directory: ${{ inputs.directory }}
 
-      - uses: intility/reusable-elixir/.github/actions/ssh-agent@8727dbe54adf66920ebb7a53eb089ca6219466ab # main (post v3.2.0)
+      - uses: intility/reusable-elixir/.github/actions/ssh-agent@5b776d23ae47011068da1175a091f655d71c7acc # main (post v3.2.0)
         with:
           ssh-private-key: ${{ secrets.ssh-private-key }}
 
@@ -170,7 +170,7 @@ jobs:
           version-file: ${{ inputs.directory }}/.tool-versions
           version-type: strict
 
-      - uses: intility/reusable-elixir/.github/actions/mix-cache@8727dbe54adf66920ebb7a53eb089ca6219466ab # main (post v3.2.0)
+      - uses: intility/reusable-elixir/.github/actions/mix-cache@5b776d23ae47011068da1175a091f655d71c7acc # main (post v3.2.0)
         with:
           mix-env: prod
           directory: ${{ inputs.directory }}
@@ -188,7 +188,7 @@ jobs:
         env:
           MIX_ENV: prod
 
-      - uses: intility/reusable-elixir/.github/actions/download-artifacts@8727dbe54adf66920ebb7a53eb089ca6219466ab # main (post v3.2.0)
+      - uses: intility/reusable-elixir/.github/actions/download-artifacts@5b776d23ae47011068da1175a091f655d71c7acc # main (post v3.2.0)
         if: ${{ inputs.artifacts != '' }}
         with:
           artifacts: ${{ inputs.artifacts }}
@@ -216,7 +216,7 @@ jobs:
         env:
           MIX_ENV: prod
 
-      - uses: intility/reusable-elixir/.github/actions/mix-compile@8727dbe54adf66920ebb7a53eb089ca6219466ab # main (post v3.2.0)
+      - uses: intility/reusable-elixir/.github/actions/mix-compile@5b776d23ae47011068da1175a091f655d71c7acc # main (post v3.2.0)
         with:
           mix-env: prod
           args: --warnings-as-errors
@@ -243,7 +243,7 @@ jobs:
       - name: Create release tarball
         if: ${{ inputs.tarball }}
         id: tarball
-        uses: intility/reusable-elixir/.github/actions/create-tarball@8727dbe54adf66920ebb7a53eb089ca6219466ab # main (post v3.2.0)
+        uses: intility/reusable-elixir/.github/actions/create-tarball@5b776d23ae47011068da1175a091f655d71c7acc # main (post v3.2.0)
         with:
           release: ${{ inputs.release }}
           directory: ${{ inputs.directory }}
@@ -296,7 +296,7 @@ jobs:
       - name: Build and push OCI image
         if: ${{ inputs.docker }}
         id: ocibuild
-        uses: intility/reusable-elixir/.github/actions/ocibuild@8727dbe54adf66920ebb7a53eb089ca6219466ab # main (post v3.2.0)
+        uses: intility/reusable-elixir/.github/actions/ocibuild@5b776d23ae47011068da1175a091f655d71c7acc # main (post v3.2.0)
         with:
           tags: ${{ steps.meta.outputs.tags }}
           registry: ghcr.io
