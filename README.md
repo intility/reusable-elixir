@@ -246,7 +246,7 @@ jobs:
     secrets: inherit
 ```
 
-The tarball is named `<name>-<version>-<os>-<arch>.tar.gz` and includes a `.sha256` checksum file. Both are uploaded as assets to the GitHub Release matching the current tag. The `<os>` and `<arch>` reflect the runner the workflow executes on (e.g. `linux-amd64` on `ubuntu-latest`); tarballs are single-architecture regardless of the `platforms` input, which only affects multi-arch OCI images.
+The tarball is named `<name>-<version>-<os>-<arch>.tar.gz` and includes a `.sha256` checksum file. Both are uploaded as assets to the GitHub Release matching the current tag. The `<os>` and `<arch>` reflect the runner the workflow executes on (`linux-amd64`; the release job runs on `ubuntu-24.04`, so bundled ERTS needs glibc 2.39 or newer on the target); tarballs are single-architecture regardless of the `platforms` input, which only affects multi-arch OCI images.
 
 For umbrella projects, or any project with multiple releases configured, set the `release` input to select which release to package. Single-release projects are detected automatically.
 
