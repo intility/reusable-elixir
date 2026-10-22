@@ -132,7 +132,9 @@ on:
 
 jobs:
   release:
-    runs-on: ubuntu-latest
+    # Pinned, not ubuntu-latest: the release bundles ERTS built for the runner's glibc, which must
+    # not be newer than the base image's (debian:stable-slim, glibc 2.41). Ubuntu 26.04 has 2.43.
+    runs-on: ubuntu-24.04
     outputs:
       digest: ${{ steps.ocibuild.outputs.digest }}
       tarball-name: ${{ steps.tarball.outputs.tarball-name }}
