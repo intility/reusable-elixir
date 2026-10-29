@@ -1,0 +1,118 @@
+name: Submit Hex dependencies
+
+# Submits every Hex package in mix.lock, transitive packages included, to the GitHub dependency
+# graph. GitHub does not read mix.lock, and Dependabot only works on packages in the graph.
+# mix.lock already pins every package, so nothing is built or restored: the file is parsed as text
+# and no repo code runs. Only public hexpm packages are submitted, since a private organization
+# package could share its name with a public one and match the wrong advisory.
+on:
+  workflow_call:
+    inputs:
+      directory:
+        type: string
+        default: "."
+        description: The directory that holds mix.lock (for apps in a subdirectory).
+      correlator:
+        type: string
+        default: ""
+        description: Snapshot correlator. Defaults to hex-dependency-submission-<directory>. GitHub replaces a snapshot with a later one that has the same correlator.
+
+jobs:
+  submit:
+    name: Submit Hex dependencies
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # Used to submit the dependency snapshot
+    defaults:
+      run:
+        working-directory: ${{ inputs.directory }}
+    steps:
+      # Only mix.lock is checked out, and persist-credentials: false keeps GITHUB_TOKEN out of .git/config
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v4
+        with:
+          sparse-checkout: ${{ inputs.directory }}/mix.lock
+          sparse-checkout-cone-mode: false
+          persist-credentials: false
+
+      - name: Submit snapshot
+        env:
+          GH_TOKEN: ${{ github.token }}
+          DIRECTORY: ${{ inputs.directory }}
+          CORRELATOR: ${{ inputs.correlator != '' && inputs.correlator || format('hex-dependency-submission-{0}', inputs.directory) }}
+          REPO: ${{ github.repository }}
+          SHA: ${{ github.sha }}
+          REF: ${{ github.ref }}
+          RUN_ID: ${{ github.run_id }}-${{ github.run_attempt }}
+        run: |
+          set -euo pipefail
+
+          if [ ! -f mix.lock ]; then
+            echo "::error::No mix.lock found in '$DIRECTORY'"
+            exit 1
+          fi
+
+          # The manifest path is relative to the repo root, without a leading ./
+          location="${DIRECTORY%/}/mix.lock"
+          location="${location#./}"
+
+          # One entry per line: "name": {:hex, :name, "1.2.3", "hash", [:mix], [deps], "hexpm", "hash"},
+          # The repo (second to last element) is "hexpm" for public packages, "hexpm:org" for private ones.
+          # Entries from before the repo element existed have none, and are public.
+          jq -Rn '
+            [inputs
+             | capture("^\\s*\"[^\"]+\":\\s*\\{:hex,\\s*:(?<name>[a-z0-9_]+),\\s*\"(?<version>[^\"]+)\"(?<rest>.*)$")
+             | .repo = (.rest | capture(", \"(?<r>[^\"]+)\", \"[0-9a-f]{64}\"\\},?\\s*$").r // "hexpm")
+             | del(.rest)]' mix.lock > entries.json
+
+          # The snapshot replaces the previous one, so an entry lost to a parse miss would drop its alerts.
+          # Fail instead.
+          total=$(grep -cE '^\s*"[^"]+":\s*\{:hex,' mix.lock || true)
+          parsed=$(jq length entries.json)
+          if [ "$total" -ne "$parsed" ]; then
+            echo "::error::Parsed $parsed of $total Hex entries in mix.lock, so the format is not understood"
+            exit 1
+          fi
+
+          git_deps=$(grep -cE '^\s*"[^"]+":\s*\{:git,' mix.lock || true)
+          private=$(jq '[.[] | select(.repo != "hexpm")] | length' entries.json)
+          echo "Hex entries: $total ($private private skipped), git entries skipped: $git_deps"
+
+          # Every package is submitted as direct and runtime: mix.lock records neither the direct
+          # dependencies of mix.exs nor the dependency scope.
+          jq -n \
+            --slurpfile entries entries.json \
+            --arg location "$location" --arg sha "$SHA" --arg ref "$REF" \
+            --arg correlator "$CORRELATOR" --arg id "$RUN_ID" \
+            --arg scanned "$(date -u +%Y-%m-%dT%H:%M:%SZ)" '
+            reduce ($entries[0][] | select(.repo == "hexpm")) as $e ({};
+              .[$e.name] = {
+                package_url: "pkg:hex/\($e.name)@\($e.version | @uri)",
+                relationship: "direct",
+                scope: "runtime"
+              }) as $resolved
+            | {
+                version: 0,
+                sha: $sha,
+                ref: $ref,
+                job: {correlator: $correlator, id: $id},
+                detector: {
+                  name: "reusable-elixir mix.lock",
+                  version: "1.0.0",
+                  url: "https://github.com/intility/reusable-elixir"
+                },
+                scanned: $scanned,
+                manifests: {($location): {
+                  name: $location,
+                  file: {source_location: $location},
+                  resolved: $resolved
+                }}
+              }' > snapshot.json
+
+          packages=$(jq '.manifests[].resolved | length' snapshot.json)
+          if [ "$packages" -eq 0 ]; then
+            echo "::error::No public Hex packages found in mix.lock, so there is nothing to submit"
+            exit 1
+          fi
+
+          gh api -X POST "repos/$REPO/dependency-graph/snapshots" --input snapshot.json --jq '.message'
+          echo "Submitted $packages packages with correlator $CORRELATOR"

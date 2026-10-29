@@ -336,6 +336,51 @@ The actual build timestamp is recorded in the `org.opencontainers.image.created`
 
 ---
 
+## 🔍 elixir-dependency-submission
+
+Submits every Hex package in `mix.lock`, transitive packages included, to the GitHub dependency graph.
+
+GitHub's dependency graph does not read `mix.lock`, so Hex packages are missing from it. Dependabot only works on packages in the graph. This workflow parses `mix.lock` as text and submits the packages through the dependency submission API. Nothing is built or restored, and no repo code runs: only `mix.lock` is checked out.
+
+### Usage
+
+Run it on every push to `main`, and on a schedule so the snapshot stays current:
+
+```yaml
+name: Dependency submission
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: "0 5 * * *"
+  workflow_dispatch:
+
+jobs:
+  submit:
+    permissions:
+      contents: write # Used to submit the dependency snapshot
+    uses: intility/reusable-elixir/.github/workflows/elixir-dependency-submission.yaml@main
+```
+
+Pin the `uses:` reference to a commit SHA like the other workflows. The snapshot is attached to the commit that triggered the run, so only run it on the default branch.
+
+### Inputs
+
+| Name         | Type   | Default                                    | Description                                                                                              |
+|:-------------|:-------|:-------------------------------------------|:---------------------------------------------------------------------------------------------------------|
+| `directory`  | string | `.`                                        | Directory that holds `mix.lock` (for apps in a subdirectory)                                             |
+| `correlator` | string | `hex-dependency-submission-<directory>`    | Snapshot correlator. GitHub replaces a snapshot with a later one that has the same correlator            |
+
+### Behavior
+
+- Only public `hexpm` packages are submitted. Packages from a private Hex organization and Git dependencies are skipped, since a private package could share its name with a public one and match the wrong advisory.
+- Every package is submitted as a direct, runtime dependency. `mix.lock` records neither which packages `mix.exs` lists nor the dependency scope.
+- The run fails if `mix.lock` is missing, has no public Hex packages, or has entries it cannot parse. The snapshot replaces the previous one, so a silent miss would drop alerts.
+- For a repo with several `mix.lock` files, call the workflow once per `directory`. The default correlator includes the directory, so the snapshots do not replace each other.
+
+---
+
 ## Pre-built Artifacts
 
 For projects that depend on native binaries (Rust, Go, C) or other pre-compiled assets, you can inject artifacts from upstream jobs:
