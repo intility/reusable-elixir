@@ -336,6 +336,51 @@ The actual build timestamp is recorded in the `org.opencontainers.image.created`
 
 ---
 
+## 🔍 elixir-dependency-submission
+
+Submits every Hex package in every `mix.lock`, transitive packages included, to the GitHub dependency graph.
+
+GitHub's dependency graph does not read `mix.lock`, so Hex packages are missing from it. Dependabot only works on packages in the graph. This workflow finds every `mix.lock` that git tracks, parses it as text and submits the packages through the dependency submission API. Nothing is built or restored, and no repo code runs: the job only reads `mix.lock` and `mix.exs` files.
+
+### Usage
+
+Run it on every push to `main`, and on a schedule so the snapshot stays current:
+
+```yaml
+name: Dependency submission
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: "0 5 * * *"
+  workflow_dispatch:
+
+jobs:
+  submit:
+    permissions:
+      contents: write # Used to submit the dependency snapshot
+    uses: intility/reusable-elixir/.github/workflows/elixir-dependency-submission.yaml@main
+```
+
+Pin the `uses:` reference to a commit SHA like the other workflows. The snapshot is attached to the commit that triggered the run, so only run it on the default branch.
+
+### Inputs
+
+| Name         | Type   | Default                                    | Description                                                                                              |
+|:-------------|:-------|:-------------------------------------------|:---------------------------------------------------------------------------------------------------------|
+| `directory`  | string | `.`                                        | Directory to search. Every `mix.lock` that git tracks below it is submitted, so a monorepo needs one call |
+| `correlator` | string | `hex-dependency-submission-<directory>`    | Snapshot correlator. GitHub replaces a snapshot with a later one that has the same correlator            |
+
+### Behavior
+
+- Only public `hexpm` packages are submitted. Packages from a private Hex organization and Git dependencies are skipped, since a private package could share its name with a public one and match the wrong advisory.
+- A package is submitted as direct if it is listed as a `{:name, ...}` dependency in the `mix.exs` next to its `mix.lock`, and as indirect otherwise. For an umbrella (`apps_path`), the `mix.exs` of its apps count too. Other `mix.exs` files below the directory (other projects, fixtures, path dependencies) do not count. Dependencies built by a helper function are missed and show as indirect. Every package gets the runtime scope, since `mix.lock` does not record it.
+- All `mix.lock` files go into one snapshot, one manifest each. A lock with no public packages is skipped.
+- The run fails, before anything is submitted, if no `mix.lock` is found, none has public Hex packages, a lock has entries it cannot parse, or a lock has no `mix.exs` next to it. The snapshot replaces the previous one, so submitting the other locks would drop the alerts of the broken one. If no package in a lock appears in its `mix.exs`, the run warns and submits everything as indirect.
+
+---
+
 ## Pre-built Artifacts
 
 For projects that depend on native binaries (Rust, Go, C) or other pre-compiled assets, you can inject artifacts from upstream jobs:
