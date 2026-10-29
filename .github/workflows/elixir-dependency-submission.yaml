@@ -82,12 +82,12 @@ jobs:
             --arg location "$location" --arg sha "$SHA" --arg ref "$REF" \
             --arg correlator "$CORRELATOR" --arg id "$RUN_ID" \
             --arg scanned "$(date -u +%Y-%m-%dT%H:%M:%SZ)" '
-            reduce ($entries[0][] | select(.repo == "hexpm")) as $e ({};
+            (reduce ($entries[0][] | select(.repo == "hexpm")) as $e ({};
               .[$e.name] = {
                 package_url: "pkg:hex/\($e.name)@\($e.version | @uri)",
                 relationship: "direct",
                 scope: "runtime"
-              }) as $resolved
+              })) as $resolved
             | {
                 version: 0,
                 sha: $sha,
