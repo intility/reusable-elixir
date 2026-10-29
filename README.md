@@ -15,7 +15,7 @@ Runs tests and static analysis for Elixir projects.
 ### Features
 
 - **Parallel jobs** for fast feedback (deps, audit, build, test, credo, dialyzer run concurrently)
-- **Credo** static code analysis
+- **Credo** static code analysis, with results uploaded to GitHub code scanning (SARIF)
 - **Dialyzer** type checking with PLT caching
 - **Sobelow** security scanner (Phoenix)
 - **PostgreSQL** service container with Ash/Ecto support
@@ -73,6 +73,7 @@ jobs:
 | `otp-version`           | string  | -          | Erlang/OTP version (uses `.tool-versions` if not specified)           |
 | `audit`                 | boolean | `true`     | Run hex.audit and deps.audit                                          |
 | `credo`                 | boolean | `true`     | Run Credo static analysis                                             |
+| `credo-sarif`           | boolean | `false`    | Upload Credo results to code scanning (needs `security-events: write`) |
 | `dialyzer`              | boolean | `true`     | Run Dialyzer type checking                                            |
 | `sobelow`               | boolean | `false`    | Run Sobelow security scanner (Phoenix projects)                       |
 | `postgres`              | string  | -          | PostgreSQL migrations: `ash` or `ecto` (starts service automatically) |
@@ -90,6 +91,18 @@ jobs:
 | `env`                   | string  | -          | Environment variables for all jobs (one `KEY=VALUE` per line)         |
 | `artifacts`             | string  | -          | Multiline artifact definitions to download (`name:path` per line)     |
 | `services`              | string  | -          | Multiline YAML list of Docker sidecar services (see below)            |
+
+### Code scanning
+
+Credo results are uploaded to GitHub code scanning (SARIF) when the calling workflow grants `security-events: write`:
+
+```yaml
+permissions:
+  contents: read
+  security-events: write
+```
+
+Without it (or on pull requests from forks, or private repos without GitHub Advanced Security) the upload is skipped or fails harmlessly. Credo findings fail the build either way.
 
 ### Secrets
 
