@@ -1,5 +1,17 @@
 # Changelog
 
+## [3.3.0](https://github.com/intility/reusable-elixir/compare/v3.2.2...v3.3.0) (2026-10-29)
+
+
+### Features
+
+* add elixir-dependency-submission workflow ([#196](https://github.com/intility/reusable-elixir/issues/196)) ([acda78f](https://github.com/intility/reusable-elixir/commit/acda78fce004e9f30a8ec1bd759e654e5a823f33))
+
+
+### Bug Fixes
+
+* submit locks without a mix.exs as indirect instead of failing ([#199](https://github.com/intility/reusable-elixir/issues/199)) ([fa99b19](https://github.com/intility/reusable-elixir/commit/fa99b19e91e51238769680e915e0255b9a294366))
+
 ## [3.2.2](https://github.com/intility/reusable-elixir/compare/v3.2.1...v3.2.2) (2026-10-22)
 
 
