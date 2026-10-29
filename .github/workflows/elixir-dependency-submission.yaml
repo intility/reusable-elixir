@@ -58,7 +58,7 @@ jobs:
           # Entries from before the repo element existed have none, and are public.
           jq -Rn '
             [inputs
-             | capture("^\\s*\"[^\"]+\":\\s*\\{:hex,\\s*:(?<name>[a-z0-9_]+),\\s*\"(?<version>[^\"]+)\"(?<rest>.*)$")
+             | capture("^\\s*\"(?<key>[^\"]+)\":\\s*\\{:hex,\\s*:(?<name>[a-z0-9_]+),\\s*\"(?<version>[^\"]+)\"(?<rest>.*)$")
              | .repo = (.rest | capture(", \"(?<r>[^\"]+)\", \"[0-9a-f]{64}\"\\},?\\s*$").r // "hexpm")
              | del(.rest)]' mix.lock > entries.json
 
@@ -75,17 +75,30 @@ jobs:
           private=$(jq '[.[] | select(.repo != "hexpm")] | length' entries.json)
           echo "Hex entries: $total ($private private skipped), git entries skipped: $git_deps"
 
-          # Every package is submitted as direct and runtime: mix.lock records neither the direct
-          # dependencies of mix.exs nor the dependency scope.
+          # mix.lock does not say which packages mix.exs lists. A package is direct if its app name opens
+          # a dependency tuple, {:name, ..., in any mix.exs below the directory (umbrella apps included).
+          # The atoms are matched against the lock, so unrelated tuples in mix.exs are ignored. mix.exs is
+          # only read as text. Dependencies defined outside mix.exs, or built by a helper function, are
+          # missed and show as indirect. The scope is always runtime: mix.lock does not record it.
+          direct=$(grep -rhoE --include=mix.exs --exclude-dir={deps,_build,node_modules,.git} '\{\s*:[a-z0-9_]+\s*,' . \
+            | sed -E 's/\{\s*:([a-z0-9_]+)\s*,/\1/' | sort -u | jq -R . | jq -s . || true)
+          direct=${direct:-[]}
+          direct_count=$(jq -n --argjson d "$direct" --slurpfile e entries.json '[$e[0][] | select(.repo == "hexpm" and (.key as $k | $d | index($k)))] | length')
+          if [ "$direct_count" -eq 0 ]; then
+            echo "::error::No package in mix.lock is listed as a dependency in a mix.exs below '$DIRECTORY', so direct and indirect cannot be told apart"
+            exit 1
+          fi
+
           jq -n \
             --slurpfile entries entries.json \
+            --argjson direct "$direct" \
             --arg location "$location" --arg sha "$SHA" --arg ref "$REF" \
             --arg correlator "$CORRELATOR" --arg id "$RUN_ID" \
             --arg scanned "$(date -u +%Y-%m-%dT%H:%M:%SZ)" '
             (reduce ($entries[0][] | select(.repo == "hexpm")) as $e ({};
               .[$e.name] = {
                 package_url: "pkg:hex/\($e.name)@\($e.version | @uri)",
-                relationship: "direct",
+                relationship: (if ($direct | index($e.key)) then "direct" else "indirect" end),
                 scope: "runtime"
               })) as $resolved
             | {
@@ -113,4 +126,4 @@ jobs:
           fi
 
           gh api -X POST "repos/$REPO/dependency-graph/snapshots" --input snapshot.json --jq '.message'
-          echo "Submitted $packages packages with correlator $CORRELATOR"
+          echo "Submitted $packages packages ($direct_count direct) with correlator $CORRELATOR"

@@ -375,8 +375,8 @@ Pin the `uses:` reference to a commit SHA like the other workflows. The snapshot
 ### Behavior
 
 - Only public `hexpm` packages are submitted. Packages from a private Hex organization and Git dependencies are skipped, since a private package could share its name with a public one and match the wrong advisory.
-- Every package is submitted as a direct, runtime dependency. `mix.lock` records neither which packages `mix.exs` lists nor the dependency scope.
-- The run fails if `mix.lock` is missing, has no public Hex packages, or has entries it cannot parse. The snapshot replaces the previous one, so a silent miss would drop alerts.
+- A package is submitted as direct if it is listed as a `{:name, ...}` dependency in a `mix.exs` below `directory` (umbrella apps included), and as indirect otherwise. `mix.exs` is only read as text. Dependencies defined outside `mix.exs`, or built by a helper function, are missed and show as indirect. Every package gets the runtime scope, since `mix.lock` does not record it.
+- The run fails if `mix.lock` is missing, has no public Hex packages, has entries it cannot parse, or no package in it appears in any `mix.exs`. The snapshot replaces the previous one, so a silent miss would drop alerts.
 - For a repo with several `mix.lock` files, call the workflow once per `directory`. The default correlator includes the directory, so the snapshots do not replace each other.
 
 ---
