@@ -27,11 +27,9 @@ jobs:
       run:
         working-directory: ${{ inputs.directory }}
     steps:
-      # Only mix.lock is checked out, and persist-credentials: false keeps GITHUB_TOKEN out of .git/config
+      # persist-credentials: false keeps GITHUB_TOKEN out of .git/config
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v4
         with:
-          sparse-checkout: ${{ inputs.directory }}/mix.lock
-          sparse-checkout-cone-mode: false
           persist-credentials: false
 
       - name: Submit snapshot

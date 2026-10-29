@@ -340,7 +340,7 @@ The actual build timestamp is recorded in the `org.opencontainers.image.created`
 
 Submits every Hex package in `mix.lock`, transitive packages included, to the GitHub dependency graph.
 
-GitHub's dependency graph does not read `mix.lock`, so Hex packages are missing from it. Dependabot only works on packages in the graph. This workflow parses `mix.lock` as text and submits the packages through the dependency submission API. Nothing is built or restored, and no repo code runs: only `mix.lock` is checked out.
+GitHub's dependency graph does not read `mix.lock`, so Hex packages are missing from it. Dependabot only works on packages in the graph. This workflow parses `mix.lock` as text and submits the packages through the dependency submission API. Nothing is built or restored, and no repo code runs: the job only reads `mix.lock`.
 
 ### Usage
 
