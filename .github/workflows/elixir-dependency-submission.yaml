@@ -95,22 +95,25 @@ jobs:
             # projects, fixtures or path dependencies, and do not count. Newlines are removed first so a
             # tuple split over lines matches. The atoms are matched against the lock, so unrelated tuples
             # in mix.exs are ignored. Dependencies built by a helper function are missed and show as indirect.
-            if [ ! -f "$dir/mix.exs" ]; then
-              echo "::error file=$location::No mix.exs next to the lock, so direct and indirect cannot be told apart"
-              exit 1
+            # Alerts match on name and version from the lock, so a missing mix.exs only costs the
+            # direct/indirect label. Every package is then submitted as indirect.
+            direct='[]'
+            if [ -f "$dir/mix.exs" ]; then
+              exs=("$dir/mix.exs")
+              apps=$(grep -oE 'apps_path:[[:space:]]*"[^"]+"' "$dir/mix.exs" | head -n 1 | sed -E 's/.*"([^"]+)"/\1/' || true)
+              if [ -n "$apps" ] && [[ "$apps" != *..* ]]; then
+                for f in "$dir/$apps"/*/mix.exs; do
+                  [ -f "$f" ] && exs+=("$f")
+                done
+              fi
+              direct=$(cat "${exs[@]}" | tr '\n' ' ' | { grep -oE '\{[[:space:]]*:[a-z0-9_]+[[:space:]]*,' || true; } \
+                | sed -E 's/\{[[:space:]]*:([a-z0-9_]+)[[:space:]]*,/\1/' | sort -u | jq -R . | jq -s .)
+            else
+              echo "::warning file=$location::No mix.exs next to the lock, so every package is submitted as indirect"
             fi
-            exs=("$dir/mix.exs")
-            apps=$(grep -oE 'apps_path:[[:space:]]*"[^"]+"' "$dir/mix.exs" | head -n 1 | sed -E 's/.*"([^"]+)"/\1/' || true)
-            if [ -n "$apps" ] && [[ "$apps" != *..* ]]; then
-              for f in "$dir/$apps"/*/mix.exs; do
-                [ -f "$f" ] && exs+=("$f")
-              done
-            fi
-            direct=$(cat "${exs[@]}" | tr '\n' ' ' | { grep -oE '\{[[:space:]]*:[a-z0-9_]+[[:space:]]*,' || true; } \
-              | sed -E 's/\{[[:space:]]*:([a-z0-9_]+)[[:space:]]*,/\1/' | sort -u | jq -R . | jq -s .)
             direct_count=$(jq -n --argjson d "$direct" --slurpfile e "$tmp/entries.json" \
               '[$e[0][] | select(.repo == "hexpm" and (.key as $k | $d | index($k)))] | length')
-            if [ "$direct_count" -eq 0 ]; then
+            if [ "$direct_count" -eq 0 ] && [ -f "$dir/mix.exs" ]; then
               echo "::warning file=$location::No package in the lock is listed in mix.exs, so every package is submitted as indirect"
             fi
             echo "$location: $((total - private)) public packages ($direct_count direct), $private private and $git_deps git skipped"
