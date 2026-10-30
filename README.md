@@ -98,6 +98,7 @@ Credo results are uploaded to GitHub code scanning (SARIF) when the calling work
 
 ```yaml
 permissions:
+  actions: read          # Needed by the upload on private and internal repos
   contents: read
   security-events: write
 ```
