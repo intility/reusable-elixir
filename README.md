@@ -73,7 +73,6 @@ jobs:
 | `otp-version`           | string  | -          | Erlang/OTP version (uses `.tool-versions` if not specified)           |
 | `audit`                 | boolean | `true`     | Run hex.audit and deps.audit                                          |
 | `credo`                 | boolean | `true`     | Run Credo static analysis                                             |
-| `credo-sarif`           | boolean | `false`    | Upload Credo results to code scanning (needs `security-events: write`) |
 | `dialyzer`              | boolean | `true`     | Run Dialyzer type checking                                            |
 | `sobelow`               | boolean | `false`    | Run Sobelow security scanner (Phoenix projects)                       |
 | `postgres`              | string  | -          | PostgreSQL migrations: `ash` or `ecto` (starts service automatically) |
@@ -92,18 +91,18 @@ jobs:
 | `artifacts`             | string  | -          | Multiline artifact definitions to download (`name:path` per line)     |
 | `services`              | string  | -          | Multiline YAML list of Docker sidecar services (see below)            |
 
-### Code scanning
+### Required Permissions
 
-Credo results are uploaded to GitHub code scanning (SARIF) when the calling workflow grants `security-events: write`:
+No permissions are required to run the workflow. To have Credo findings show up in GitHub code scanning (the Security tab and PR annotations), grant these in the calling workflow or job:
 
 ```yaml
 permissions:
-  actions: read          # Needed by the upload on private and internal repos
+  actions: read          # Private and internal repos only: the upload reads the workflow run
   contents: read
-  security-events: write
+  security-events: write # Upload SARIF to code scanning
 ```
 
-Without it (or on pull requests from forks, or private repos without GitHub Advanced Security) the upload is skipped or fails harmlessly. Credo findings fail the build either way.
+Private and internal repos also need GitHub Advanced Security (Code Security) enabled. Without these permissions, on pull requests from forks, or without Advanced Security, the upload is skipped or fails harmlessly. Credo findings fail the build either way.
 
 ### Secrets
 
