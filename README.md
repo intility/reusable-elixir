@@ -15,7 +15,7 @@ Runs tests and static analysis for Elixir projects.
 ### Features
 
 - **Parallel jobs** for fast feedback (deps, audit, build, test, credo, dialyzer run concurrently)
-- **Credo** static code analysis
+- **Credo** static code analysis, with results uploaded to GitHub code scanning (SARIF)
 - **Dialyzer** type checking with PLT caching
 - **Sobelow** security scanner (Phoenix)
 - **PostgreSQL** service container with Ash/Ecto support
@@ -90,6 +90,19 @@ jobs:
 | `env`                   | string  | -          | Environment variables for all jobs (one `KEY=VALUE` per line)         |
 | `artifacts`             | string  | -          | Multiline artifact definitions to download (`name:path` per line)     |
 | `services`              | string  | -          | Multiline YAML list of Docker sidecar services (see below)            |
+
+### Required Permissions
+
+No permissions are required to run the workflow. To have Credo findings show up in GitHub code scanning (the Security tab and PR annotations), grant these in the calling workflow or job:
+
+```yaml
+permissions:
+  actions: read          # Private and internal repos only: the upload reads the workflow run
+  contents: read
+  security-events: write # Upload SARIF to code scanning
+```
+
+Private and internal repos also need GitHub Advanced Security (Code Security) enabled. Without these permissions, on pull requests from forks, or without Advanced Security, the upload is skipped or fails harmlessly. Credo findings fail the build either way.
 
 ### Secrets
 
@@ -477,7 +490,11 @@ jobs:
 
 ## Version Management
 
-Both workflows support two ways to specify Elixir/OTP versions:
+`elixir-test`, `elixir-docs` and `elixir-release` take their Elixir/OTP versions from **either** a `.tool-versions` file **or** the `elixir-version` and `otp-version` inputs. A matrix is a way to feed those inputs; it is not a separate mechanism.
+
+- **Neither input set:** the project's `.tool-versions` is used.
+- **Both inputs set:** a `.tool-versions` is generated from them in the project directory on the runner, replacing any existing one for that run. Your committed file is not changed.
+- **Only one input set:** the run fails. `elixir-version` and `otp-version` must be given together.
 
 ### Using `.tool-versions` (recommended)
 
@@ -498,7 +515,7 @@ erlang 28.0
 
 ### Using explicit versions
 
-Override `.tool-versions` by specifying versions explicitly:
+Specify both versions to override `.tool-versions`:
 
 ```yaml
 jobs:
@@ -511,7 +528,7 @@ jobs:
 
 ### Matrix strategy for multiple versions
 
-Test against multiple Elixir/OTP combinations:
+To test several Elixir/OTP combinations, pass the matrix values as the explicit inputs. Every entry must set both:
 
 ```yaml
 jobs:

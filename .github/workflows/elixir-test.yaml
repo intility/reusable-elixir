@@ -371,11 +371,38 @@ jobs:
         with:
           mix-env: test
           directory: ${{ inputs.directory }}
-      - uses: intility/reusable-elixir/.github/actions/mix-task@5b776d23ae47011068da1175a091f655d71c7acc # main (post v3.2.0)
+      - name: Run Credo
+        id: credo
+        env:
+          MIX_ENV: test
+        run: |
+          status=0
+          mix credo --strict --format sarif > credo.sarif || status=$?
+          echo "status=$status" >> "$GITHUB_OUTPUT"
+      # Credo reports paths relative to the project directory; code scanning needs repo-relative ones.
+      - name: Make SARIF paths repo-relative
+        if: ${{ inputs.directory != '.' }}
+        env:
+          DIRECTORY: ${{ inputs.directory }}
+        run: |
+          if jq --arg d "${DIRECTORY%/}" '(.runs[].results[]?.locations[]?.physicalLocation.artifactLocation) |= (.uri = $d + "/" + .uri | del(.uriBaseId))' credo.sarif > credo.sarif.tmp; then
+            mv credo.sarif.tmp credo.sarif
+          fi
+      # Uses the caller's token permissions. Without security-events: write (or on fork PRs)
+      # the upload is skipped or fails harmlessly; Credo's own exit status still gates the job.
+      - uses: github/codeql-action/upload-sarif@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4.39.1
+        if: ${{ github.event.pull_request.head.repo.fork != true }}
+        continue-on-error: true
         with:
-          mix-env: test
-          task: credo --strict
-          directory: ${{ inputs.directory }}
+          sarif_file: ${{ inputs.directory }}/credo.sarif
+          category: credo
+      - name: Fail on Credo issues
+        if: ${{ steps.credo.outputs.status != '0' }}
+        env:
+          CREDO_STATUS: ${{ steps.credo.outputs.status }}
+        run: |
+          jq -r '.runs[].results[] | "\(.locations[0].physicalLocation.artifactLocation.uri):\(.locations[0].physicalLocation.region.startLine): \(.message.text)"' credo.sarif || true
+          exit "$CREDO_STATUS"
 
   dialyzer:
     name: Dialyzer
