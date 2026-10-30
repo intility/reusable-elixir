@@ -490,7 +490,11 @@ jobs:
 
 ## Version Management
 
-Both workflows support two ways to specify Elixir/OTP versions:
+`elixir-test`, `elixir-docs` and `elixir-release` take their Elixir/OTP versions from **either** a `.tool-versions` file **or** the `elixir-version` and `otp-version` inputs. A matrix is a way to feed those inputs; it is not a separate mechanism.
+
+- **Neither input set:** the project's `.tool-versions` is used.
+- **Both inputs set:** a `.tool-versions` is generated from them in the project directory on the runner, replacing any existing one for that run. Your committed file is not changed.
+- **Only one input set:** the run fails. `elixir-version` and `otp-version` must be given together.
 
 ### Using `.tool-versions` (recommended)
 
@@ -511,7 +515,7 @@ erlang 28.0
 
 ### Using explicit versions
 
-Override `.tool-versions` by specifying versions explicitly:
+Specify both versions to override `.tool-versions`:
 
 ```yaml
 jobs:
@@ -524,7 +528,7 @@ jobs:
 
 ### Matrix strategy for multiple versions
 
-Test against multiple Elixir/OTP combinations:
+To test several Elixir/OTP combinations, pass the matrix values as the explicit inputs. Every entry must set both:
 
 ```yaml
 jobs:
