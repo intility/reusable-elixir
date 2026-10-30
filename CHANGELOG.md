@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.4.0](https://github.com/intility/reusable-elixir/compare/v3.3.0...v3.4.0) (2026-10-30)
+
+
+### Features
+
+* upload Credo results to code scanning ([#201](https://github.com/intility/reusable-elixir/issues/201)) ([db10430](https://github.com/intility/reusable-elixir/commit/db1043078c856af3719ded184a53f3e7496e4a25))
+
 ## [3.3.0](https://github.com/intility/reusable-elixir/compare/v3.2.2...v3.3.0) (2026-10-29)
 
 
