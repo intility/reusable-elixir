@@ -74,10 +74,11 @@ runs:
           exit 1
         fi
 
-        # Build argument array safely
+        # Build argument array safely. Note: org.opencontainers.image.created is
+        # auto-populated by ocibuild (derived from SOURCE_DATE_EPOCH), so it must
+        # not be overridden here or reproducible manifest digests would break.
         ARGS=()
         ARGS+=(--tag "${INPUT_TAGS}")
-        ARGS+=(-a "org.opencontainers.image.created=$(date +%s)")
 
         # Add optional base image override
         if [ -n "${INPUT_BASE_IMAGE}" ]; then
