@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.4.1](https://github.com/intility/reusable-elixir/compare/v3.4.0...v3.4.1) (2026-11-27)
+
+
+### Bug Fixes
+
+* **ocibuild:** stop overriding the auto-generated created annotation ([#203](https://github.com/intility/reusable-elixir/issues/203)) ([e7993f2](https://github.com/intility/reusable-elixir/commit/e7993f2592e5c39584e9a35146881b03032056ff))
+
 ## [3.4.0](https://github.com/intility/reusable-elixir/compare/v3.3.0...v3.4.0) (2026-10-30)
 
 
